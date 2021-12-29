@@ -10,7 +10,7 @@ public class DigitalQueueContext : IdentityDbContext<User>
 {
     public DigitalQueueContext(DbContextOptions<DigitalQueueContext> options)
     : base(options) { }
-    
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

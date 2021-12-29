@@ -4,5 +4,5 @@ namespace DigitalQueue.Web.Domain;
 
 public class User : IdentityUser
 {
-    
+
 }
