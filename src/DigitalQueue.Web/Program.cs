@@ -1,3 +1,7 @@
+using DigitalQueue.Web.Data;
+using DigitalQueue.Web.Extensions;
+using DigitalQueue.Web.Users;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,6 +15,9 @@ builder.Services.AddRouting(options =>
     options.AppendTrailingSlash = true;
 });
 
+builder.Services.AddDataContext(builder.Configuration);
+builder.Services.AddIdentity(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -22,8 +29,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+// application data initialization
+await app.InitializeSeedData();
 
 app.Run();
