@@ -62,8 +62,18 @@ public static class ServiceCollectionExtensions
             options.SignIn.RequireConfirmedEmail = false;
             options.SignIn.RequireConfirmedPhoneNumber = false;
         }).AddRoles<IdentityRole>()
-          .AddEntityFrameworkStores<DigitalQueueContext>();
+          .AddEntityFrameworkStores<DigitalQueueContext>()
+          .AddTokenProvider<JwtRefreshTokenProvider>(JwtRefreshTokenProvider.ProviderName);
 
         services.AddScoped<UsersService>();
+        
+        // Configure JWT refresh token provider
+        services.Configure<JwtRefreshTokenProvider.JwtRefreshTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromMinutes(configuration.GetValue<double>("JwtOptions:RefreshTokenLifeTime"));
+            options.Name = JwtRefreshTokenProvider.ProviderName;
+        });
+
+        services.AddScoped<JwtTokenService>();
     }
 }

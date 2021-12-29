@@ -34,4 +34,21 @@ public class UsersService
             }
         );
     }
+
+    public async Task<IList<Claim>?> AuthenticateUser(string email, string password)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            return null;
+        }
+
+        var correct = await _userManager.CheckPasswordAsync(user, password);
+        if (!correct)
+        {
+            return null;
+        }
+
+        return await _userManager.GetClaimsAsync(user);
+    }
 }
