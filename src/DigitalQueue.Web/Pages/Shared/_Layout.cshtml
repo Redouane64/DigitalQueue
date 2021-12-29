@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Digital Queue Administrator Dashboard</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
@@ -23,26 +22,34 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1 justify-content-end nav-pills">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="Dashboard" asp-page="/Index">
-                                <i class="fa fa-cog fa-fw fa-columns m-1"></i>Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/Login">
-                                <i class="fa fa-cog fa-fw fa-sign-in-alt m-1"></i>Sign In
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/">
-                                <i class="fa fa-cog fa-fw fa-sign-out-alt m-1"></i>Sign Out
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/">
-                                <i class="fa fa-cog fa-fw fa-user-circle-o m-1"></i>Account
-                            </a>
-                        </li>
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="Dashboard" asp-page="Index">
+                                    <i class="fa fa-cog fa-fw fa-columns m-1"></i>Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-page-handler="SignOut">
+                                    <button type="submit" class="nav-link text-white" asp-area="" asp-page="Index" asp-page-handler="SignOut">
+                                        <i class="fa fa-cog fa-fw fa-sign-out-alt m-1"></i>Sign Out
+                                    </button>
+                                </form>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-page="">
+                                    <i class="fa fa-cog fa-fw fa-user-circle-o m-1"></i>Account
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-page="Login">
+                                    <i class="fa fa-cog fa-fw fa-sign-in-alt m-1"></i>Sign In
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

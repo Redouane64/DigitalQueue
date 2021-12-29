@@ -44,8 +44,8 @@ public class LoginModel : PageModel
         }
 
         await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme, 
-            new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)), 
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
             new AuthenticationProperties()
             {
                 IsPersistent = RememberMe,
@@ -53,4 +53,5 @@ public class LoginModel : PageModel
 
         return RedirectToPagePermanent("Index", new { area = "Dashboard" });
     }
+
 }

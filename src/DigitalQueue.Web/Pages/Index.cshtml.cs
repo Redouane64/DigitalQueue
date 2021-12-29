@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DigitalQueue.Web.Pages;
@@ -15,5 +17,19 @@ public class IndexModel : PageModel
     public void OnGet()
     {
 
+    }
+
+    public async Task<IActionResult> OnPostSignOutAsync()
+    {
+        if (!User.Identity!.IsAuthenticated)
+        {
+            return Unauthorized();
+        }
+
+        await HttpContext.SignOutAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme
+        );
+
+        return RedirectToPagePermanent("Login");
     }
 }
