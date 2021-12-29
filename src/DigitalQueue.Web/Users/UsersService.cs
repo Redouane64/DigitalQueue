@@ -1,3 +1,6 @@
+using System.Security.Claims;
+
+using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Domain;
 
 using Microsoft.AspNetCore.Identity;
@@ -7,24 +10,28 @@ namespace DigitalQueue.Web.Users;
 public class UsersService
 {
     private readonly UserManager<User> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public UsersService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+    public UsersService(UserManager<User> userManager)
     {
         _userManager = userManager;
-        _roleManager = roleManager;
     }
 
-    public async Task CreateDefaultAccountsAndRoles()
+    public async Task CreateDefaultUser(string email, string password)
     {
-        await _roleManager.CreateAsync(RoleDefaults.Administrator);
-        await _roleManager.CreateAsync(RoleDefaults.Teacher);
-        await _roleManager.CreateAsync(RoleDefaults.Student);
-        
+        var defaultUser = new User() { UserName = email.Split("@").First(), Email = email };
+
         await _userManager.CreateAsync(
-            new User() { UserName = "redouane", Email = "redouane.sobaihi@live.com" }, 
-            "password"
+            defaultUser, password
         );
-        
+
+        await _userManager.AddToRoleAsync(defaultUser, RoleDefaults.Administrator);
+        await _userManager.AddClaimsAsync(
+            defaultUser,
+            new[]
+            {
+                new Claim(ClaimTypes.Email, defaultUser.Email),
+                new Claim(ClaimTypes.Role, RoleDefaults.Administrator)
+            }
+        );
     }
 }

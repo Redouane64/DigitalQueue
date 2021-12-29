@@ -35,6 +35,5 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 // application data initialization
-await app.InitializeSeedData();
-
+await app.InitializeDefaultUser();
 app.Run();

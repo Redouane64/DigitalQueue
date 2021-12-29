@@ -54,9 +54,10 @@ public static class ServiceCollectionExtensions
             options.Password.RequireUppercase = false;
             options.Password.RequiredUniqueChars = 0;
             options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = 4;
 
             options.User.RequireUniqueEmail = true;
-            
+
             options.SignIn.RequireConfirmedAccount = false;
             options.SignIn.RequireConfirmedEmail = false;
             options.SignIn.RequireConfirmedPhoneNumber = false;
