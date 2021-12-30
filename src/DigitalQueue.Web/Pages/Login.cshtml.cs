@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 using DigitalQueue.Web.Users;
@@ -21,9 +22,13 @@ public class LoginModel : PageModel
     }
 
     [BindProperty]
+    [Required]
+    [EmailAddress]
     public string Email { get; set; } = null!;
 
     [BindProperty]
+    [Required]
+    [DataType(DataType.Password)]
     public string Password { get; set; } = null!;
 
     [BindProperty]
@@ -36,6 +41,11 @@ public class LoginModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+        
         var claims = await _usersService.AuthenticateUser(Email, Password);
         if (claims is null)
         {
