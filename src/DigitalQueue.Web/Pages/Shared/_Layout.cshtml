@@ -12,7 +12,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">
+                <a class="navbar-brand" asp-area="Accounts" asp-page="Index">
                     <img src="~/favicon.png" alt="Digital Queue Logo" height="32" width="32" class="d-inline-block align-top" />
                     
                 </a>
@@ -22,7 +22,7 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1 justify-content-end nav-pills">
-                        @if (User.Identity!.IsAuthenticated)
+                        @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="Dashboard" asp-page="Index">
@@ -30,14 +30,14 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <form asp-page-handler="SignOut">
-                                    <button type="submit" class="nav-link text-white" asp-area="" asp-page="Index" asp-page-handler="SignOut">
+                                <form asp-area="Accounts" asp-page="Index">
+                                    <button type="submit" class="nav-link text-white">
                                         <i class="fa fa-cog fa-fw fa-sign-out-alt m-1"></i>Sign Out
                                     </button>
                                 </form>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-page="">
+                                <a class="nav-link text-white" asp-area="Accounts" asp-page="Profile">
                                     <i class="fa fa-cog fa-fw fa-user-circle-o m-1"></i>Account
                                 </a>
                             </li>
@@ -45,7 +45,7 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-page="Login">
+                                <a class="nav-link text-white" asp-area="Accounts" asp-page="Login">
                                     <i class="fa fa-cog fa-fw fa-sign-in-alt m-1"></i>Sign In
                                 </a>
                             </li>

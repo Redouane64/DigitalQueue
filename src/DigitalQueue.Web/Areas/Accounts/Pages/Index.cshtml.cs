@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace DigitalQueue.Web.Pages;
+namespace DigitalQueue.Web.Areas.Accounts.Pages;
 
 public class IndexModel : PageModel
 {
@@ -14,22 +14,27 @@ public class IndexModel : PageModel
         _logger = logger;
     }
 
-    public void OnGet()
+    public IActionResult OnGet()
     {
+        if (User.Identity.IsAuthenticated)
+        {
+            return RedirectToPage("Index", new { area = "Dashboard" });
+        }
 
+        return Page();
     }
 
-    public async Task<IActionResult> OnPostSignOutAsync()
+    public async Task<IActionResult> OnPostAsync()
     {
-        if (!User.Identity!.IsAuthenticated)
+        if (!User.Identity.IsAuthenticated)
         {
-            return Unauthorized();
+            return RedirectToPage("Login", new { area = "Accounts" });
         }
 
         await HttpContext.SignOutAsync(
             CookieAuthenticationDefaults.AuthenticationScheme
         );
 
-        return RedirectToPagePermanent("Login");
+        return RedirectToPage("Login", new { area = "Accounts" });
     }
 }

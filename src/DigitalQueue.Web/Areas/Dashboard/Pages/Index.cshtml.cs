@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DigitalQueue.Web.Areas.Dashboard.Pages;
 
-public class Index : PageModel
+[Authorize("Admin")]
+public class IndexModel : PageModel
 {
     public void OnGet()
     {

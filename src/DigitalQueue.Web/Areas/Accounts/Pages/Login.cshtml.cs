@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace DigitalQueue.Web.Pages;
+namespace DigitalQueue.Web.Areas.Accounts.Pages;
 
 public class LoginModel : PageModel
 {
@@ -24,19 +24,24 @@ public class LoginModel : PageModel
     [BindProperty]
     [Required]
     [EmailAddress]
-    public string Email { get; set; } = null!;
+    public string Email { get; set; }
 
     [BindProperty]
     [Required]
     [DataType(DataType.Password)]
-    public string Password { get; set; } = null!;
+    public string Password { get; set; }
 
     [BindProperty]
-    public bool RememberMe { get; set; } = true;
+    public bool RememberMe { get; set; }
 
-    public void OnGet()
+    public IActionResult OnGet()
     {
+        if (User.Identity.IsAuthenticated)
+        {
+            return RedirectToPage("Index", new { area = "Dashboard" });
+        }
 
+        return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()
@@ -45,7 +50,7 @@ public class LoginModel : PageModel
         {
             return Page();
         }
-        
+
         var claims = await _usersService.AuthenticateUser(Email, Password);
         if (claims is null)
         {
@@ -61,7 +66,7 @@ public class LoginModel : PageModel
                 IsPersistent = RememberMe,
             });
 
-        return RedirectToPagePermanent("Index", new { area = "Dashboard" });
+        return RedirectToPage("Index", new { area = "Dashboard" });
     }
 
 }
