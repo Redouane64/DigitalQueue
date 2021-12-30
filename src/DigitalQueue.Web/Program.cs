@@ -1,3 +1,4 @@
+using DigitalQueue.Web.Api;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Extensions;
 using DigitalQueue.Web.Users;
@@ -6,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddControllers();
 
 builder.Services.AddRouting(options =>
 {
@@ -17,14 +17,22 @@ builder.Services.AddRouting(options =>
 
 builder.Services.AddDataContext(builder.Configuration);
 builder.Services.AddIdentity(builder.Configuration);
+builder.Services.AddApi(builder.Configuration);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+app.UseExceptionHandler("/Error");
+
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Digital Queue v1");
+    });
 }
+
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -33,6 +41,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapControllers();
 
 // application data initialization
 await app.InitializeDefaultUser();

@@ -11,7 +11,7 @@ public class ProfileModel : PageModel
     {
 
     }
-    
+
     public async Task<IActionResult> OnPostAsync()
     {
         if (!User.Identity.IsAuthenticated)
