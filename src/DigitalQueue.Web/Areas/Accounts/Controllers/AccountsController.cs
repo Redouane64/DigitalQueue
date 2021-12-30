@@ -16,14 +16,14 @@ public class AccountsController : ControllerBase
 {
 
     [HttpPost("signin", Name = nameof(SignIn))]
-    public Task<IActionResult> SignIn()
+    public IActionResult SignIn()
     {
-        return Task.FromResult(Ok());
+        return Ok();
     }
 
     [HttpPost("signup", Name = nameof(SignUp))]
-    public Task<IActionResult> SignUp()
+    public IActionResult SignUp()
     {
-        return Task.FromResult(Ok());
+        return Ok();
     }
 }
