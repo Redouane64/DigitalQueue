@@ -51,7 +51,7 @@ public class LoginModel : PageModel
             return Page();
         }
 
-        var claims = await _usersService.AuthenticateUser(Email, Password);
+        var claims = await _usersService.GetUserClaims(Email, Password);
         if (claims is null)
         {
             ModelState.AddModelError("invalid_credentials", "Invalid credentials.");

@@ -2,6 +2,9 @@ using DigitalQueue.Web.Api;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Extensions;
 using DigitalQueue.Web.Users;
+using DigitalQueue.Web.Users.Extensions;
+
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,8 @@ builder.Services.AddRouting(options =>
     options.LowercaseQueryStrings = true;
     options.AppendTrailingSlash = true;
 });
+
+builder.Services.AddMediatR(typeof(Program).Assembly);
 
 builder.Services.AddDataContext(builder.Configuration);
 builder.Services.AddIdentity(builder.Configuration);

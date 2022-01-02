@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DigitalQueue.Web.Users;
+namespace DigitalQueue.Web.Users.JWT;
 
 public sealed class JwtTokenService
 {
@@ -60,7 +60,7 @@ public sealed class JwtTokenService
         return (Token: stringifiedToken, RefreshToken: refreshToken);
     }
 
-    public async Task<(string Token, string RefreshToken)> RefreshToken(string refreshToken, User user,
+    public async Task<(string? Token, string? RefreshToken)> RefreshToken(string refreshToken, User user,
         IEnumerable<Claim> claims)
     {
         var isValid =

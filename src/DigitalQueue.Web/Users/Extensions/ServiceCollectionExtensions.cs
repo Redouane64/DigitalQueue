@@ -2,12 +2,13 @@ using System.Text;
 
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Domain;
+using DigitalQueue.Web.Users.JWT;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DigitalQueue.Web.Users;
+namespace DigitalQueue.Web.Users.Extensions;
 
 public static class ServiceCollectionExtensions
 {
@@ -22,8 +23,15 @@ public static class ServiceCollectionExtensions
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         }).AddCookie(options =>
         {
+            options.LoginPath = "/accounts/login";
+            options.LogoutPath = "/accounts?handler=signout";
+            options.AccessDeniedPath = "/accounts?handler=signout";
+
             options.Cookie.Name = cookieOptions.Name;
             options.Cookie.MaxAge = TimeSpan.FromMinutes(cookieOptions.ExpireTimeSpan);
             options.ExpireTimeSpan = TimeSpan.FromMinutes(cookieOptions.ExpireTimeSpan);
@@ -47,6 +55,15 @@ public static class ServiceCollectionExtensions
             };
         });
 
+        services.AddAuthorizationCore(options =>
+        {
+            options.AddPolicy("Admin", policy =>
+            {
+                policy.RequireRole(RoleDefaults.Administrator);
+                policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+            });
+        });
+
         services.AddIdentityCore<User>(options =>
         {
             options.Password.RequireDigit = false;
@@ -66,7 +83,7 @@ public static class ServiceCollectionExtensions
           .AddTokenProvider<JwtRefreshTokenProvider>(JwtRefreshTokenProvider.ProviderName);
 
         services.AddScoped<UsersService>();
-        
+
         // Configure JWT refresh token provider
         services.Configure<JwtRefreshTokenProvider.JwtRefreshTokenProviderOptions>(options =>
         {
@@ -75,5 +92,6 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddScoped<JwtTokenService>();
+
     }
 }

@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-using Microsoft.AspNetCore.Http;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+
+using DigitalQueue.Web.Users.Commands;
 
 namespace DigitalQueue.Web.Areas.Accounts.Controllers;
 
@@ -14,16 +13,34 @@ namespace DigitalQueue.Web.Areas.Accounts.Controllers;
 [Produces("application/json")]
 public class AccountsController : ControllerBase
 {
+    private readonly IMediator _mediator;
+
+    public AccountsController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
 
     [HttpPost("signin", Name = nameof(SignIn))]
-    public IActionResult SignIn()
+    public async Task<IActionResult> SignIn([FromBody]SignInCommand command)
     {
-        return Ok();
+        var result = await _mediator.Send(command);
+        if (result is null)
+        {
+            return BadRequest();
+        }
+        
+        return Ok(result);
     }
 
     [HttpPost("signup", Name = nameof(SignUp))]
-    public IActionResult SignUp()
+    public async Task<IActionResult> SignUp([FromBody] SignUpCommand command)
     {
-        return Ok();
+        var result = await _mediator.Send(command);
+        if (result is null)
+        {
+            return BadRequest();
+        }
+        
+        return Ok(result);
     }
 }

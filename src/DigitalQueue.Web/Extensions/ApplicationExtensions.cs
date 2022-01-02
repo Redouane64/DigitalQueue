@@ -1,3 +1,4 @@
+using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Domain;
 using DigitalQueue.Web.Users;
 
@@ -21,6 +22,6 @@ public static class ApplicationExtensions
         string email = defaultUser.GetValue<string>("Email");
         string password = defaultUser.GetValue<string>("Password");
 
-        await userService.CreateDefaultUser(email, password);
+        await userService.CreateUser(email, password, RoleDefaults.Administrator);
     }
 }
