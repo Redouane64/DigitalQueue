@@ -1,5 +1,7 @@
 using System;
 
+using DigitalQueue.Web.Api;
+
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,8 +23,11 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost("signin", Name = nameof(SignIn))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SignIn([FromBody]SignInCommand command)
     {
+        //throw new Exception("HAHA");
         var result = await _mediator.Send(command);
         if (result is null)
         {
@@ -33,6 +38,8 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost("signup", Name = nameof(SignUp))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SignUp([FromBody] SignUpCommand command)
     {
         var result = await _mediator.Send(command);

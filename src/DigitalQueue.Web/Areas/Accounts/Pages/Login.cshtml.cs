@@ -46,6 +46,7 @@ public class LoginModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
+        throw new Exception("Boom");
         if (!ModelState.IsValid)
         {
             return Page();

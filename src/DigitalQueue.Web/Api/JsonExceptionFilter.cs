@@ -14,6 +14,11 @@ public class JsonExceptionFilter : IExceptionFilter
 
     public void OnException(ExceptionContext context)
     {
+        if (!context.HttpContext.Request.Path.StartsWithSegments("/api"))
+        {
+            return;
+        }
+        
         ErrorViewModel error;
         if (_env.IsDevelopment())
         {

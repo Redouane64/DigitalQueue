@@ -4,6 +4,8 @@ using DigitalQueue.Web.Extensions;
 using DigitalQueue.Web.Users;
 using DigitalQueue.Web.Users.Extensions;
 
+using Hellang.Middleware.ProblemDetails;
+
 using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
