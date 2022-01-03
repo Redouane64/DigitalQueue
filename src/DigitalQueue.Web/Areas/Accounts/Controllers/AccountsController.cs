@@ -6,6 +6,11 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 using DigitalQueue.Web.Users.Commands;
+using DigitalQueue.Web.Users.Dtos;
+using DigitalQueue.Web.Users.Queries;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DigitalQueue.Web.Areas.Accounts.Controllers;
 
@@ -23,7 +28,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost("signin", Name = nameof(SignIn))]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AccessTokenResultDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SignIn([FromBody]SignInCommand command)
     {
@@ -38,8 +43,8 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost("signup", Name = nameof(SignUp))]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(AccessTokenResultDto),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorViewModel),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SignUp([FromBody] SignUpCommand command)
     {
         var result = await _mediator.Send(command);

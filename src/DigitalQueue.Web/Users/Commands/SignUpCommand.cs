@@ -9,11 +9,15 @@ using MediatR;
 
 namespace DigitalQueue.Web.Users.Commands;
 
-public class SignUpCommand : IRequest<AccessTokenResultDto>
+public class SignUpCommand : IRequest<AccessTokenResultDto?>
 {
     [Required]
     [EmailAddress]
     public string Email { get; set; }
+    
+    [RegularExpression("^[a-zA-Z ]*$")]
+    [DataType(DataType.Text)]
+    public string UserName { get; set; }
 
     [Required]
     [DataType(DataType.Password)]
@@ -37,7 +41,11 @@ public class SignUpCommand : IRequest<AccessTokenResultDto>
         public async Task<AccessTokenResultDto?> Handle(SignUpCommand request, CancellationToken cancellationToken)
         {
             var claims = await _usersService.CreateUser(
-                request.Email, 
+                new User()
+                {
+                    Email = request.Email,
+                    UserName = request.UserName
+                }, 
                 request.Password, 
                 RoleDefaults.Student);
 
