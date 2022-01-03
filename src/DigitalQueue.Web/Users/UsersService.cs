@@ -21,44 +21,48 @@ public class UsersService
     public async Task<IList<Claim>?> CreateUser(string email, string password, string role = RoleDefaults.Student)
     {
         var defaultUser = new User() { UserName = email.Split("@").First(), Email = email };
+        return await CreateUser(defaultUser, password, role);
+    }
 
+    public async Task<IList<Claim>?> CreateUser(User user, string password, string role = RoleDefaults.Student)
+    {
         var createUser = await _userManager.CreateAsync(
-            defaultUser, password
+            user, password
         );
 
         if (!createUser.Succeeded)
         {
-            _logger.LogWarning("Failed to create user: {0}", 
+            _logger.LogWarning("Failed to create user: {0}",
                 createUser.Errors.Select(e => e.Description).First());
             return null;
         }
 
-        var setRole = await _userManager.AddToRoleAsync(defaultUser, role);
+        var setRole = await _userManager.AddToRoleAsync(user, role);
         if (!setRole.Succeeded)
         {
-            _logger.LogWarning("Failed to set user role: {0}", 
+            _logger.LogWarning("Failed to set user role: {0}",
                 setRole.Errors.Select(e => e.Description).First());
             return null;
         }
 
         Claim[] claims = new[]
         {
-            new Claim(ClaimTypes.Email, defaultUser.Email),
+            new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, role)
         };
-        
+
         var setClaims = await _userManager.AddClaimsAsync(
-            defaultUser,
+            user,
             claims
         );
 
         if (!setClaims.Succeeded)
         {
-            _logger.LogWarning("Failed to user claims: {0}", 
+            _logger.LogWarning("Failed to user claims: {0}",
                 setClaims.Errors.Select(e => e.Description).First());
             return null;
         }
-        
+
         return claims;
     }
 
