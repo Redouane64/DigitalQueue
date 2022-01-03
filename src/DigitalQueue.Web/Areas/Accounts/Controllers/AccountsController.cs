@@ -55,4 +55,19 @@ public class AccountsController : ControllerBase
         
         return Ok(result);
     }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpGet("profile", Name = nameof(GetProfile))]
+    [ProducesResponseType(typeof(UserDto),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorViewModel),StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetProfile()
+    {
+        var user = await _mediator.Send(new GetProfileRequest(User));
+        if (user is null)
+        {
+            return BadRequest();
+        }
+        
+        return Ok(user);
+    }
 }

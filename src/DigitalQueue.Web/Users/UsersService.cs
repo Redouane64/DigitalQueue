@@ -85,4 +85,12 @@ public class UsersService
         return await _userManager.GetClaimsAsync(user);
     }
 
+    public async Task<(User? user, IList<string>? role)> FindUserByEmail(string email)
+    {
+        var user = await this._userManager.FindByEmailAsync(email);
+        var role = await this._userManager.GetRolesAsync(user);
+
+        return (user, role);
+    } 
+
 }
