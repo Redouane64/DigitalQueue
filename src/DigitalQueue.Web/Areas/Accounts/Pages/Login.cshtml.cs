@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
+using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Users;
 
 using Microsoft.AspNetCore.Authentication;
@@ -55,6 +56,12 @@ public class LoginModel : PageModel
         if (claims is null)
         {
             ModelState.AddModelError("invalid_credentials", "Invalid credentials.");
+            return Page();
+        }
+
+        if (!claims.Any(c => c.Type == ClaimTypes.Role && c.Value != RoleDefaults.Administrator))
+        {
+            ModelState.AddModelError("access_denied", "Access denied.");
             return Page();
         }
 
