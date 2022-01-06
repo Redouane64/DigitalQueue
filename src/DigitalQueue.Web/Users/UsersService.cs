@@ -58,7 +58,7 @@ public class UsersService
 
         if (!setClaims.Succeeded)
         {
-            _logger.LogWarning("Failed to user claims: {0}",
+            _logger.LogWarning("Failed to set user claims: {0}",
                 setClaims.Errors.Select(e => e.Description).First());
             return null;
         }
