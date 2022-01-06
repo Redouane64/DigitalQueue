@@ -19,14 +19,14 @@ public class JsonExceptionFilter : IExceptionFilter
             return;
         }
         
-        ErrorViewModel error;
+        ErrorDto error;
         if (_env.IsDevelopment())
         {
-            error = new ErrorViewModel(context.Exception.Message, context.Exception.StackTrace);
+            error = new ErrorDto(context.Exception.Message, context.Exception.StackTrace);
         }
         else
         {
-            error = new ErrorViewModel("Something went wrong.");
+            error = new ErrorDto("Something went wrong.");
         }
 
         context.Result = new ObjectResult(error) { StatusCode = 500 };

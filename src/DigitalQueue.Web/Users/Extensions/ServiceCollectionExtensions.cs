@@ -1,12 +1,14 @@
 using System.Text;
 
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Domain;
-using DigitalQueue.Web.Users.JWT;
+using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Users.Infrastructure;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+
+using CookieOptions = DigitalQueue.Web.Users.Infrastructure.CookieOptions;
 
 namespace DigitalQueue.Web.Users.Extensions;
 

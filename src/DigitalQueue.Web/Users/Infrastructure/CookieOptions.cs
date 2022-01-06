@@ -1,4 +1,4 @@
-namespace DigitalQueue.Web.Users;
+namespace DigitalQueue.Web.Users.Infrastructure;
 
 public class CookieOptions
 {

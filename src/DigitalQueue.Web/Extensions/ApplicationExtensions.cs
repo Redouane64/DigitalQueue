@@ -1,5 +1,4 @@
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Domain;
 using DigitalQueue.Web.Users;
 
 using Microsoft.AspNetCore.Identity;

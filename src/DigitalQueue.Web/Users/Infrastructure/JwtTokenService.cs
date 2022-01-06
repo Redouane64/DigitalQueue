@@ -2,13 +2,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-using DigitalQueue.Web.Domain;
+using DigitalQueue.Web.Data.Entities;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DigitalQueue.Web.Users.JWT;
+namespace DigitalQueue.Web.Users.Infrastructure;
 
 public sealed class JwtTokenService
 {

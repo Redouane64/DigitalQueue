@@ -24,7 +24,7 @@ public static class ApiExtensions
             {
                 options.InvalidModelStateResponseFactory = (context) =>
                 {
-                    var error = new ErrorViewModel("One or more validation problem occurred.");
+                    var error = new ErrorDto("One or more validation problem occurred.");
 
                     var actionExecutingContext = context as ActionExecutingContext;
 

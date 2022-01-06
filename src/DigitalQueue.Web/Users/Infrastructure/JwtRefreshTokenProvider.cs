@@ -1,10 +1,10 @@
-using DigitalQueue.Web.Domain;
+using DigitalQueue.Web.Data.Entities;
 
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
-namespace DigitalQueue.Web.Users.JWT;
+namespace DigitalQueue.Web.Users.Infrastructure;
 
 public class JwtRefreshTokenProvider : DataProtectorTokenProvider<User>
 {

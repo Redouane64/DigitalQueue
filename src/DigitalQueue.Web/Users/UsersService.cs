@@ -1,7 +1,7 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Domain;
+using DigitalQueue.Web.Data.Entities;
 
 using Microsoft.AspNetCore.Identity;
 

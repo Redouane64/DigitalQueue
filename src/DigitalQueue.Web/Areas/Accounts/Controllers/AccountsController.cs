@@ -28,8 +28,8 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost("signin", Name = nameof(SignIn))]
-    [ProducesResponseType(typeof(AccessTokenResultDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorViewModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(AccessTokenDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorDto), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SignIn([FromBody]SignInCommand command)
     {
         //throw new Exception("HAHA");
@@ -43,8 +43,8 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost("signup", Name = nameof(SignUp))]
-    [ProducesResponseType(typeof(AccessTokenResultDto),StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorViewModel),StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(AccessTokenDto),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorDto),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SignUp([FromBody] SignUpCommand command)
     {
         var result = await _mediator.Send(command);
@@ -59,7 +59,7 @@ public class AccountsController : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("profile", Name = nameof(GetProfile))]
     [ProducesResponseType(typeof(UserDto),StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorViewModel),StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorDto),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetProfile()
     {
         var user = await _mediator.Send(new GetProfileRequest(User));

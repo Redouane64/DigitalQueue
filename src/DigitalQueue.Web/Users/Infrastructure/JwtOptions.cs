@@ -1,4 +1,4 @@
-namespace DigitalQueue.Web.Users.JWT;
+namespace DigitalQueue.Web.Users.Infrastructure;
 
 public class JwtOptions
 {

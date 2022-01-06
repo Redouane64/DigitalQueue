@@ -1,15 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Domain;
+using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Users.Dtos;
-using DigitalQueue.Web.Users.JWT;
+using DigitalQueue.Web.Users.Infrastructure;
 
 using MediatR;
 
 namespace DigitalQueue.Web.Users.Commands;
 
-public class SignUpCommand : IRequest<AccessTokenResultDto?>
+public class SignUpCommand : IRequest<AccessTokenDto?>
 {
     [Required]
     [EmailAddress]
@@ -27,7 +27,7 @@ public class SignUpCommand : IRequest<AccessTokenResultDto?>
     [Compare(nameof(Password))]
     public string ConfirmPassword { get; set; }
     
-    public class SignUpCommandHandler : IRequestHandler<SignUpCommand, AccessTokenResultDto?>
+    public class SignUpCommandHandler : IRequestHandler<SignUpCommand, AccessTokenDto?>
     {
         private readonly UsersService _usersService;
         private readonly JwtTokenService _tokenService;
@@ -38,7 +38,7 @@ public class SignUpCommand : IRequest<AccessTokenResultDto?>
             _tokenService = tokenService;
         }
 
-        public async Task<AccessTokenResultDto?> Handle(SignUpCommand request, CancellationToken cancellationToken)
+        public async Task<AccessTokenDto?> Handle(SignUpCommand request, CancellationToken cancellationToken)
         {
             var claims = await _usersService.CreateUser(
                 new User()
@@ -54,7 +54,7 @@ public class SignUpCommand : IRequest<AccessTokenResultDto?>
                 var (token, refreshToken) = await _tokenService.GenerateToken(claims,
                     new User {Email = request.Email});
 
-                return new AccessTokenResultDto(token, refreshToken);
+                return new AccessTokenDto(token, refreshToken);
             }
 
             return null;

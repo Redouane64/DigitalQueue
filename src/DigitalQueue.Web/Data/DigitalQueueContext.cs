@@ -1,4 +1,4 @@
-using DigitalQueue.Web.Domain;
+using DigitalQueue.Web.Data.Entities;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

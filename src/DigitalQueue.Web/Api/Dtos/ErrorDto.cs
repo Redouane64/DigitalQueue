@@ -1,13 +1,13 @@
 namespace DigitalQueue.Web.Api;
 
-public class ErrorViewModel
+public class ErrorDto
 {
-    public ErrorViewModel(string message)
+    public ErrorDto(string message)
     {
         Message = message;
     }
 
-    public ErrorViewModel(string message, string stacktrace)
+    public ErrorDto(string message, string stacktrace)
         : this(message)
     {
         StackTrace = stacktrace;

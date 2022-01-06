@@ -1,4 +1,4 @@
-using DigitalQueue.Web.Domain;
+using DigitalQueue.Web.Data.Entities;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
