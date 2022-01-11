@@ -59,12 +59,15 @@ public class LoginModel : PageModel
             return Page();
         }
 
-        if (!claims.Any(c => c.Type == ClaimTypes.Role && c.Value != RoleDefaults.Administrator))
+        /*
+         * Allow only administrator role to log-in to dashboard
+         */
+        if (claims.FirstOrDefault(c => c.Type == ClaimTypes.Role && c.Value != RoleDefaults.Administrator) is not null)
         {
             ModelState.AddModelError("access_denied", "Access denied.");
             return Page();
         }
-
+        
         await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
