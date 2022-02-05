@@ -24,5 +24,8 @@ public class DigitalQueueContext : IdentityDbContext<User>
 
         builder.Entity<IdentityUserClaim<string>>().ToTable("users_claims");
         builder.Entity<IdentityUserRole<string>>().ToTable("users_roles");
+
+        builder.ApplyConfiguration(new CourseEntityConfiguration());
+        builder.ApplyConfiguration(new MembershipEntityConfiguration());
     }
 }

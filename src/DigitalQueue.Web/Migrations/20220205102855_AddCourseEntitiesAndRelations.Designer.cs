@@ -2,6 +2,7 @@
 using DigitalQueue.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalQueue.Web.Migrations
 {
     [DbContext(typeof(DigitalQueueContext))]
-    partial class DigitalQueueContextModelSnapshot : ModelSnapshot
+    [Migration("20220205102855_AddCourseEntitiesAndRelations")]
+    partial class AddCourseEntitiesAndRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
@@ -29,7 +31,7 @@ namespace DigitalQueue.Web.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("courses", (string)null);
+                    b.ToTable("Course");
                 });
 
             modelBuilder.Entity("DigitalQueue.Web.Data.Entities.Membership", b =>
@@ -50,7 +52,7 @@ namespace DigitalQueue.Web.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("memberships", (string)null);
+                    b.ToTable("Membership");
                 });
 
             modelBuilder.Entity("DigitalQueue.Web.Data.Entities.User", b =>
@@ -122,19 +124,19 @@ namespace DigitalQueue.Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4fcf4a41-1724-4c2e-a384-0c50c35ac85a",
+                            Id = "9a102baa-67ac-4b04-af3c-e8e09c5c9fff",
                             Name = "administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "22dfb2c2-f847-4afc-8bb5-7c1bb88d8217",
+                            Id = "63133fd1-65b8-435e-877d-43b50846671e",
                             Name = "teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
-                            Id = "b8eb1daa-8cb5-4482-a8c4-2ff8665cf970",
+                            Id = "77ec1cd5-a8a9-40ad-aa41-35e48830715f",
                             Name = "student",
                             NormalizedName = "STUDENT"
                         });
