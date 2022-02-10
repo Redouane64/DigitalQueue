@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -57,5 +58,13 @@ public static class ApiExtensions
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Digital Queue API", Version = "v1" });
         });
 
+        services.AddCors(options =>
+        {
+            options.AddPolicy("_AnyClient", 
+                builder => builder.WithMethods("GET", "OPTIONS", "POST")
+                    .AllowAnyHeader()
+                    .AllowAnyOrigin()
+                    .SetPreflightMaxAge(TimeSpan.FromDays(5)).Build());
+        });
     }
 }
