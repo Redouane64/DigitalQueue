@@ -2,3 +2,15 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+$(document).ready(function() {
+    $('.course-teacher').select2({
+        ajax: {
+            method: 'POST',
+            url: '/api/teachers/search',
+            delay: 300,
+            contentType: 'application/json'
+        },
+        placeholder: 'Search for a teachers',
+        minimumInputLength: 2,
+    });
+});
