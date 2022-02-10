@@ -8,11 +8,11 @@
 <div class="container-md mt-lg-5">
     <div class="row">
         <div class="col-6">
-            <h3>Courses</h3>
+            <h3><i class="fa fa-cog fa-fw fa-list m-1"></i>Courses</h3>
             @await Html.PartialAsync("~/Areas/Courses/Pages/Shared/_CoursesListPartial.cshtml", Model.Courses)
         </div>
         <div class="col-6">
-            <h3>Users</h3>
+            <h3><i class="fa fa-cog fa-fw fa-users m-1"></i>Users</h3>
             @await Html.PartialAsync("~/Areas/Accounts/Pages/Shared/_UsersListPartial.cshtml", Model.Users)
         </div>
     </div>
