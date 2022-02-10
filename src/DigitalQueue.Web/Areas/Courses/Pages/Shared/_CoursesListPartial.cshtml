@@ -1,0 +1,33 @@
+@model IEnumerable<Course>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (Model is null || Model?.Count() == 0)
+    {
+        <tr>
+            <td colspan="2">
+                <i>No Courses</i>
+            </td> 
+        </tr>
+    }
+    else
+    {
+        foreach (var course in Model)
+        {
+            <tr>
+                <td>
+                    @course.Title
+                </td> 
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+
+
