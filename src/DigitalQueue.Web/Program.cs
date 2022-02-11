@@ -1,3 +1,4 @@
+using DigitalQueue.Web.Areas.Teachers;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Extensions;
 
@@ -20,6 +21,7 @@ builder.Services.AddMediatR(typeof(Program).Assembly);
 builder.Services.AddDataContext(builder.Configuration);
 builder.Services.AddIdentity(builder.Configuration);
 builder.Services.AddApi(builder.Configuration);
+builder.Services.AddTeachersServices();
 
 var app = builder.Build();
 

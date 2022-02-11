@@ -1,5 +1,4 @@
-using DigitalQueue.Web.Areas.Accounts.Dtos;
-using DigitalQueue.Web.Areas.Teachers.Dtos;
+using DigitalQueue.Web.Areas.Teachers.Services;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -13,9 +12,11 @@ namespace DigitalQueue.Web.Areas.Teachers.Controllers;
 [Produces("application/json")]
 public class TeachersController : ControllerBase
 {
-    public TeachersController()
+    private readonly TeachersService _teachersService;
+
+    public TeachersController(TeachersService teachersService)
     {
-        
+        _teachersService = teachersService;
     }
     
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
@@ -23,13 +24,6 @@ public class TeachersController : ControllerBase
     public async Task<IActionResult> Search([FromQuery(Name = "q")] string? q)
     {
         // TODO: update logic to work with database
-        
-        var sample = new TeacherSearchResult(new[]
-        {
-            new { text = "Jack", id="33D2C7A7-CF3E-4DFB-9922-D7ABC4052BE1" }, 
-            new { text = "Karim", id="63E0C9D4-D33C-4A09-BD56-0DB17F4236E6" }, 
-            new { text = "Joe", id="BB56761A-B815-4450-81A6-356511C31DF8" }, 
-        }, new {more = false});
-        return Ok(sample);
+        return Ok(await this._teachersService.Search(q));
     }
 }
