@@ -2,7 +2,7 @@ using MediatR;
 
 using Microsoft.Build.Framework;
 
-namespace DigitalQueue.Web.Courses.Commands;
+namespace DigitalQueue.Web.Areas.Courses.Commands;
 
 public class CreateCourseCommand : IRequest<object>
 {
