@@ -1,4 +1,5 @@
-using DigitalQueue.Web.Users.Dtos;
+using DigitalQueue.Web.Areas.Accounts.Dtos;
+using DigitalQueue.Web.Areas.Teachers.Dtos;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;

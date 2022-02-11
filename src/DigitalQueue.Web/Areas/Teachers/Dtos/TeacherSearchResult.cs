@@ -1,4 +1,4 @@
-namespace DigitalQueue.Web.Users.Dtos;
+namespace DigitalQueue.Web.Areas.Teachers.Dtos;
 
 public class TeacherSearchResult
 {

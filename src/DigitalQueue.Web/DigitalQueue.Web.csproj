@@ -25,4 +25,8 @@
     <_ContentIncludedByDefault Remove="Areas\Courses\Shared\_CoursesListPartial.cshtml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Courses\Controllers" />
+  </ItemGroup>
+
 </Project>

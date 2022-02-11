@@ -1,14 +1,12 @@
 using System;
 
+using DigitalQueue.Web.Areas.Accounts.Commands;
+using DigitalQueue.Web.Areas.Accounts.Dtos;
+using DigitalQueue.Web.Areas.Accounts.Queries;
 using DigitalQueue.Web.Filters;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-
-using DigitalQueue.Web.Users.Commands;
-using DigitalQueue.Web.Users.Dtos;
-using DigitalQueue.Web.Users.Queries;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 

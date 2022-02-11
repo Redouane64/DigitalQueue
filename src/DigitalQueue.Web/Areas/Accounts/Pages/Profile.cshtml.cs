@@ -1,5 +1,5 @@
-using DigitalQueue.Web.Users.Dtos;
-using DigitalQueue.Web.Users.Queries;
+using DigitalQueue.Web.Areas.Accounts.Dtos;
+using DigitalQueue.Web.Areas.Accounts.Queries;
 
 using MediatR;
 
