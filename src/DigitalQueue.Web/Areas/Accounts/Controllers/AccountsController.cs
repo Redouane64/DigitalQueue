@@ -1,6 +1,6 @@
 using System;
 
-using DigitalQueue.Web.Api;
+using DigitalQueue.Web.Filters;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

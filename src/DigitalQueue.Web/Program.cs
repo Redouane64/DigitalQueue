@@ -1,4 +1,3 @@
-using DigitalQueue.Web.Api;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Extensions;
 using DigitalQueue.Web.Users.Extensions;
