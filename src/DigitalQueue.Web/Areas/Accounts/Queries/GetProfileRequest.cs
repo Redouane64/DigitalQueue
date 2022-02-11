@@ -1,7 +1,8 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Dtos;
-using DigitalQueue.Web.Users;
+using DigitalQueue.Web.Areas.Accounts.Services;
+using DigitalQueue.Web.Data.Entities;
 
 using MediatR;
 
@@ -34,14 +35,11 @@ public class GetProfileRequest : IRequest<UserDto?>
                 return null;
             }
 
-            var (user, roles) = await this._usersService.FindUserByEmail(email);
-            
-            if (user is null)
-            {
-                return null;
-            }
-            
-            return new UserDto(user.Email, user.UserName, roles);
+            (User user, IList<string> roles) = await this._usersService.FindUserByEmail(email);
+
+            var claims = await this._usersService.GetUserClaims(user);
+
+            return new UserDto(user, roles, claims);
         }
     }
 }

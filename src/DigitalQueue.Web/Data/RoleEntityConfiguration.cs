@@ -1,5 +1,3 @@
-using DigitalQueue.Web.Users;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,8 +19,7 @@ public class RoleEntityConfiguration : IEntityTypeConfiguration<IdentityRole>
         builder.HasData(new List<IdentityRole>()
         {
             new IdentityRole(RoleDefaults.Administrator) { NormalizedName = RoleDefaults.Administrator.ToUpper() },
-            new IdentityRole(RoleDefaults.Teacher) { NormalizedName = RoleDefaults.Teacher.ToUpper() },
-            new IdentityRole(RoleDefaults.Student) { NormalizedName = RoleDefaults.Student.ToUpper() },
+            new IdentityRole(RoleDefaults.User) { NormalizedName = RoleDefaults.User.ToUpper() },
         });
     }
 }

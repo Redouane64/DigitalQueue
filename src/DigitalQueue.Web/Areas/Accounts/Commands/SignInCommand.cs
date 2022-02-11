@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
 using DigitalQueue.Web.Areas.Accounts.Dtos;
+using DigitalQueue.Web.Areas.Accounts.Services;
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Infrastructure;
-using DigitalQueue.Web.Users;
 
 using MediatR;
 

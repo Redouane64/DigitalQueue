@@ -30,7 +30,7 @@ public class ProfileModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (!User.Identity.IsAuthenticated)
+        if (User.Identity is {IsAuthenticated: false})
         {
             return RedirectToPage("Login", new { area = "Accounts" });
         }

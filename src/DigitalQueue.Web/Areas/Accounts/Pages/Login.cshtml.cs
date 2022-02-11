@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
+using DigitalQueue.Web.Areas.Accounts.Services;
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Users;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

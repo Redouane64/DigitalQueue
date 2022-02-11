@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
 using DigitalQueue.Web.Areas.Accounts.Dtos;
+using DigitalQueue.Web.Areas.Accounts.Services;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Infrastructure;
-using DigitalQueue.Web.Users;
 
 using MediatR;
 
@@ -48,7 +48,7 @@ public class SignUpCommand : IRequest<AccessTokenDto?>
                     UserName = request.UserName
                 }, 
                 request.Password, 
-                RoleDefaults.Student);
+                RoleDefaults.User);
 
             if (claims is not null)
             {

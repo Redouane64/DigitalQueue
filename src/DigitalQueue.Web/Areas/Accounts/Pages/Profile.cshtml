@@ -2,20 +2,43 @@
 @model ProfileModel
 
 @{
-    ViewData["Title"] = $"${Model.Profile.username}'s Profile";
+    ViewData["Title"] = $"${Model.Profile.Username}'s Profile";
 }
 
 <div class="container mt-lg-5">
     <div class="row">
         <div class="col-6">
+            <p class="h4">Account Details</p>
             <dl>
                 <dt>Email</dt>
-                <dd>@Model.Profile.email</dd>
+                <dd>@Model.Profile.Email</dd>
                 <dt>User Name</dt>
-                <dd>@Model.Profile.username</dd>
+                <dd>@Model.Profile.Username</dd>
                 <dt>Account Role</dt>
-                <dd class="text-capitalize">@Model.Profile.role.First()</dd>
+                <dd class="text-capitalize">@Model.Profile.Roles.First()</dd>
             </dl>
+        </div>
+        <div class="col-6">
+            <p class="h4">Additional Access Roles</p>
+            <div>
+                @if (!Model.Profile.Claims.Any())
+                {
+                    <i class="text-muted">You do not have any additional access roles.</i>
+                }
+                else
+                {
+                    foreach (var claim in Model.Profile.Claims)
+                    {
+                        <strong>@claim.Claim</strong>
+                        <dl>
+                            @foreach (var value in claim.Values)
+                            {
+                                <dt>@value</dt>
+                            }
+                        </dl>
+                    }
+                }
+            </div>
         </div>
     </div>
 </div>

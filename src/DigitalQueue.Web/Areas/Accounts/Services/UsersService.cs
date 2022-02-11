@@ -1,30 +1,33 @@
 using System.Security.Claims;
 
+using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 
 using Microsoft.AspNetCore.Identity;
 
-namespace DigitalQueue.Web.Users;
+namespace DigitalQueue.Web.Areas.Accounts.Services;
 
 public class UsersService
 {
     private readonly UserManager<User> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly ILogger<UsersService> _logger;
 
-    public UsersService(UserManager<User> userManager, ILogger<UsersService> logger)
+    public UsersService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, ILogger<UsersService> logger)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
         _logger = logger;
     }
 
-    public async Task<IList<Claim>?> CreateUser(string email, string password, string role = RoleDefaults.Student)
+    public async Task<IList<Claim>?> CreateUser(string email, string password, string role = RoleDefaults.User)
     {
         var defaultUser = new User() { UserName = email.Split("@").First(), Email = email };
         return await CreateUser(defaultUser, password, role);
     }
 
-    public async Task<IList<Claim>?> CreateUser(User user, string password, string role = RoleDefaults.Student)
+    public async Task<IList<Claim>?> CreateUser(User user, string password, string role = RoleDefaults.User)
     {
         var createUser = await _userManager.CreateAsync(
             user, password
@@ -37,33 +40,70 @@ public class UsersService
             return null;
         }
 
-        var setRole = await _userManager.AddToRoleAsync(user, role);
-        if (!setRole.Succeeded)
+        bool assignUserToRole = await AssignUserToRole(user, role);
+        if (!assignUserToRole)
         {
-            _logger.LogWarning("Failed to set user role: {0}",
-                setRole.Errors.Select(e => e.Description).First());
             return null;
         }
 
-        Claim[] claims = new[]
-        {
+        Claim[] claims = {
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, role)
         };
 
+        bool assignClaimToUser = await AssignClaimToUser(user, claims);
+        if (!assignClaimToUser)
+        {
+            return null;
+        }
+
+        return claims;
+    }
+
+    public async Task<bool> AssignClaimToUser(User user, Claim[] claims)
+    {
         var setClaims = await _userManager.AddClaimsAsync(
             user,
             claims
         );
 
-        if (!setClaims.Succeeded)
+        if (setClaims.Succeeded)
         {
-            _logger.LogWarning("Failed to set user claims: {0}",
-                setClaims.Errors.Select(e => e.Description).First());
-            return null;
+            return true;
         }
 
-        return claims;
+        // at this point we failed
+        _logger.LogWarning("Failed to set user claims: {0}",
+            setClaims.Errors.Select(e => e.Description).First());
+
+        // clean up invalid user
+        await this._userManager.DeleteAsync(user);
+
+        return true;
+    }
+
+    public async Task<bool> AssignUserToRole(User user, string role)
+    {
+        var existingRole = await this._roleManager.FindByNameAsync(role);
+        if (existingRole is null)
+        {
+            return false;
+        }
+        
+        var setRole = await _userManager.AddToRoleAsync(user, role);
+        if (setRole.Succeeded)
+        {
+            return true;
+        }
+
+        // at this point we failed.
+        _logger.LogWarning("Failed to set user role: {0}",
+            setRole.Errors.Select(e => e.Description).First());
+
+        // clean up invalid user
+        await this._userManager.DeleteAsync(user);
+
+        return false;
     }
 
     public async Task<IList<Claim>?> GetUserClaims(string email, string password)
@@ -85,12 +125,41 @@ public class UsersService
         return await _userManager.GetClaimsAsync(user);
     }
 
-    public async Task<(User? user, IList<string>? role)> FindUserByEmail(string email)
+    public async Task<(User user, IList<string> role)> FindUserByEmail(string email)
     {
         var user = await this._userManager.FindByEmailAsync(email);
         var role = await this._userManager.GetRolesAsync(user);
 
         return (user, role);
-    } 
+    }
 
+    public async Task<IReadOnlyList<UserDto>> GetAllUsers()
+    {
+        // TODO: add pagination
+        var users = this._userManager.Users;
+        var allUsers = new List<UserDto>();
+
+        foreach (var user in users)
+        {
+            var roles = await this._userManager.GetRolesAsync(user);
+            IEnumerable<UserClaimDto> userClaims = await GetUserClaims(user);
+
+            allUsers.Add(new UserDto(user, roles, userClaims));
+        }
+
+        return allUsers.AsReadOnly();
+    }
+
+    public async Task<IEnumerable<UserClaimDto>> GetUserClaims(User user)
+    {
+        var claims = await this._userManager.GetClaimsAsync(user);
+
+        var userClaims = claims
+            .Where(claim => claim.Type is not ClaimTypes.Email && claim.Type is not ClaimTypes.Role)
+            .GroupBy(claim => claim.Type)
+            .Select(entry =>
+                new UserClaimDto(entry.Key, entry.Select(claim => claim.Value).ToArray())
+            );
+        return userClaims;
+    }
 }
