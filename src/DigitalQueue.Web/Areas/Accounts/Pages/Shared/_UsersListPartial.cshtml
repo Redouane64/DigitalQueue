@@ -1,9 +1,10 @@
-@model IEnumerable<User>
+@model IEnumerable<UserDto>
 
 <table class="table">
     <thead>
     <tr>
-        <th>Title</th>
+        <th>Name</th>
+        <th>Roles</th>
         <th>Actions</th>
     </tr>
     </thead>
@@ -11,7 +12,7 @@
     @if (Model is null || Model?.Count() == 0)
     {
         <tr>
-            <td colspan="2">
+            <td colspan="3">
                 <i>No Users</i>
             </td> 
         </tr>
@@ -22,8 +23,14 @@
         {
             <tr>
                 <td>
-                    @user.UserName
-                </td> 
+                    @user.Username
+                </td>
+                <td>
+                    <strong class="text-capitalize">@String.Join(",", user.Roles)</strong>
+                </td>
+                <td>
+                    <a href="#">View</a> | <a href="#">Set As Admin</a> | <a href="#">Set As Teacher</a>
+                </td>
             </tr>
         }
     }
