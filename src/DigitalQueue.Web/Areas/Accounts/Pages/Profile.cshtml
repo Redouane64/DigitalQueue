@@ -1,4 +1,4 @@
-@page
+@page "{id}"
 @model ProfileModel
 
 @{
@@ -23,7 +23,7 @@
             <div>
                 @if (!Model.Profile.Claims.Any())
                 {
-                    <i class="text-muted">You do not have any additional access roles.</i>
+                    <i class="text-muted">No additional access roles found.</i>
                 }
                 else
                 {

@@ -12,12 +12,14 @@ public class UsersService
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IHttpContextAccessor _httpContext;
     private readonly ILogger<UsersService> _logger;
 
-    public UsersService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, ILogger<UsersService> logger)
+    public UsersService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContext, ILogger<UsersService> logger)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _httpContext = httpContext;
         _logger = logger;
     }
 
@@ -48,7 +50,8 @@ public class UsersService
 
         Claim[] claims = {
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, role)
+            new Claim(ClaimTypes.Role, role),
+            new Claim(ClaimTypes.NameIdentifier, user.Id)
         };
 
         bool assignClaimToUser = await AssignClaimToUser(user, claims);
@@ -132,11 +135,28 @@ public class UsersService
 
         return (user, role);
     }
-
+    
+    public async Task<UserDto> FindUserById(string id)
+    {
+        var user = await this._userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return null;
+        }
+        
+        var roles = await this._userManager.GetRolesAsync(user);
+        var claims = await this.GetUserClaims(user);
+        
+        return new UserDto(user, roles, claims);
+    }
+    
     public async Task<IReadOnlyList<UserDto>> GetAllUsers()
     {
         // TODO: add pagination
-        var users = this._userManager.Users;
+
+        var callerUserId = this._httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        var users = this._userManager.Users.Where(user => user.Id != callerUserId);
         var allUsers = new List<UserDto>();
 
         foreach (var user in users)
@@ -155,7 +175,10 @@ public class UsersService
         var claims = await this._userManager.GetClaimsAsync(user);
 
         var userClaims = claims
-            .Where(claim => claim.Type is not ClaimTypes.Email && claim.Type is not ClaimTypes.Role)
+            .Where(claim => 
+                claim.Type is not ClaimTypes.Email && 
+                claim.Type is not ClaimTypes.Role &&
+                claim.Type is not ClaimTypes.NameIdentifier)
             .GroupBy(claim => claim.Type)
             .Select(entry =>
                 new UserClaimDto(entry.Key, entry.Select(claim => claim.Value).ToArray())

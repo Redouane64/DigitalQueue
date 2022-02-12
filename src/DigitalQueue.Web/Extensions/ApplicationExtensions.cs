@@ -1,8 +1,6 @@
 using DigitalQueue.Web.Areas.Accounts.Services;
 using DigitalQueue.Web.Data;
 
-using Microsoft.AspNetCore.Identity;
-
 namespace DigitalQueue.Web.Extensions;
 
 public static class ApplicationExtensions

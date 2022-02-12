@@ -29,7 +29,10 @@
                     <strong class="text-capitalize">@String.Join(",", user.Roles)</strong>
                 </td>
                 <td>
-                    <a href="#">View</a> | <a href="#">Set As Admin</a> | <a href="#">Set As Teacher</a>
+                    <strong class="text-lowercase">@user.Email</strong>
+                </td>
+                <td>
+                    <a asp-area="Accounts" asp-page="Profile" asp-route-id="@user.Id">View</a> | <a>Update Role</a>
                 </td>
             </tr>
         }

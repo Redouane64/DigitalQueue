@@ -20,12 +20,21 @@ public class ProfileModel : PageModel
     {
         _mediator = mediator;
     }
-
+    
     public UserDto? Profile { get; set; }
     
-    public async Task OnGetAsync()
+    public async Task<IActionResult> OnGetAsync(string id)
     {
-        Profile = await _mediator.Send(new GetProfileRequest(User));
+        var profile = await _mediator.Send(new GetProfileByIdRequest(id));
+
+        if (profile is null)
+        {
+            return NotFound();
+        }
+
+        Profile = profile;
+
+        return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()

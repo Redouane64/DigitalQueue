@@ -18,6 +18,8 @@ builder.Services.AddRouting(options =>
 
 builder.Services.AddMediatR(typeof(Program).Assembly);
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddDataContext(builder.Configuration);
 builder.Services.AddIdentity(builder.Configuration);
 builder.Services.AddApi(builder.Configuration);
