@@ -1,6 +1,5 @@
 using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Areas.Accounts.Queries;
-using DigitalQueue.Web.Data.Entities;
 
 using MediatR;
 
@@ -21,6 +20,7 @@ public class Index : PageModel
     
     public async Task OnGet()
     {
+        ViewData["fullList"] = true;
         Users = await this._mediator.Send(new GetRegisteredAccounts());
     }
 }
