@@ -1,10 +1,10 @@
 using System.Text;
 using System.Text.Json.Serialization;
 
+using DigitalQueue.Web.Areas.Accounts.Services;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Filters;
-using DigitalQueue.Web.Users;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
