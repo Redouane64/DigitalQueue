@@ -1,43 +1,82 @@
 @page "{id}"
+@using DigitalQueue.Web.Data
+@using System.Security.Claims
 @model ProfileModel
 
 @{
-    ViewData["Title"] = $"${Model.Profile.Username}'s Profile";
+    ViewData["Title"] = $"{Model.Profile.Username}'s Profile";
 }
 
 <div class="container mt-lg-5">
     <div class="row">
         <div class="col-6">
-            <p class="h4">Account Details</p>
-            <dl>
-                <dt>Email</dt>
-                <dd>@Model.Profile.Email</dd>
-                <dt>User Name</dt>
-                <dd>@Model.Profile.Username</dd>
-                <dt>Account Role</dt>
-                <dd class="text-capitalize">@Model.Profile.Roles.First()</dd>
-            </dl>
+            <p class="h4"><i class="fa fa-fw fa-user m-1"></i>Basic Info</p>
+            <div class="row-cols-3 mt-lg-4 mb-5">
+                <div class="mb-3">
+                    <label for="emailAddress" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="emailAddress" value="@Model.Profile.Email" readonly>
+                </div>
+                <div class="mb-3">
+                  <label for="name" class="form-label">Name</label>
+                  <input type="email" class="form-control" id="name" value="@Model.Profile.Username" readonly>
+                </div>
+            </div>
+            <p class="h4"><i class="fa fa-fw fa-tools m-1"></i>Actions</p>
+            <div class="mt-lg-4">
+            @if (User.FindFirstValue(ClaimTypes.NameIdentifier) == RouteData.Values["id"].ToString())
+            {
+                <a href="#" class="btn btn-lg btn-primary">Change E-mail</a>
+                <a href="#" class="btn btn-lg btn-secondary">Change Password</a>
+            }
+            else
+            {
+                <a href="#" class="btn btn-lg btn-primary">Update Role</a>
+            }
+            </div>
         </div>
         <div class="col-6">
-            <p class="h4">Additional Access Roles</p>
-            <div>
-                @if (!Model.Profile.Claims.Any())
-                {
-                    <i class="text-muted">No additional access roles found.</i>
-                }
-                else
-                {
-                    foreach (var claim in Model.Profile.Claims)
+            <p class="h4">Account Roles & Permissions</p>
+
+            <div class="row mt-lg-3">
+                <div class="col">
+                    <p class="h5"><i class="fa fa-fw fa-keyboard m-1"></i>Permissions</p>
+                    @if (!Model.Profile.Claims.Any())
                     {
-                        <strong>@claim.Claim</strong>
-                        <dl>
-                            @foreach (var value in claim.Values)
-                            {
-                                <dt>@value</dt>
-                            }
-                        </dl>
+                        <i class="text-muted">No permissions assigned.</i>
                     }
-                }
+                    else
+                    {
+                        foreach (var claim in Model.Profile.Claims)
+                        {
+                            <strong>@claim.Claim</strong>
+                            <dl>
+                                @foreach (var value in claim.Values)
+                                {
+                                    <dt>@value</dt>
+                                }
+                            </dl>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="row mt-lg-5">
+                <div class="col">
+                    <p class="h5"><i class="fa fa-fw fa-key m-1"></i>Roles</p>
+                    <ul class="list-group list-group-horizontal">
+                        @foreach (var role in Model.Profile.Roles)
+                        {
+                            @if (role.Equals(RoleDefaults.Administrator))
+                            {
+                                <li class="list-group-item list-group-item-danger text-capitalize">@role</li>
+                            }
+                            else
+                            {
+                                <li class="list-group-item list-group-item-success text-capitalize">@role</li>
+                            }
+                        }
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
