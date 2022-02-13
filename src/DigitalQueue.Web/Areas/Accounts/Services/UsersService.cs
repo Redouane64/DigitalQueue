@@ -5,6 +5,7 @@ using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Accounts.Services;
 
@@ -109,6 +110,16 @@ public class UsersService
         return false;
     }
 
+    public async Task<SearchResult<RoleDto>> FindRoles(string q)
+    {
+        var roles = await this._roleManager.Roles
+            .Where(role => role.Name.Contains(q))
+            .Select(role => new RoleDto(role.Name, role.Id))
+            .ToArrayAsync();
+        
+        return new SearchResult<RoleDto>(roles);
+    }
+
     public async Task<IList<Claim>?> GetUserClaims(string email, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
@@ -128,14 +139,6 @@ public class UsersService
         return await _userManager.GetClaimsAsync(user);
     }
 
-    public async Task<(User user, IList<string> role)> FindUserByEmail(string email)
-    {
-        var user = await this._userManager.FindByEmailAsync(email);
-        var role = await this._userManager.GetRolesAsync(user);
-
-        return (user, role);
-    }
-    
     public async Task<UserDto> FindUserById(string id)
     {
         var user = await this._userManager.FindByIdAsync(id);
@@ -144,7 +147,7 @@ public class UsersService
             return null;
         }
         
-        var roles = await this._userManager.GetRolesAsync(user);
+        var roles = await this.GetUserRoles(user);
         var claims = await this.GetUserClaims(user);
         
         return new UserDto(user, roles, claims);
@@ -161,16 +164,26 @@ public class UsersService
 
         foreach (var user in users)
         {
-            var roles = await this._userManager.GetRolesAsync(user);
-            IEnumerable<UserClaimDto> userClaims = await GetUserClaims(user);
+            var roles = await GetUserRoles(user);
+            var claims = await GetUserClaims(user);
 
-            allUsers.Add(new UserDto(user, roles, userClaims));
+            allUsers.Add(new UserDto(user, roles, claims));
         }
 
         return allUsers.AsReadOnly();
     }
 
-    public async Task<IEnumerable<UserClaimDto>> GetUserClaims(User user)
+    public async Task<RoleDto[]> GetUserRoles(User user)
+    {
+        var userRoles = await this._userManager.GetRolesAsync(user);
+        var roles = await this._roleManager.Roles
+            .Where(role => userRoles.Contains(role.Name))
+            .Select(role => new RoleDto(role.Name, role.Id))
+            .ToArrayAsync();
+        return roles;
+    }
+
+    public async Task<IEnumerable<ClaimDto>> GetUserClaims(User user)
     {
         var claims = await this._userManager.GetClaimsAsync(user);
 
@@ -181,7 +194,7 @@ public class UsersService
                 claim.Type is not ClaimTypes.NameIdentifier)
             .GroupBy(claim => claim.Type)
             .Select(entry =>
-                new UserClaimDto(entry.Key, entry.Select(claim => claim.Value).ToArray())
+                new ClaimDto(entry.Key, entry.Select(claim => claim.Value).ToArray())
             );
         return userClaims;
     }
