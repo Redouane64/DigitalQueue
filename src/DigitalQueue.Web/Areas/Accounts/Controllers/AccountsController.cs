@@ -1,4 +1,4 @@
-using System;
+using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Commands;
 using DigitalQueue.Web.Areas.Accounts.Dtos;
@@ -28,9 +28,8 @@ public class AccountsController : ControllerBase
     [HttpPost("signin", Name = nameof(SignIn))]
     [ProducesResponseType(typeof(AccessTokenDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorDto), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignIn([FromBody]SignInCommand command)
+    public async Task<IActionResult> SignIn([FromBody]LoginCommand command)
     {
-        //throw new Exception("HAHA");
         var result = await _mediator.Send(command);
         if (result is null)
         {
@@ -43,7 +42,7 @@ public class AccountsController : ControllerBase
     [HttpPost("signup", Name = nameof(SignUp))]
     [ProducesResponseType(typeof(AccessTokenDto),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorDto),StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignUp([FromBody] SignUpCommand command)
+    public async Task<IActionResult> SignUp([FromBody] CreateAccountCommand command)
     {
         var result = await _mediator.Send(command);
         if (result is null)
@@ -60,7 +59,14 @@ public class AccountsController : ControllerBase
     [ProducesResponseType(typeof(ErrorDto),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetProfile()
     {
-        var user = await _mediator.Send(new GetProfileRequest(User));
+        var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null)
+        {
+            return BadRequest();
+        }
+        
+        var user = await _mediator.Send(new GetUserQuery(userId));
         if (user is null)
         {
             return BadRequest();

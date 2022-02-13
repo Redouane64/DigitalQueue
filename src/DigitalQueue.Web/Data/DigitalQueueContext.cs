@@ -28,4 +28,7 @@ public class DigitalQueueContext : IdentityDbContext<User>
         builder.ApplyConfiguration(new CourseEntityConfiguration());
         builder.ApplyConfiguration(new MembershipEntityConfiguration());
     }
+
+    public DbSet<Course> Courses { get; set; }
+    
 }

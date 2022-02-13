@@ -1,7 +1,9 @@
 using DigitalQueue.Web.Areas.Accounts.Dtos;
-using DigitalQueue.Web.Areas.Accounts.Services;
 
 using MediatR;
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
@@ -17,16 +19,21 @@ public class SearchRoleCommand : IRequest<SearchResult<RoleDto>>
     
     public class SearchRoleCommandHandler : IRequestHandler<SearchRoleCommand, SearchResult<RoleDto>>
     {
-        private readonly UsersService _usersService;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public SearchRoleCommandHandler(UsersService usersService)
+        public SearchRoleCommandHandler(RoleManager<IdentityRole> roleManager)
         {
-            _usersService = usersService;
+            _roleManager = roleManager;
         }
         
         public async Task<SearchResult<RoleDto>> Handle(SearchRoleCommand request, CancellationToken cancellationToken)
         {
-            return await this._usersService.FindRoles(request.Query);
+            var roles = await _roleManager.Roles
+                .Where(role => role.Name.Contains(request.Query))
+                .Select(role => new RoleDto(role.Name, role.Id))
+                .ToArrayAsync(cancellationToken);
+        
+            return new SearchResult<RoleDto>(roles);
         }
     }
 }

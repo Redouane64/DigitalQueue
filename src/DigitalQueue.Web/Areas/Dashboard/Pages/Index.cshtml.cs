@@ -26,6 +26,6 @@ public class Index : PageModel
     public async Task OnGet()
     {
         ViewData["fullList"] = false;
-        Users = await this._mediator.Send(new GetRegisteredAccounts());
+        Users = await this._mediator.Send(new GetUsersQuery());
     }
 }

@@ -25,7 +25,7 @@ public class ProfileModel : PageModel
     
     public async Task<IActionResult> OnGetAsync(string id)
     {
-        var profile = await _mediator.Send(new GetProfileRequest(id));
+        var profile = await _mediator.Send(new GetUserQuery(id));
 
         if (profile is null)
         {
@@ -35,20 +35,6 @@ public class ProfileModel : PageModel
         Profile = profile;
 
         return Page();
-    }
-
-    public async Task<IActionResult> OnPostAsync()
-    {
-        if (User.Identity is {IsAuthenticated: false})
-        {
-            return RedirectToPage("Login", new { area = "Accounts" });
-        }
-
-        await HttpContext.SignOutAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme
-        );
-
-        return RedirectToPage("Login", new { area = "Accounts" });
     }
 
     public async Task<IActionResult> OnPostRolesUpdate([FromForm]string id, [FromForm] string[] roles)

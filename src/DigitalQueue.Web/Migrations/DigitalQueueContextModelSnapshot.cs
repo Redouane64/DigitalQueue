@@ -64,6 +64,11 @@ namespace DigitalQueue.Web.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("email");
 
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("fullname");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT")
@@ -122,13 +127,13 @@ namespace DigitalQueue.Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "cbf534bf-a935-4119-84d5-be98090946da",
+                            Id = "75950bfe-d076-4431-ab83-8fc62959013e",
                             Name = "administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "03c53d15-1be5-4c96-ae9f-f8aa4d919a8b",
+                            Id = "237ea819-ab1a-473e-b9bb-843b299aaede",
                             Name = "user",
                             NormalizedName = "USER"
                         });

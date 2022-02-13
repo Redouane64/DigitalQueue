@@ -1,7 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
 
-using DigitalQueue.Web.Areas.Accounts.Services;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Filters;
@@ -150,9 +149,7 @@ public static class ServiceCollectionExtensions
         }).AddRoles<IdentityRole>()
           .AddEntityFrameworkStores<DigitalQueueContext>()
           .AddTokenProvider<JwtRefreshTokenProvider>(JwtRefreshTokenProvider.ProviderName);
-
-        services.AddScoped<UsersService>();
-
+        
         // Configure JWT refresh token provider
         services.Configure<JwtRefreshTokenProvider.JwtRefreshTokenProviderOptions>(options =>
         {

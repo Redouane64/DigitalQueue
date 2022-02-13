@@ -4,7 +4,7 @@
 
 namespace DigitalQueue.Web.Migrations
 {
-    public partial class AddCourseEntitiesAndRelations : Migration
+    public partial class AddCoursesNewRolesAndUserFullName : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -23,8 +23,15 @@ namespace DigitalQueue.Web.Migrations
                 keyColumn: "id",
                 keyValue: "4ce325d4-9e26-409c-889f-97c72a3c92a2");
 
+            migrationBuilder.AddColumn<string>(
+                name: "fullname",
+                table: "users",
+                type: "TEXT",
+                nullable: false,
+                defaultValue: "");
+
             migrationBuilder.CreateTable(
-                name: "Course",
+                name: "courses",
                 columns: table => new
                 {
                     id = table.Column<string>(type: "TEXT", nullable: false),
@@ -32,11 +39,11 @@ namespace DigitalQueue.Web.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Course", x => x.id);
+                    table.PrimaryKey("PK_courses", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Membership",
+                name: "memberships",
                 columns: table => new
                 {
                     course_id = table.Column<string>(type: "TEXT", nullable: false),
@@ -45,15 +52,15 @@ namespace DigitalQueue.Web.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Membership", x => new { x.course_id, x.user_id });
+                    table.PrimaryKey("PK_memberships", x => new { x.course_id, x.user_id });
                     table.ForeignKey(
-                        name: "FK_Membership_Course_course_id",
+                        name: "FK_memberships_courses_course_id",
                         column: x => x.course_id,
-                        principalTable: "Course",
+                        principalTable: "courses",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Membership_users_user_id",
+                        name: "FK_memberships_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -63,46 +70,40 @@ namespace DigitalQueue.Web.Migrations
             migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "id", "name", "normalized_name" },
-                values: new object[] { "63133fd1-65b8-435e-877d-43b50846671e", "teacher", "TEACHER" });
+                values: new object[] { "237ea819-ab1a-473e-b9bb-843b299aaede", "user", "USER" });
 
             migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "id", "name", "normalized_name" },
-                values: new object[] { "77ec1cd5-a8a9-40ad-aa41-35e48830715f", "student", "STUDENT" });
-
-            migrationBuilder.InsertData(
-                table: "roles",
-                columns: new[] { "id", "name", "normalized_name" },
-                values: new object[] { "9a102baa-67ac-4b04-af3c-e8e09c5c9fff", "administrator", "ADMINISTRATOR" });
+                values: new object[] { "75950bfe-d076-4431-ab83-8fc62959013e", "administrator", "ADMINISTRATOR" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Membership_user_id",
-                table: "Membership",
+                name: "IX_memberships_user_id",
+                table: "memberships",
                 column: "user_id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Membership");
+                name: "memberships");
 
             migrationBuilder.DropTable(
-                name: "Course");
+                name: "courses");
 
             migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "id",
-                keyValue: "63133fd1-65b8-435e-877d-43b50846671e");
+                keyValue: "237ea819-ab1a-473e-b9bb-843b299aaede");
 
             migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "id",
-                keyValue: "77ec1cd5-a8a9-40ad-aa41-35e48830715f");
+                keyValue: "75950bfe-d076-4431-ab83-8fc62959013e");
 
-            migrationBuilder.DeleteData(
-                table: "roles",
-                keyColumn: "id",
-                keyValue: "9a102baa-67ac-4b04-af3c-e8e09c5c9fff");
+            migrationBuilder.DropColumn(
+                name: "fullname",
+                table: "users");
 
             migrationBuilder.InsertData(
                 table: "roles",

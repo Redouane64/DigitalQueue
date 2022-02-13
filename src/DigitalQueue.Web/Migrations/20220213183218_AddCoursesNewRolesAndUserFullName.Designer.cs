@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalQueue.Web.Migrations
 {
     [DbContext(typeof(DigitalQueueContext))]
-    [Migration("20220205103241_FixCourseAndMembershipEntitiesTableNames")]
-    partial class FixCourseAndMembershipEntitiesTableNames
+    [Migration("20220213183218_AddCoursesNewRolesAndUserFullName")]
+    partial class AddCoursesNewRolesAndUserFullName
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,6 +65,11 @@ namespace DigitalQueue.Web.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("TEXT")
                         .HasColumnName("email");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("fullname");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -124,21 +129,15 @@ namespace DigitalQueue.Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4fcf4a41-1724-4c2e-a384-0c50c35ac85a",
+                            Id = "75950bfe-d076-4431-ab83-8fc62959013e",
                             Name = "administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "22dfb2c2-f847-4afc-8bb5-7c1bb88d8217",
-                            Name = "teacher",
-                            NormalizedName = "TEACHER"
-                        },
-                        new
-                        {
-                            Id = "b8eb1daa-8cb5-4482-a8c4-2ff8665cf970",
-                            Name = "student",
-                            NormalizedName = "STUDENT"
+                            Id = "237ea819-ab1a-473e-b9bb-843b299aaede",
+                            Name = "user",
+                            NormalizedName = "USER"
                         });
                 });
 
