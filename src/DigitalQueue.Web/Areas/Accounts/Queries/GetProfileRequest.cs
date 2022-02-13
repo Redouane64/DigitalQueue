@@ -2,7 +2,6 @@ using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Areas.Accounts.Services;
-using DigitalQueue.Web.Data.Entities;
 
 using MediatR;
 
@@ -10,7 +9,14 @@ namespace DigitalQueue.Web.Areas.Accounts.Queries;
 
 public class GetProfileRequest : IRequest<UserDto?>
 {
-    public ClaimsPrincipal User { get; }
+    public ClaimsPrincipal? User { get; }
+
+    public string? Id { get; }
+
+    public GetProfileRequest(string? id)
+    {
+        Id = id;
+    }
 
     public GetProfileRequest(ClaimsPrincipal user)
     {
@@ -28,18 +34,18 @@ public class GetProfileRequest : IRequest<UserDto?>
         
         public async Task<UserDto?> Handle(GetProfileRequest request, CancellationToken cancellationToken)
         {
-            var email = request.User.FindFirstValue(ClaimTypes.Email);
-
-            if (email is null)
+            if (request.Id is not null)
+            {
+                return await this._usersService.FindUserById(request.Id);
+            }
+            
+            var userId = request.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId is null)
             {
                 return null;
             }
 
-            (User user, IList<string> roles) = await this._usersService.FindUserByEmail(email);
-
-            var claims = await this._usersService.GetUserClaims(user);
-
-            return new UserDto(user, roles, claims);
+            return await this._usersService.FindUserById(userId);
         }
     }
 }
