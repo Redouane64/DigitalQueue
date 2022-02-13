@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DigitalQueue.Web.Areas.Accounts.Pages;
 
-[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Policy = "Admin")]
 public class ProfileModel : PageModel
 {
     private readonly IMediator _mediator;
@@ -25,7 +25,7 @@ public class ProfileModel : PageModel
     
     public async Task<IActionResult> OnGetAsync(string id)
     {
-        var profile = await _mediator.Send(new GetProfileByIdRequest(id));
+        var profile = await _mediator.Send(new GetProfileRequest(id));
 
         if (profile is null)
         {
@@ -49,5 +49,11 @@ public class ProfileModel : PageModel
         );
 
         return RedirectToPage("Login", new { area = "Accounts" });
+    }
+
+    public async Task<IActionResult> OnPostRolesUpdate([FromForm]string id, [FromForm] string[] roles)
+    {
+        // TODO: implement this.
+        return RedirectToPage(new { id });
     }
 }

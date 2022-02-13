@@ -13,4 +13,14 @@ $(document).ready(function() {
         placeholder: 'Search for a teachers',
         minimumInputLength: 2,
     });
+
+    $('.user-roles').select2({
+        ajax: {
+            method: 'POST',
+            url: '/api/roles/search',
+            delay: 300
+        },
+        placeholder: 'Search for roles',
+        minimumInputLength: 2,
+    });
 });
