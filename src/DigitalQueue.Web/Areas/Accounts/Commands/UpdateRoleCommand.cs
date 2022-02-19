@@ -48,25 +48,29 @@ public class UpdateRoleCommand : IRequest<bool>
                     }
 
                     var existingRoles = await _userManager.GetRolesAsync(user);
-                    string[] newRoles = null;
+                    var newRoles = new List<string> { RoleDefaults.User };
                     if (request.Roles.Length < existingRoles.Count)
                     {
-                        newRoles = existingRoles.Except(request.Roles).ToArray();
+                        newRoles.AddRange(existingRoles.Except(request.Roles).ToArray());
                     }
                     else
                     {
-                        newRoles = request.Roles.Except(existingRoles).ToArray();
+                        newRoles.AddRange(request.Roles.Except(existingRoles).ToArray());
                     }
 
-                    foreach (var role in newRoles)
+                    foreach (var role in newRoles
+                                            .Where(r => !r.Equals(RoleDefaults.User, StringComparison.InvariantCultureIgnoreCase))
+                                            .Distinct()
+                                            .ToArray())
                     {
                         if (!await _userManager.IsInRoleAsync(user, role))
                         {
-                            await _userManager.AddToRolesAsync(user, newRoles);
+                            await _userManager.AddToRoleAsync(user, role);
                             await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, role));
                         }
                         else
                         {
+                            
                             await _userManager.RemoveFromRoleAsync(user, role);
                             await _userManager.RemoveClaimAsync(user, new Claim(ClaimTypes.Role, role));
                         }
