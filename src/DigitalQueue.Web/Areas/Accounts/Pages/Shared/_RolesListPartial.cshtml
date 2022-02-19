@@ -12,13 +12,13 @@
         </div>
         }
         <div class="row">
-            <form method="post" asp-page-handler="RolesUpdate">
+            <form method="post" asp-page-handler="UpdateRoles">
                 <input type="hidden" name="id" value="@ViewData["id"]" >
                 <div class="form-group">
                     <select type="text" name="roles" id="roles" class="form-control user-roles" multiple="multiple" disabled="@Convert.ToBoolean(ViewData["isOwner"])">
-                        @foreach (var role in Model)
+                        @foreach (var role in Model!)
                         {
-                            <option selected="selected" readonly="readonly" value="@role.Id">@role.Text</option>
+                            <option selected="selected" readonly="readonly" value="@role.Text">@role.Text</option>
                         }
                     </select>
                 </div>

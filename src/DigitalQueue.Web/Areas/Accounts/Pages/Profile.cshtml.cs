@@ -1,9 +1,9 @@
+using DigitalQueue.Web.Areas.Accounts.Commands;
 using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Areas.Accounts.Queries;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +20,10 @@ public class ProfileModel : PageModel
     {
         _mediator = mediator;
     }
-    
+
+    [TempData]
+    public Boolean? PostResultMessage { get; set; }
+
     public UserDto? Profile { get; set; }
     
     public async Task<IActionResult> OnGetAsync(string id)
@@ -37,9 +40,10 @@ public class ProfileModel : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostRolesUpdate([FromForm]string id, [FromForm] string[] roles)
+    public async Task<IActionResult> OnPostUpdateRoles([FromForm]string id, [FromForm] string[] roles)
     {
-        // TODO: implement this.
+        PostResultMessage = await this._mediator.Send(new UpdateRoleCommand(id, roles));
+        
         return RedirectToPage(new { id });
     }
 }

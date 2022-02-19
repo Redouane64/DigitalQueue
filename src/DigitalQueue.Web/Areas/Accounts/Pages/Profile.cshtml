@@ -8,9 +8,20 @@
     ViewData["id"] = RouteData.Values["id"];
     // A flag to determine of user view his own profile or another user's profile.
     ViewData["isOwner"] = User.FindFirstValue(ClaimTypes.NameIdentifier) == RouteData.Values["id"]?.ToString();
+    
+    // Post result temp data
+    var result = TempData["PostResultMessage"] as Boolean?;
 }
 
 <div class="container mt-lg-5">
+    @if (result.HasValue)
+    {
+        <div class="alert alert-dismissible @(result.Value ? "alert-success" : "alert-danger")">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong>@(result.Value ? "Hoooray!" : "Oh snap!")</strong> 
+            @(result.Value ? "User updated successfully." : "Something went wrong.")
+        </div>
+    }
     <div class="row">
         <div class="col-6">
             <p class="h4"><i class="fa fa-fw fa-user m-1"></i>Basic Info</p>
@@ -24,17 +35,17 @@
                     <input type="email" class="form-control" id="username" value="@Model.Profile.Username" readonly>
                 </div>
                 <div class="mb-3">
-                  <label for="fullname" class="form-label">Full Name</label>
-                  <input type="email" class="form-control" id="fullname" value="@Model.Profile.FullName" readonly>
+                    <label for="fullname" class="form-label">Full Name</label>
+                    <input type="email" class="form-control" id="fullname" value="@Model.Profile.FullName" readonly>
                 </div>
             </div>
             @if (Convert.ToBoolean(ViewData["isOwner"]))
             {
-            <p class="h4"><i class="fa fa-fw fa-tools m-1"></i>Actions</p>
-            <div class="mt-lg-4">
-                <a href="#" class="btn btn-lg btn-primary">Change E-mail</a>
-                <a href="#" class="btn btn-lg btn-secondary">Change Password</a>
-            </div>
+                <p class="h4"><i class="fa fa-fw fa-tools m-1"></i>Actions</p>
+                <div class="mt-lg-4">
+                    <a href="#" class="btn btn-lg btn-primary">Change E-mail</a>
+                    <a href="#" class="btn btn-lg btn-secondary">Change Password</a>
+                </div>
             }
         </div>
         <div class="col-6">
@@ -66,7 +77,7 @@
             <div class="row mt-lg-5">
                 <div class="col">
                     <p class="h5"><i class="fa fa-fw fa-key m-1"></i>Roles</p>
-                    <partial name="_RolesListPartial" model="Model.Profile.Roles" view-data="new ViewDataDictionary(ViewData)" />
+                    <partial name="_RolesListPartial" model="Model.Profile.Roles" view-data="new ViewDataDictionary(ViewData)"/>
                 </div>
             </div>
         </div>

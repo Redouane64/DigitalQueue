@@ -30,7 +30,7 @@ public class SearchRoleCommand : IRequest<SearchResult<RoleDto>>
         {
             var roles = await _roleManager.Roles
                 .Where(role => role.Name.Contains(request.Query))
-                .Select(role => new RoleDto(role.Name, role.Id))
+                .Select(role => new RoleDto(role.Name, role.Name))
                 .ToArrayAsync(cancellationToken);
         
             return new SearchResult<RoleDto>(roles);
