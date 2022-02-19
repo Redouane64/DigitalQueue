@@ -19,6 +19,7 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
     [EmailAddress]
     public string Email { get; set; }
     
+    [Required]
     [RegularExpression("^[a-zA-Z ]*$")]
     [DataType(DataType.Text)]
     public string FullName { get; set; }
@@ -62,7 +63,7 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                 {
                     Email = request.Email,
                     FullName = request.FullName,
-                    UserName = request.Email.Split("@").First()
+                    UserName = request.Email
                 };
             
                 var createUser = await _userManager.CreateAsync(

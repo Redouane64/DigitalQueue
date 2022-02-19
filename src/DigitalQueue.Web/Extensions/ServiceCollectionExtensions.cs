@@ -140,8 +140,6 @@ public static class ServiceCollectionExtensions
             options.Password.RequiredLength = 4;
 
             options.User.RequireUniqueEmail = true;
-            options.User.AllowedUserNameCharacters =
-                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ";
 
             options.SignIn.RequireConfirmedAccount = false;
             options.SignIn.RequireConfirmedEmail = false;
