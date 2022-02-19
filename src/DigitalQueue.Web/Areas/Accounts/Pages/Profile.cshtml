@@ -3,11 +3,11 @@
 @model ProfileModel
 
 @{
-    ViewData["Title"] = $"{Model.Profile.Username}'s Profile";
+    ViewData["Title"] = $"{Model.Profile!.Username}'s Profile";
 
     ViewData["id"] = RouteData.Values["id"];
     // A flag to determine of user view his own profile or another user's profile.
-    ViewData["isOwner"] = User.FindFirstValue(ClaimTypes.NameIdentifier) == RouteData.Values["id"].ToString();
+    ViewData["isOwner"] = User.FindFirstValue(ClaimTypes.NameIdentifier) == RouteData.Values["id"]?.ToString();
 }
 
 <div class="container mt-lg-5">
@@ -16,12 +16,16 @@
             <p class="h4"><i class="fa fa-fw fa-user m-1"></i>Basic Info</p>
             <div class="row-cols-3 mt-lg-4 mb-5">
                 <div class="mb-3">
-                    <label for="emailAddress" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="emailAddress" value="@Model.Profile.Email" readonly>
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" value="@Model.Profile.Email" readonly>
                 </div>
                 <div class="mb-3">
-                  <label for="name" class="form-label">Name</label>
-                  <input type="email" class="form-control" id="name" value="@Model.Profile.Username" readonly>
+                    <label for="username" class="form-label">Username</label>
+                    <input type="email" class="form-control" id="username" value="@Model.Profile.Username" readonly>
+                </div>
+                <div class="mb-3">
+                  <label for="fullname" class="form-label">Full Name</label>
+                  <input type="email" class="form-control" id="fullname" value="@Model.Profile.FullName" readonly>
                 </div>
             </div>
             @if (Convert.ToBoolean(ViewData["isOwner"]))

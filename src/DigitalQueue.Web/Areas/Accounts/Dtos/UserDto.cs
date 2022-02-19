@@ -9,6 +9,7 @@ public class UserDto
         this.Id = user.Id;
         this.Email = user.Email;
         this.Username = user.UserName;
+        this.FullName = user.FullName;
         this.Roles = roles;
         this.Claims = claims;
     }
@@ -16,6 +17,7 @@ public class UserDto
     public string Id { get; }
     public string Email { get; }
     public string Username { get; }
+    public string FullName { get; }
     public IEnumerable<RoleDto> Roles { get; }
     public IEnumerable<ClaimDto> Claims { get; }
     
