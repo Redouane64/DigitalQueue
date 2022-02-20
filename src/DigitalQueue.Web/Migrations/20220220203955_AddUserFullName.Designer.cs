@@ -10,50 +10,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalQueue.Web.Migrations
 {
     [DbContext(typeof(DigitalQueueContext))]
-    [Migration("20220213183218_AddCoursesNewRolesAndUserFullName")]
-    partial class AddCoursesNewRolesAndUserFullName
+    [Migration("20220220203955_AddUserFullName")]
+    partial class AddUserFullName
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
-
-            modelBuilder.Entity("DigitalQueue.Web.Data.Entities.Course", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("title");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("courses", (string)null);
-                });
-
-            modelBuilder.Entity("DigitalQueue.Web.Data.Entities.Membership", b =>
-                {
-                    b.Property<string>("CourseId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("course_id");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("user_id");
-
-                    b.Property<bool>("IsTeacher")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("is_teacher");
-
-                    b.HasKey("CourseId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("memberships", (string)null);
-                });
 
             modelBuilder.Entity("DigitalQueue.Web.Data.Entities.User", b =>
                 {
@@ -129,13 +92,13 @@ namespace DigitalQueue.Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "75950bfe-d076-4431-ab83-8fc62959013e",
+                            Id = "58a18e36-3523-4fef-8552-fa3cb6080895",
                             Name = "administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "237ea819-ab1a-473e-b9bb-843b299aaede",
+                            Id = "311e3bee-7fe8-4e3c-8203-7fe30c77566b",
                             Name = "user",
                             NormalizedName = "USER"
                         });
@@ -179,25 +142,6 @@ namespace DigitalQueue.Web.Migrations
                     b.ToTable("users_roles", (string)null);
                 });
 
-            modelBuilder.Entity("DigitalQueue.Web.Data.Entities.Membership", b =>
-                {
-                    b.HasOne("DigitalQueue.Web.Data.Entities.Course", "Course")
-                        .WithMany("CourseMemberships")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DigitalQueue.Web.Data.Entities.User", "User")
-                        .WithMany("CoursesMemberships")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.HasOne("DigitalQueue.Web.Data.Entities.User", null)
@@ -220,16 +164,6 @@ namespace DigitalQueue.Web.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("DigitalQueue.Web.Data.Entities.Course", b =>
-                {
-                    b.Navigation("CourseMemberships");
-                });
-
-            modelBuilder.Entity("DigitalQueue.Web.Data.Entities.User", b =>
-                {
-                    b.Navigation("CoursesMemberships");
                 });
 #pragma warning restore 612, 618
         }

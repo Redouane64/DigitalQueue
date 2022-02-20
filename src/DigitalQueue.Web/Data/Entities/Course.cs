@@ -6,7 +6,6 @@ public class Course
 
     public string Title { get; set; }
     
-    public ICollection<User> Members { get; set; }
-    public ICollection<Membership> CourseMemberships { get; set; }
-    
+    public ICollection<User> Teachers { get; set; }
+
 }

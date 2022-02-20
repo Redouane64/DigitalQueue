@@ -26,7 +26,6 @@ public class DigitalQueueContext : IdentityDbContext<User>
         builder.Entity<IdentityUserRole<string>>().ToTable("users_roles");
 
         builder.ApplyConfiguration(new CourseEntityConfiguration());
-        builder.ApplyConfiguration(new MembershipEntityConfiguration());
     }
 
     public DbSet<Course> Courses { get; set; }

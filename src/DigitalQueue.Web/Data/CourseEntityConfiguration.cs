@@ -15,31 +15,16 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
         builder.Property(e => e.Title).HasColumnName("title");
         
         builder.HasMany(
-            e => e.Members
+            e => e.Teachers
         ).WithMany(
-            e => e.Courses
-        ).UsingEntity<Membership>(
-            e => e.HasOne(m => m.User)
-                .WithMany(m => m.CoursesMemberships)
-                .HasForeignKey(m => m.UserId)
-                .OnDelete(DeleteBehavior.Restrict),
-            e => e.HasOne(c => c.Course)
-                .WithMany(c => c.CourseMemberships)
-                .HasForeignKey(c => c.CourseId)
-                .OnDelete(DeleteBehavior.Restrict),
-            m => m.HasKey(t => new {t.CourseId, t.UserId})
-        );
+            e => e.TeacherOf
+        ).UsingEntity(e =>
+        {
+            e.ToTable("course_teacher");
+            e.Property("TeacherOfId").HasColumnName("course_id");
+            e.Property("TeachersId").HasColumnName("teacher_id");
+        });
+        
     }
 }
 
-public class MembershipEntityConfiguration : IEntityTypeConfiguration<Membership>
-{
-    public void Configure(EntityTypeBuilder<Membership> builder)
-    {
-        builder.ToTable("memberships");
-        
-        builder.Property(e => e.UserId).HasColumnName("user_id");
-        builder.Property(e => e.CourseId).HasColumnName("course_id");
-        builder.Property(e => e.IsTeacher).HasColumnName("is_teacher");
-    }
-}
