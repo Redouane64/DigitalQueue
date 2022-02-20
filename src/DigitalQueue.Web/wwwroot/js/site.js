@@ -8,7 +8,6 @@ $(document).ready(function() {
             method: 'POST',
             url: '/api/teachers/search',
             delay: 300,
-            contentType: 'application/json'
         },
         placeholder: 'Search for a teachers',
         minimumInputLength: 2,

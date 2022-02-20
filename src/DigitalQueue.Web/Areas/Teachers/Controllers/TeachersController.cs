@@ -1,4 +1,6 @@
-using DigitalQueue.Web.Areas.Teachers.Services;
+using DigitalQueue.Web.Areas.Teachers.Commands;
+
+using MediatR;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -12,18 +14,18 @@ namespace DigitalQueue.Web.Areas.Teachers.Controllers;
 [Produces("application/json")]
 public class TeachersController : ControllerBase
 {
-    private readonly TeachersService _teachersService;
+    private readonly IMediator _mediator;
 
-    public TeachersController(TeachersService teachersService)
+    public TeachersController(IMediator mediator)
     {
-        _teachersService = teachersService;
+        _mediator = mediator;
     }
     
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     [HttpPost("search", Name = nameof(Search))]
-    public async Task<IActionResult> Search([FromQuery(Name = "q")] string? q)
+    [Consumes("application/x-www-form-urlencoded")]
+    public async Task<IActionResult> Search([FromForm] string q)
     {
-        // TODO: update logic to work with database
-        return Ok(await this._teachersService.Search(q));
+        return Ok(await _mediator.Send(new SearchTeacherCommand(q)));
     }
 }
