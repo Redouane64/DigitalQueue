@@ -1,4 +1,4 @@
-namespace DigitalQueue.Web.Areas.Accounts.Dtos;
+namespace DigitalQueue.Web.Areas.Common.Dtos;
 
 public class SearchResult<T>
 {
