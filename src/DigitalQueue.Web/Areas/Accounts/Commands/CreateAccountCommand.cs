@@ -15,6 +15,16 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
 public class CreateAccountCommand : IRequest<AccessTokenDto?>
 {
+    protected string[] _roles = null;
+
+    public CreateAccountCommand()
+    { }
+
+    public CreateAccountCommand(string[] roles)
+    {
+        _roles = roles;
+    }
+    
     [Required]
     [EmailAddress]
     public string Email { get; set; }
@@ -31,10 +41,7 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
     [Required]
     [Compare(nameof(Password))]
     public string ConfirmPassword { get; set; }
-
-    [BindNever]
-    public string[]? Roles { get; set; }
-
+    
     public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, AccessTokenDto?>
     {
         private readonly UserManager<User> _userManager;
@@ -79,8 +86,8 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                     return null;
                 }
 
-                request.Roles = new[] {RoleDefaults.User};
-                var assignRole = await _userManager.AddToRolesAsync(user, request.Roles);
+                request._roles ??= new[] { RoleDefaults.User };
+                var assignRole = await _userManager.AddToRolesAsync(user, request._roles);
                 if (!assignRole.Succeeded)
                 {
                     await transaction.RollbackAsync(cancellationToken);
@@ -94,7 +101,7 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.NameIdentifier, user.Id)
                 };
-                var roleClaims = request.Roles.Select(
+                var roleClaims = request._roles.Select(
                     role => new Claim(ClaimTypes.Role, role)
                 );
 
