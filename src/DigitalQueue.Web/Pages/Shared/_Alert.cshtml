@@ -1,0 +1,19 @@
+@model dynamic
+
+@{
+    string GetCssClass(bool success)
+    {
+        return success ? "alert-success" : "alert-danger";
+    }
+
+    string GetAlertTitle(bool success)
+    {
+        return success ? "Hoooray!" : "Oh snap!";
+    }
+}
+
+<div class="alert alert-dismissible @GetCssClass(Model.Status)">
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <strong>@GetAlertTitle(Model.Status)</strong>
+    @(Model.Status ? Model.SuccessMessage : Model.ErrorMessage)
+</div>

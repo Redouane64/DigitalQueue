@@ -10,17 +10,17 @@
     ViewData["isOwner"] = User.FindFirstValue(ClaimTypes.NameIdentifier) == RouteData.Values["id"]?.ToString();
     
     // Post result temp data
-    var result = TempData["PostResultMessage"] as Boolean?;
+    bool? showAlert = TempData["PostResultMessage"] as bool?;
 }
 
 <div class="container mt-lg-5">
-    @if (result.HasValue)
+    @if (showAlert.HasValue)
     {
-        <div class="alert alert-dismissible @(result.Value ? "alert-success" : "alert-danger")">
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            <strong>@(result.Value ? "Hoooray!" : "Oh snap!")</strong> 
-            @(result.Value ? "User updated successfully." : "Something went wrong.")
-        </div>
+        <partial name="_Alert" model="@(new {
+                                          Status = showAlert.Value, 
+                                          SuccessMessage = "User updated successfully.", 
+                                          ErrorMessage = "Something went wrong." 
+                                      })"/>
     }
     <div class="row">
         <div class="col-6">
