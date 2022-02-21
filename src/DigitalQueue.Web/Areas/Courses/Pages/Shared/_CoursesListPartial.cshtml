@@ -1,9 +1,12 @@
-@model IEnumerable<Course>
+@model IEnumerable<CourseDto>
 
 <table class="table">
     <thead>
     <tr>
+        <th></th>
         <th>Title</th>
+        <th># Students</th>
+        <th># Teachers</th>
         <th>Actions</th>
     </tr>
     </thead>
@@ -22,8 +25,20 @@
         {
             <tr>
                 <td>
+                    <span class="fa fa-book"></span>
+                </td>
+                <td class="text-capitalize">
                     @course.Title
-                </td> 
+                </td>
+                <td>
+                    @course.StudentsCount
+                </td>
+                <td>
+                    @course.TeachersCount
+                </td>
+                <td>
+                    <a href="#">View Details</a>
+                </td>
             </tr>
         }
     }

@@ -33,8 +33,15 @@ public class CreateCourseModel : PageModel
         
     }
 
-    public async Task OnPost()
+    public async Task<IActionResult> OnPost()
     {
-        await this._mediator.Send(new CreateCourseCommand(Title, Teachers));
+        var course = await this._mediator.Send(new CreateCourseCommand(Title, Teachers));
+
+        if (course is null)
+        {
+            return Page();
+        }
+
+        return RedirectToPagePermanent("Index");
     }
 }

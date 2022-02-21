@@ -1,6 +1,7 @@
 using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Areas.Accounts.Queries;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Areas.Courses.Dtos;
+using DigitalQueue.Web.Areas.Courses.Queries;
 
 using MediatR;
 
@@ -21,11 +22,12 @@ public class Index : PageModel
 
     public IEnumerable<UserDto> Users { get; set; }
 
-    public IEnumerable<Course> Courses { get; set; }
+    public IEnumerable<CourseDto> Courses { get; set; }
 
     public async Task OnGet()
     {
         ViewData["fullList"] = false;
         Users = await this._mediator.Send(new GetUsersQuery());
+        Courses = await this._mediator.Send(new GetCoursesQuery());
     }
 }
