@@ -42,6 +42,7 @@ public class CreateCourseModel : PageModel
             return Page();
         }
 
+        HttpContext.Session.SetInt32("redirect_from_success_create", 1);
         return RedirectToPagePermanent("Index");
     }
 }

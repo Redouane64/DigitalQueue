@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 
@@ -60,6 +62,23 @@ public class CreateCourseCommand : IRequest<Course?>
                     };
 
                     await _context.AddAsync(course, cancellationToken);
+
+                    foreach (var teacher in teachers)
+                    {
+                        var result = await _userManager.AddClaimAsync(
+                            teacher, 
+                            new Claim(
+                                ClaimTypesDefaults.Teacher, 
+                                course.Id
+                            )
+                        );
+                        if (!result.Succeeded)
+                        {
+                            await transaction.RollbackAsync(cancellationToken);
+
+                            return null;
+                        }
+                    }
                     
                     await _context.SaveChangesAsync(cancellationToken);
                     await transaction.CommitAsync(cancellationToken);

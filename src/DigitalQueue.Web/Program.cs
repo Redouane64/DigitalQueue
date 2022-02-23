@@ -16,6 +16,11 @@ builder.Services.AddRouting(options =>
     options.AppendTrailingSlash = true;
 });
 
+builder.Services.AddSession(options =>
+{
+    options.Cookie.MaxAge = TimeSpan.FromMinutes(5);
+});
+
 builder.Services.AddMediatR(typeof(Program).Assembly);
 
 builder.Services.AddHttpContextAccessor();
@@ -47,6 +52,8 @@ app.UseCors("_AnyClient");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapRazorPages();
 app.MapControllers();

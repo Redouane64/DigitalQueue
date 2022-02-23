@@ -3,8 +3,20 @@
 
 @{
     ViewData["Title"] = "Courses";
+    
+    // was a redirect from success course create action?
+    var RedirectFromSuccessCreate = HttpContext.Session.GetInt32("redirect_from_success_create");
 }
 
 <div class="container-md mt-lg-5">
-    <partial name="Shared/_CoursesListPartial" for="Courses" />
+    @if (RedirectFromSuccessCreate.GetValueOrDefault() == 1)
+    {
+        HttpContext.Session.Remove("redirect_from_success_create");
+        <partial name="_Alert" model="@(new {
+                                          Status = true, 
+                                          SuccessMessage = "Course created successfully.", 
+                                          ErrorMessage = ""
+                                      })"/>
+    }
+    <partial name="Shared/_CoursesListPartial" for="Courses"/>
 </div>

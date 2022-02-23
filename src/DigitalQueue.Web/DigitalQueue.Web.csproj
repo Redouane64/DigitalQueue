@@ -25,10 +25,4 @@
     <_ContentIncludedByDefault Remove="Areas\Courses\Shared\_CoursesListPartial.cshtml" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\Accounts\Services" />
-    <Folder Include="Areas\Courses\Controllers" />
-    <Folder Include="Areas\Teachers\Services" />
-  </ItemGroup>
-
 </Project>
