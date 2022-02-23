@@ -24,7 +24,8 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
             e.Property("TeacherOfId").HasColumnName("course_id");
             e.Property("TeachersId").HasColumnName("teacher_id");
         });
-        
+
+        builder.HasIndex(e => e.Title).IsUnique();
     }
 }
 

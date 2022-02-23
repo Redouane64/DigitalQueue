@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
 using DigitalQueue.Web.Areas.Courses.Commands;
+using DigitalQueue.Web.Areas.Courses.Queries;
 
 using MediatR;
 
@@ -35,10 +36,19 @@ public class CreateCourseModel : PageModel
 
     public async Task<IActionResult> OnPost()
     {
+        var existingCourse = await this._mediator.Send(new GetCourseByName(Title));
+
+        if (existingCourse is not null)
+        {
+            ModelState.AddModelError(nameof(Title), "Course with same name already exisits.");
+            return Page();
+        }
+        
         var course = await this._mediator.Send(new CreateCourseCommand(Title, Teachers));
 
         if (course is null)
         {
+            ModelState.AddModelError("", "Unable to create course");
             return Page();
         }
 
