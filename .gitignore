@@ -454,3 +454,6 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 *.db*
+
+# client side library installation dir
+src/DigitalQueue.Web/wwwroot/lib
