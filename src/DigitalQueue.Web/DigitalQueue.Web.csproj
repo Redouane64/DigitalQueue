@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Areas\Courses\Shared\_CoursesListPartial.cshtml" />
+    <Folder Include="wwwroot\lib" />
   </ItemGroup>
 
 </Project>
