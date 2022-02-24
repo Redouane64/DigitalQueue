@@ -13,14 +13,14 @@
             <th>Roles</th>
             <th>E-mail</th>
         }
-        <th><i class="fa fa-sm fa-tools m-1"></i>Actions</th>
+        <th><i class="fa fa-tools m-1"></i>Actions</th>
     </tr>
     </thead>
     <tbody>
     @if (Model is null || Model?.Count() == 0)
     {
         <tr>
-            <td colspan="3">
+            <td colspan="@(fullList ? 5 : 3)">
                 <i>No Users</i>
             </td> 
         </tr>
@@ -30,7 +30,7 @@
         foreach (var user in Model)
         {
             <tr>
-                <td><i class="fa fa-cog fa-fw fa-user-circle"></i></td>
+                <td><i class="fa fa-user-circle"></i></td>
                 <td>
                     @user.FullName
                 </td>

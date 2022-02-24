@@ -7,7 +7,6 @@
     <title>@ViewData["Title"] - Digital Queue Administrator Dashboard</title>
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap-icons/bootstrap-icons.svg" />
     <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
@@ -29,17 +28,17 @@
                         <ul class="navbar-nav flex-grow-1 justify-content-start nav-pills">
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="Courses" asp-page="Index">
-                                    <i class="fa fa-cog fa-fw fa-list m-1"></i>Courses
+                                    <i class="fa fa-list m-1"></i>Courses
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="Courses" asp-page="CreateCourse">
-                                    <i class="fa fa-cog fa-fw fa-plus-circle m-1"></i>Create New Course
+                                    <i class="fa fa-plus-circle m-1"></i>Create New Course
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="Accounts" asp-page="Index">
-                                    <i class="fa fa-cog fa-fw fa-users m-1"></i>Users
+                                    <i class="fa fa-users m-1"></i>Users
                                 </a>
                             </li>
                         </ul>
@@ -49,18 +48,18 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="Dashboard" asp-page="Index">
-                                    <i class="fa fa-cog fa-fw fa-dashboard m-1"></i>Dashboard
+                                    <i class="fa fa-dashboard m-1"></i>Dashboard
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="Accounts" asp-page="Profile" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)">
-                                    <i class="fa fa-cog fa-fw fa-user m-1"></i>Account
+                                    <i class="fa fa-user m-1"></i>Account
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <form asp-area="Accounts" asp-page="Login" asp-page-handler="SignOut">
                                     <button type="submit" class="nav-link text-white">
-                                        <i class="fa fa-cog fa-fw fa-sign-out-alt m-1"></i>Sign Out
+                                        <i class="fa fa-sign-out-alt m-1"></i>Sign Out
                                     </button>
                                 </form>
                             </li>
@@ -69,7 +68,7 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="Accounts" asp-page="Login">
-                                    <i class="fa fa-cog fa-fw fa-sign-in-alt m-1"></i>Sign In
+                                    <i class="fa fa-sign-in-alt m-1"></i>Sign In
                                 </a>
                             </li>
                         }
