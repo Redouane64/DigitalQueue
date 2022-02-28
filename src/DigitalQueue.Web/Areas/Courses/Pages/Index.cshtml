@@ -12,11 +12,12 @@
     @if (RedirectFromSuccessCreate.GetValueOrDefault() == 1)
     {
         HttpContext.Session.Remove("redirect_from_success_create");
-        <partial name="_Alert" model="@(new {
-                                          Status = true, 
-                                          SuccessMessage = "Course created successfully.", 
-                                          ErrorMessage = ""
-                                      })"/>
+        
+        @await Component.InvokeAsync("Alert", new
+        {
+            success=true, 
+            message="Course created successfully."
+        })
     }
     <partial name="Shared/_CoursesListPartial" for="Courses"/>
 </div>

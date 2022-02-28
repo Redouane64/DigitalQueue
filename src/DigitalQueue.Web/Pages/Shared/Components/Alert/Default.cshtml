@@ -1,0 +1,7 @@
+@model dynamic
+
+<div class="alert alert-dismissible @(Model.success ? "alert-success" : "alert-danger")">
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <strong>@(Model.success ? "Hoooray!" : "Oh snap!")</strong>
+    @Model.message
+</div>

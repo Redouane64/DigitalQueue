@@ -1,5 +1,6 @@
 @page "{id}"
 
+@using DigitalQueue.Web.Pages.Shared.Components.Alert
 @model ProfileModel
 
 @{
@@ -16,11 +17,11 @@
 <div class="container mt-lg-5">
     @if (showAlert.HasValue)
     {
-        <partial name="_Alert" model="@(new {
-                                          Status = showAlert.Value, 
-                                          SuccessMessage = "User updated successfully.", 
-                                          ErrorMessage = "Something went wrong." 
-                                      })"/>
+        @await Component.InvokeAsync("Alert", new
+        {
+            success=showAlert.Value, 
+            message=(showAlert.Value ? "User updated successfully." : "Something went wrong.")
+        })
     }
     <div class="row">
         <div class="col-6">
@@ -56,15 +57,17 @@
                     }
                     else
                     {
-                        foreach (var claim in Model.Profile.Claims)
+                        @foreach (var claim in Model.Profile.Claims)
                         {
+                        <div class="mt-3">
                             <strong>@claim.Claim</strong>
-                            <dl>
-                                @foreach (var value in claim.Values)
-                                {
-                                    <dt>@value</dt>
-                                }
-                            </dl>
+                            <ul class="list-group">
+                            @foreach (var value in claim.Values)
+                            {
+                                <li class="list-group-item">@value</li>
+                            }
+                            </ul>
+                        </div>
                         }
                     }
                 </div>
