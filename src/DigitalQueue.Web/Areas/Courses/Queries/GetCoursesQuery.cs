@@ -28,7 +28,7 @@ public class GetCoursesQuery : IRequest<IEnumerable<CourseDto>>
                         c.Id,
                         c.Title, 
                         c.Teachers.Count, 
-                        0 /* TODO: */
+                        0
                     )
                 )
                 .ToArrayAsync(cancellationToken);

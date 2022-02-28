@@ -36,9 +36,8 @@ public class GetCourseByName : IRequest<CourseDto?>
             {
                 return null;
             }
-
-            // TODO: make count args optional
-            return new CourseDto(course.Id, course.Title, 0, 0);
+            
+            return new CourseDto(course.Id, course.Title);
         }
     }
 }
