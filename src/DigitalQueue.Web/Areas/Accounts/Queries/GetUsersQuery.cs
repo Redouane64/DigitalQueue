@@ -36,10 +36,10 @@ public class GetUsersQuery : IRequest<IEnumerable<UserDto>>
         {
             // TODO: add pagination
 
-            var callerUserId = this._httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentUser = await this._userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
         
             var users = this._userManager.Users
-                .Where(user => user.Id != callerUserId)
+                .Where(user => user.Id != currentUser.Id)
                 .ToArray();
             
             var allUsers = new List<UserDto>();
