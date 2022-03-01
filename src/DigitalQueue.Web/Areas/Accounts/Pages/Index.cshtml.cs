@@ -1,6 +1,3 @@
-using DigitalQueue.Web.Areas.Accounts.Dtos;
-using DigitalQueue.Web.Areas.Accounts.Queries;
-
 using MediatR;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -19,11 +16,7 @@ public class Index : PageModel
         _mediator = mediator;
     }
     
-    public IEnumerable<UserDto> Users { get; set; }
-    
     public async Task OnGet()
     {
-        ViewData["fullList"] = true;
-        Users = await this._mediator.Send(new GetUsersQuery());
     }
 }

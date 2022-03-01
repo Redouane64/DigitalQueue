@@ -32,7 +32,11 @@ public class GetUserQuery : IRequest<UserDto?>
         
         public async Task<UserDto?> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
-            var user = await this._userManager.FindByIdAsync(request.Id);
+            var user = await this._userManager.Users
+                .AsNoTracking()
+                .Include(e => e.TeacherOf)
+                .FirstOrDefaultAsync(u => u.Id == request.Id, cancellationToken);
+            
             if (user is null)
             {
                 return null;

@@ -9,11 +9,11 @@
     <div class="row">
         <div class="col-6">
             <h3><i class="fa fa-cog fa-fw fa-list m-1"></i>Courses</h3>
-            @await Html.PartialAsync("~/Areas/Courses/Pages/Shared/_CoursesListPartial.cshtml", Model.Courses, new ViewDataDictionary(ViewData))
+            @await Component.InvokeAsync("CoursesList")
         </div>
         <div class="col-6">
             <h3><i class="fa fa-cog fa-fw fa-users m-1"></i>Users</h3>
-            @await Html.PartialAsync("~/Areas/Accounts/Pages/Shared/_UsersListPartial.cshtml", Model.Users, new ViewDataDictionary(ViewData))
+            @await Component.InvokeAsync("UsersList")
         </div>
     </div>
 </div>

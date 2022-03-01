@@ -1,6 +1,3 @@
-using DigitalQueue.Web.Areas.Courses.Dtos;
-using DigitalQueue.Web.Areas.Courses.Queries;
-
 using MediatR;
 
 using Microsoft.AspNetCore.Authorization;
@@ -18,10 +15,7 @@ public class Index : PageModel
         _mediator = mediator;
     }
     
-    public IEnumerable<CourseDto> Courses { get; set; }
-    
     public async Task OnGet()
     {
-        Courses = await _mediator.Send(new GetCoursesQuery());
     }
 }

@@ -19,5 +19,6 @@
             message="Course created successfully."
         })
     }
-    <partial name="Shared/_CoursesListPartial" for="Courses"/>
+    
+    @await Component.InvokeAsync("CoursesList")
 </div>

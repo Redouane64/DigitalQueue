@@ -1,14 +1,11 @@
-@model IEnumerable<UserDto>
+@model UsersListDto
 
-@{
-    var fullList = (bool)ViewData["fullList"];
-}
 <table class="table table-striped table-hover">
     <thead>
     <tr>
         <th></th>
         <th>Name</th>
-        @if (fullList)
+        @if (Model.FullView)
         {
             <th>Roles</th>
             <th>E-mail</th>
@@ -17,24 +14,16 @@
     </tr>
     </thead>
     <tbody>
-    @if (Model is null || Model?.Count() == 0)
+    @if (Model.Users.Any())
     {
-        <tr>
-            <td colspan="@(fullList ? 5 : 3)">
-                <i>No Users</i>
-            </td> 
-        </tr>
-    }
-    else
-    {
-        foreach (var user in Model)
+        foreach (var user in Model.Users)
         {
             <tr>
                 <td><i class="fa fa-user-circle"></i></td>
                 <td>
                     @user.FullName
                 </td>
-                @if (fullList)
+                @if (Model.FullView)
                 {
                     <td>
                         @foreach (var role in user.Roles)
@@ -51,6 +40,14 @@
                 </td>
             </tr>
         }
+    }
+    else
+    {
+        <tr>
+            <td colspan="@(Model.FullView ? 5 : 3)">
+                <i>No Users</i>
+            </td> 
+        </tr>
     }
     </tbody>
 </table>
