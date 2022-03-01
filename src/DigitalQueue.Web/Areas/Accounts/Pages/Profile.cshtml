@@ -1,10 +1,9 @@
 @page "{id}"
 
-@using DigitalQueue.Web.Pages.Shared.Components.Alert
 @model ProfileModel
 
 @{
-    ViewData["Title"] = $"{Model.Profile!.Username}'s Profile";
+    ViewData["Title"] = $"{Model.Profile!.Email}'s Profile";
 
     ViewData["id"] = RouteData.Values["id"];
     // A flag to determine of user view his own profile or another user's profile.
@@ -24,9 +23,9 @@
         })
     }
     <div class="row">
-        <div class="col-6">
+        <div class="col-6 mt-lg-3">
             <p class="h4"><i class="fa fa-fw fa-user m-1"></i>Basic Info</p>
-            <div class="row-cols-3 mt-lg-4 mb-5">
+            <div class="row-cols-3">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" value="@Model.Profile.Email" readonly>
@@ -46,38 +45,14 @@
             }
         </div>
         <div class="col-6">
-            <p class="h4">Account Roles & Permissions</p>
-
             <div class="row mt-lg-3">
-                <div class="col">
-                    <p class="h5"><i class="fa fa-fw fa-keyboard m-1"></i>Permissions</p>
-                    @if (!Model.Profile.Claims.Any())
-                    {
-                        <i class="text-muted">No permissions assigned.</i>
-                    }
-                    else
-                    {
-                        @foreach (var claim in Model.Profile.Claims)
-                        {
-                        <div class="mt-3">
-                            <strong>@claim.Claim</strong>
-                            <ul class="list-group">
-                            @foreach (var value in claim.Values)
-                            {
-                                <li class="list-group-item">@value</li>
-                            }
-                            </ul>
-                        </div>
-                        }
-                    }
-                </div>
+                <p class="h4">Account Roles & Permissions</p>
+                @await Component.InvokeAsync("PermissionsList", new { claims = Model.Profile.Claims })
             </div>
 
             <div class="row mt-lg-5">
-                <div class="col">
-                    <p class="h5"><i class="fa fa-fw fa-key m-1"></i>Roles</p>
-                    <partial name="_RolesListPartial" model="Model.Profile.Roles" view-data="new ViewDataDictionary(ViewData)"/>
-                </div>
+                <p class="h5"><i class="fa fa-fw fa-key m-1"></i>Roles</p>
+                @await Component.InvokeAsync("RolesList", new { roles = Model.Profile.Roles, userId = RouteData.Values["id"] })
             </div>
         </div>
     </div>
