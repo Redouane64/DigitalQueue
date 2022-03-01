@@ -12,7 +12,7 @@
     }
     <div class="row">
         <form method="post" asp-page-handler="UpdateRoles">
-            <input type="hidden" name="id" value="@ViewData["id"]" >
+            <input type="hidden" name="id" value="@Model.UserId" >
             <div class="form-group">
                 <select type="text" name="roles" id="roles" class="form-control user-roles" multiple="multiple" disabled="@Model.Editable">
                     @foreach (var role in Model.Roles)

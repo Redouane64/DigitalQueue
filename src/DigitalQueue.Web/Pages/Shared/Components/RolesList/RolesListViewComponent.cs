@@ -20,6 +20,6 @@ public class RolesListViewComponent : ViewComponent
         var editable = _httpContextAccessor.HttpContext
             .User.FindFirstValue(ClaimTypes.NameIdentifier).Equals(userId);
         
-        return View(new UserRolesDto(roles, editable));
+        return View(new UserRolesDto(roles, userId, editable));
     }
 }
