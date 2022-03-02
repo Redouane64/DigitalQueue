@@ -28,13 +28,13 @@
                     <input type="email" class="form-control" id="fullname" value="@Model.Profile.FullName" readonly>
                 </div>
             </div>
-            @if (RouteData.Values["id"] is null)
+            @if (RouteData.Values["id"].Equals(User.FindFirstValue(ClaimTypes.NameIdentifier)))
             {
-                <div class="row-cols-3">
+                <div class="row-cols mt-lg-5">
                     <p class="h4"><i class="fa fa-fw fa-tools m-1"></i>Actions</p>
-                    <div class="mt-lg-4">
-                        <a href="#" class="btn btn-lg btn-primary">Change E-mail</a>
-                        <a href="#" class="btn btn-lg btn-secondary">Change Password</a>
+                    <div class="btn-group btn-group-lg">
+                        <a href="#" class="btn btn-primary">Change E-mail</a>
+                        <a href="#" class="btn btn-primary">Change Password</a>
                     </div>
                 </div>
             }
