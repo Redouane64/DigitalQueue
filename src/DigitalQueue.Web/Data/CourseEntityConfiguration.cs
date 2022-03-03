@@ -13,6 +13,13 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
         
         builder.Property(e => e.Id).HasColumnName("id");
         builder.Property(e => e.Title).HasColumnName("title");
+        builder.Property(e => e.CreateAt)
+            .HasColumnName("create_at")
+            .ValueGeneratedOnAdd();
+        
+        builder.Property(e => e.UpdatedAt)
+            .HasColumnName("updated_at")
+            .ValueGeneratedOnUpdate();
         
         builder.HasMany(
             e => e.Teachers

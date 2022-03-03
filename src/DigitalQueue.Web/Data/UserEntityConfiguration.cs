@@ -29,5 +29,13 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.NormalizedEmail).HasColumnName("normalized_email");
         builder.Property(e => e.NormalizedUserName).HasColumnName("normalized_username");
         builder.Property(e => e.PasswordHash).HasColumnName("password_hash");
+        
+        builder.Property(e => e.CreateAt)
+            .HasColumnName("create_at")
+            .ValueGeneratedOnAdd();
+        
+        builder.Property(e => e.UpdatedAt)
+            .HasColumnName("updated_at")
+            .ValueGeneratedOnUpdate();
     }
 }

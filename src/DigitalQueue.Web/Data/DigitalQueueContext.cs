@@ -28,6 +28,37 @@ public class DigitalQueueContext : IdentityDbContext<User>
         builder.ApplyConfiguration(new CourseEntityConfiguration());
     }
 
+    public override int SaveChanges()
+    {
+        SetCreateAtAndUpdatedAtFields();
+        return base.SaveChanges();
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    {
+        SetCreateAtAndUpdatedAtFields();
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void SetCreateAtAndUpdatedAtFields()
+    {
+        var entries = ChangeTracker
+            .Entries()
+            .Where(e => e.Entity is IBaseEntity && (
+                e.State == EntityState.Added
+                || e.State == EntityState.Modified));
+
+        foreach (var entityEntry in entries)
+        {
+            ((IBaseEntity) entityEntry.Entity).UpdatedAt = DateTime.Now;
+
+            if (entityEntry.State == EntityState.Added)
+            {
+                ((IBaseEntity) entityEntry.Entity).CreateAt = DateTime.Now;
+            }
+        }
+    }
+
     public DbSet<Course> Courses { get; set; }
     
 }
