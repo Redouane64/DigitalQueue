@@ -18,6 +18,7 @@ public class UserDto
     public string Email { get; }
     public string Username { get; }
     public string FullName { get; }
+    public DateTime CreatedAt { get; set; }
     public IEnumerable<RoleDto> Roles { get; }
     public IEnumerable<ClaimDto> Claims { get; }
     

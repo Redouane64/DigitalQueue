@@ -16,9 +16,9 @@ public class CoursesListViewComponent : ViewComponent
         _mediator = mediator;
     }
 
-    public async Task<IViewComponentResult> InvokeAsync()
+    public async Task<IViewComponentResult> InvokeAsync(int? page, int? pageSize, bool fullList = true)
     {
         var courses = await _mediator.Send(new GetCoursesQuery());
-        return View(new CoursesListDto(courses));
+        return View(new CoursesListDto(courses, fullView: fullList));
     }
 }

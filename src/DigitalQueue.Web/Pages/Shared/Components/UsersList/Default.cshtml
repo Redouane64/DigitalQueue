@@ -1,6 +1,6 @@
 @model UsersListDto
 
-<table class="table table-striped table-hover">
+<table class="table table-striped table-hover @(Model.FullView ? "" : "table-sm")">
     <thead>
     <tr>
         <th></th>
@@ -9,6 +9,10 @@
         {
             <th>Roles</th>
             <th>E-mail</th>
+        }
+        else
+        {
+            <th>Created</th>
         }
         <th><i class="fa fa-tools m-1"></i>Actions</th>
     </tr>
@@ -33,6 +37,12 @@
                     </td>
                     <td>
                         <strong class="text-lowercase">@user.Email</strong>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @user.CreatedAt.Humanize(utcDate: false)
                     </td>
                 }
                 <td>

@@ -18,6 +18,8 @@ public record CourseDto
 
     public string Id { get; init; }
     public string Title { get; init; }
+    public int Year { get; set; }
+    public DateTime CreatedAt { get; set; }
     public int TeachersCount { get; init; }
     public int StudentsCount { get; init; }
 

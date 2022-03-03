@@ -22,6 +22,7 @@ public class GetCoursesQuery : IRequest<IEnumerable<CourseDto>>
         public async Task<IEnumerable<CourseDto>> Handle(GetCoursesQuery request, CancellationToken cancellationToken)
         {
             var courses = await _context.Courses
+                .OrderByDescending(c => c.CreateAt)
                 .Include(c => c.Teachers)
                 .Select(
                     c => new CourseDto(
@@ -29,7 +30,10 @@ public class GetCoursesQuery : IRequest<IEnumerable<CourseDto>>
                         c.Title, 
                         c.Teachers.Count, 
                         0
-                    )
+                    ) {
+                        Year = c.Year,
+                        CreatedAt = c.CreateAt
+                    }
                 )
                 .ToArrayAsync(cancellationToken);
 

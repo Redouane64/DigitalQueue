@@ -1,12 +1,17 @@
 @model CoursesListDto
 
-<table class="table table-striped table-hover">
+<table class="table table-striped table-hover @(Model.FullView ? "" : "table-sm")">
     <thead>
     <tr>
         <th></th>
         <th>Title</th>
-        <th># Students</th>
-        <th># Teachers</th>
+        <th>Year</th>
+        @if (Model.FullView)
+        {
+            <th>Teachers</th>
+            <th>Students</th>
+        }
+        <th>Created</th>
         <th><i class="fa fa-tools m-1"></i>Actions</th>
     </tr>
     </thead>
@@ -23,10 +28,19 @@
                     @course.Title
                 </td>
                 <td>
-                    @course.StudentsCount
+                    @course.Year
                 </td>
+                @if (Model.FullView)
+                {
+                    <td>
+                        @course.TeachersCount
+                    </td>
+                    <td>
+                        @course.StudentsCount
+                    </td>
+                }
                 <td>
-                    @course.TeachersCount
+                    @course.CreatedAt.Humanize(utcDate: false)
                 </td>
                 <td>
                     <a href="#">View Details</a>

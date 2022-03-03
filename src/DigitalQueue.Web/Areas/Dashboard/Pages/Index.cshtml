@@ -9,11 +9,11 @@
     <div class="row">
         <div class="col-6">
             <h3><i class="fa fa-cog fa-fw fa-list m-1"></i>Courses</h3>
-            @await Component.InvokeAsync("CoursesList")
+            @await Component.InvokeAsync("CoursesList", new { fullList = false })
         </div>
         <div class="col-6">
             <h3><i class="fa fa-cog fa-fw fa-users m-1"></i>Users</h3>
-            @await Component.InvokeAsync("UsersList")
+            @await Component.InvokeAsync("UsersList", new { fullList = false })
         </div>
     </div>
 </div>

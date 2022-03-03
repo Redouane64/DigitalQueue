@@ -40,6 +40,7 @@ public class GetUsersQuery : IRequest<IEnumerable<UserDto>>
         
             var users = this._userManager.Users
                 .Where(user => user.Id != currentUser.Id)
+                .OrderByDescending(u => u.CreateAt)
                 .ToArray();
             
             var allUsers = new List<UserDto>();
@@ -49,7 +50,10 @@ public class GetUsersQuery : IRequest<IEnumerable<UserDto>>
                 var roles = await this._userManager.GetRolesAsync(user);
                 var claims = await this._userManager.GetClaimsAsync(user);
 
-                allUsers.Add(new UserDto(user, await ToRolesDtos(roles), ToClaimsDtos(claims)));
+                allUsers.Add(new UserDto(user, await ToRolesDtos(roles), ToClaimsDtos(claims))
+                {
+                    CreatedAt = user.CreateAt
+                });
             }
 
             return allUsers;
