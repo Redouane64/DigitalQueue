@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 using DigitalQueue.Web.Areas.Courses.Commands;
@@ -29,6 +30,8 @@ public class CreateCourseModel : PageModel
     [Required]
     public string[] Teachers { get; set; }
 
+    public int? Year { get; set; }
+
     public void OnGet()
     {
         
@@ -36,7 +39,7 @@ public class CreateCourseModel : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        var existingCourse = await this._mediator.Send(new GetCourseByName(Title));
+        var existingCourse = await this._mediator.Send(new GetCourseByQuery(Title));
 
         if (existingCourse is not null)
         {

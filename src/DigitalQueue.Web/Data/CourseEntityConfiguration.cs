@@ -13,6 +13,8 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
         
         builder.Property(e => e.Id).HasColumnName("id");
         builder.Property(e => e.Title).HasColumnName("title");
+        builder.Property(e => e.Year).HasColumnName("year");
+
         builder.Property(e => e.CreateAt)
             .HasColumnName("create_at")
             .ValueGeneratedOnAdd();
@@ -32,7 +34,7 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
             e.Property("TeachersId").HasColumnName("teacher_id");
         });
 
-        builder.HasIndex(e => e.Title).IsUnique();
+        builder.HasIndex(e => new { e.Title, e.Year }).IsUnique();
     }
 }
 

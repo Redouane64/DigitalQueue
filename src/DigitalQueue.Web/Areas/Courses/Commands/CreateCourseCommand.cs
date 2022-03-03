@@ -15,10 +15,11 @@ namespace DigitalQueue.Web.Areas.Courses.Commands;
 
 public class CreateCourseCommand : IRequest<Course?>
 {
-    public CreateCourseCommand(string title, string[] teachers)
+    public CreateCourseCommand(string title, string[] teachers, int? year = null)
     {
         Title = title;
         Teachers = teachers;
+        Year = year ?? DateTime.Now.Year;
     }
 
     [Required]
@@ -26,6 +27,8 @@ public class CreateCourseCommand : IRequest<Course?>
 
     [Required]
     public string[]? Teachers { get; }
+    
+    public int Year { get; }
     
     public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, Course?>
     {
@@ -58,7 +61,8 @@ public class CreateCourseCommand : IRequest<Course?>
                     var course = new Course
                     {
                         Title = request.Title, 
-                        Teachers = teachers
+                        Teachers = teachers,
+                        Year = request.Year
                     };
 
                     await _context.AddAsync(course, cancellationToken);
