@@ -1,32 +1,37 @@
 @model UserRolesDto
 
-<div class="col-6">
+<div class="row g-1">
     @if (Model.Editable)
     {
-        <div class="row">
-            <div class="alert alert-dismissible alert-info">
-                <h4 class="alert-heading">Warning!</h4>
-                <p class="mb-0">Only other administrators accounts can update you roles.</p>
-            </div>
+        <div class="alert alert-info">
+            Only an other administrators accounts can update your roles.
         </div>
     }
-    <div class="row">
-        <form method="post" asp-page-handler="UpdateRoles">
-            <input type="hidden" name="id" value="@Model.UserId" >
-            <div class="form-group">
-                <select type="text" name="roles" id="roles" class="form-control user-roles" multiple="multiple" disabled="@Model.Editable">
-                    @foreach (var role in Model.Roles)
-                    {
-                        <option selected="selected" readonly="readonly" value="@role.Text">@role.Text</option>
-                    }
-                </select>
-            </div>
-            <div>
-                <i class="text-secondary small">Note: default role assigned is <strong>User</strong></i>
-            </div>
-            <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-success mt-lg-4" disabled="@Model.Editable">Update</button>
-            </div>
-        </form>
+    else
+    {
+        <div class="col">
+            <form method="post" asp-page-handler="UpdateRoles">
+                <input type="hidden" name="id" value="@Model.UserId">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <select type="text" name="roles" id="roles" class="form-control user-roles" multiple="multiple" disabled="@Model.Editable">
+                        </select>
+                    </div>
+                    <button type="submit" class="col-sm-2 btn btn-outline-success">Add Roles</button>
+                </div>
+            </form>
+        </div>
+    }
+    <div class="w-100"></div>
+    <div class="col">
+        <ul class="list-group list-group mt-3">
+            @foreach (var role in Model.Roles)
+            {
+                <li class="list-group-item text-capitalize">
+                    <i class="fa fa-fw fa-user-cog m-2"></i>
+                    <strong>@role.Text</strong>
+                </li>
+            }
+        </ul>
     </div>
 </div>

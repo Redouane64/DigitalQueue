@@ -8,6 +8,13 @@ public record CourseDto
         this.Title = title;
     }
     
+    public CourseDto(string id, string title, int year)
+    {
+        this.Id = id;
+        this.Title = title;
+        this.Year = year;
+    }
+    
     public CourseDto(string id, string title, int teachersCount, int studentsCount)
     {
         this.Id = id ?? throw new ArgumentNullException(nameof(id));

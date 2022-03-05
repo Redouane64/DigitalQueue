@@ -6,7 +6,7 @@
     ViewData["Title"] = $"{Model.Profile!.Email}'s Profile";
 }
 
-<div class="container mt-lg-5">
+<div class="container p-3">
     @if (TempData["PostResultMessage"] is bool result)
     {
         @await Component.InvokeAsync("Alert", new
@@ -15,40 +15,45 @@
             message=(result ? "User updated successfully." : "Something went wrong.")
         })
     }
-    <div class="row">
-        <div class="col-6 mt-lg-3">
-            <div class="row-cols-3">
-                <p class="h4"><i class="fa fa-fw fa-user m-1"></i>Basic Info</p>
-                <div class="mb-3">
+    <div class="row mt-5">
+        <div class="col m-1">
+            <p class="h4 mb-4"><i class="fa fa-fw fa-user m-1"></i>Basic Info</p>
+            <div class="row">
+                <div class="col-6 mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" value="@Model.Profile.FullName" readonly>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" value="@Model.Profile.Email" readonly>
                 </div>
-                <div class="mb-3">
-                    <label for="fullname" class="form-label">Full Name</label>
-                    <input type="email" class="form-control" id="fullname" value="@Model.Profile.FullName" readonly>
-                </div>
             </div>
+        </div>
+        <div class="col m-1">
+            <p class="h3 mb-4"><i class="fa fa-fw fa-tools m-1"></i>Actions</p>
+            <div class="btn-group-vertical">
             @if (RouteData.Values["id"].Equals(User.FindFirstValue(ClaimTypes.NameIdentifier)))
             {
-                <div class="row-cols mt-lg-5">
-                    <p class="h4"><i class="fa fa-fw fa-tools m-1"></i>Actions</p>
-                    <div class="btn-group btn-group-lg">
-                        <a href="#" class="btn btn-primary">Change E-mail</a>
-                        <a href="#" class="btn btn-primary">Change Password</a>
-                    </div>
-                </div>
+                <button type="button" class="btn btn-outline-dark btn-lg">Update Email</button>
+                <button type="button" class="btn btn-outline-dark btn-lg">Change Password</button>
             }
+            else
+            {
+                <button type="button" class="btn btn-outline-danger btn-lg">Freeze Account</button>
+            }
+            </div>
         </div>
-        <div class="col-6">
-            <div class="row mt-lg-3">
-                <p class="h4">Account Roles & Permissions</p>
-                @await Component.InvokeAsync("PermissionsList", new { claims = Model.Profile.Claims })
-            </div>
-
-            <div class="row mt-lg-5">
-                <p class="h5"><i class="fa fa-fw fa-key m-1"></i>Roles</p>
-                @await Component.InvokeAsync("RolesList", new { roles = Model.Profile.Roles, userId = RouteData.Values["id"] })
-            </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col">
+            <p class="h3 mb-3"><i class="fa fa-fw fa-key m-1"></i>Account Roles</p>
+            @await Component.InvokeAsync("RolesList", new {roles = Model.Profile.Roles, userId = RouteData.Values["id"]})
+        </div>
+        <div class="col">
+            <p class="h3 mb-3"><i class="fa fa-fw fa-book m-1"></i>Courses Roles</p>
+            @await Component.InvokeAsync("PermissionsList", new {claims = Model.Profile.Courses})
         </div>
     </div>
 </div>

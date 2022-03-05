@@ -10,21 +10,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Accounts.Queries;
 
-public class GetUsersQuery : IRequest<IEnumerable<UserDto>>
+public class GetAllUsersQuery : IRequest<IEnumerable<UserDto>>
 {
     
-    public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, IEnumerable<UserDto>>
+    public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumerable<UserDto>>
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<GetUsersQueryHandler> _logger;
+        private readonly ILogger<GetAllUsersQueryHandler> _logger;
 
-        public GetUsersQueryHandler(
+        public GetAllUsersQueryHandler(
             UserManager<User> userManager, 
             RoleManager<IdentityRole> roleManager, 
             IHttpContextAccessor httpContextAccessor,
-            ILogger<GetUsersQueryHandler> logger)
+            ILogger<GetAllUsersQueryHandler> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -32,7 +32,7 @@ public class GetUsersQuery : IRequest<IEnumerable<UserDto>>
             _logger = logger;
         }
         
-        public async Task<IEnumerable<UserDto>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserDto>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
             // TODO: add pagination
 
@@ -65,14 +65,14 @@ public class GetUsersQuery : IRequest<IEnumerable<UserDto>>
                 .Select(role => new RoleDto(role.Name, role.Id))
                 .ToArrayAsync();
 
-        private IEnumerable<ClaimDto> ToClaimsDtos(IEnumerable<Claim> claims) => claims
+        private IEnumerable<CourseRolesDto> ToClaimsDtos(IEnumerable<Claim> claims) => claims
             .Where(claim => 
                 claim.Type is not ClaimTypes.Email && 
                 claim.Type is not ClaimTypes.Role &&
                 claim.Type is not ClaimTypes.NameIdentifier)
             .GroupBy(claim => claim.Type)
             .Select(entry =>
-                new ClaimDto(entry.Key, entry.Select(claim => claim.Value).ToArray())
+                new CourseRolesDto(entry.Key, entry.Select(claim => claim.Value).ToArray())
             );
     }
 }

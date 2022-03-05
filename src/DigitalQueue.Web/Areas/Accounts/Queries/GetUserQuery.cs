@@ -1,6 +1,8 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Dtos;
+using DigitalQueue.Web.Areas.Courses.Dtos;
+using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 
 using MediatR;
@@ -23,11 +25,13 @@ public class GetUserQuery : IRequest<UserDto?>
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly DigitalQueueContext _context;
 
-        public GetUserQueryHandler(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public GetUserQueryHandler(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, DigitalQueueContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _context = context;
         }
         
         public async Task<UserDto?> Handle(GetUserQuery request, CancellationToken cancellationToken)
@@ -45,23 +49,24 @@ public class GetUserQuery : IRequest<UserDto?>
             var roles = await this._userManager.GetRolesAsync(user);
             var claims = await this._userManager.GetClaimsAsync(user);
 
-            return new UserDto(user, await ToRolesDtos(roles), ToClaimsDtos(claims));
+            var userCourses = ToCourseRoles(claims);
+            return new UserDto(user, await ToAccountRoles(roles), userCourses);
         }
         
-        private async Task<RoleDto[]> ToRolesDtos(IEnumerable<string> roles) =>
+        private async Task<RoleDto[]> ToAccountRoles(IEnumerable<string> roles) =>
             await this._roleManager.Roles
                 .Where(role => roles.Contains(role.Name))
                 .Select(role => new RoleDto(role.Name, role.Id))
                 .ToArrayAsync();
 
-        private IEnumerable<ClaimDto> ToClaimsDtos(IEnumerable<Claim> claims) => claims
+        private IEnumerable<CourseRolesDto> ToCourseRoles(IEnumerable<Claim> claims) => claims
             .Where(claim => 
-                claim.Type is not ClaimTypes.Email && 
-                claim.Type is not ClaimTypes.Role &&
-                claim.Type is not ClaimTypes.NameIdentifier)
-            .GroupBy(claim => claim.Type)
+                claim.Type.Equals(ClaimTypesDefaults.Student) || 
+                claim.Type.Equals(ClaimTypesDefaults.Teacher)
+            )
+            .GroupBy(claim => claim.Value)
             .Select(entry =>
-                new ClaimDto(entry.Key, entry.Select(claim => claim.Value).ToArray())
+                new CourseRolesDto(entry.Key, entry.Select(claim => claim.Type).ToArray())
             );
     }
 }

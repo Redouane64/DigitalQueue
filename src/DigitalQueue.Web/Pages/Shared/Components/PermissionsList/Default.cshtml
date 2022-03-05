@@ -1,24 +1,41 @@
 @model UserPermissionsDto
 
-<div class="col-6 mt-lg-3">
-    <p class="h5"><i class="fa fa-fw fa-keyboard m-1"></i>Permissions</p>
-    @if (Model.Claims.Any())
-    {
-        @foreach (var claim in Model.Claims)
-        {
-        <div class="mt-3">
-            <strong>@claim.Claim</strong>
-            <ul class="list-group">
-                @foreach (var value in claim.Values)
+<div class="row g-1">
+    <div class="col">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Roles</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model.Courses.Any())
+            {
+                @foreach (var course in Model.Courses)
                 {
-                    <li class="list-group-item">@value</li>
+                    <tr>
+                        <th scope="row">
+                            <a class="link-dark" asp-area="Courses" asp-page="CourseDetail" asp-route-id="@course.Course.Id">@course.Course.Title</a>
+                        </th>
+                        <td>
+                            @foreach (var role in course.Roles)
+                            {
+                                <span class="badge bg-dark">@role</span>
+                            }
+                        </td>
+                    </tr>
                 }
-            </ul>
-        </div>
-        }
-    }
-    else
-    {
-        <i class="text-muted">No permissions assigned.</i>
-    }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="2">
+                        <i class="text-muted">No Courses Assigned</i>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
 </div>

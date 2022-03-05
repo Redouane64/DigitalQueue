@@ -17,7 +17,7 @@ public class UsersListViewComponent : ViewComponent
     
     public async Task<IViewComponentResult> InvokeAsync(int? page, int? pageSize, bool fullList = true)
     {
-        var users = await _mediator.Send(new GetUsersQuery());
+        var users = await _mediator.Send(new GetAllUsersQuery());
         
         return View(new Areas.Accounts.Dtos.UsersListDto(users, page, pageSize, fullList));
     }
