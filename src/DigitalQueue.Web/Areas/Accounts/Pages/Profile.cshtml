@@ -48,11 +48,11 @@
     </div>
     <div class="row mt-5">
         <div class="col">
-            <p class="h3 mb-3"><i class="fa fa-fw fa-key m-1"></i>Account Roles</p>
+            <p class="h3 mb-2"><i class="fa fa-fw fa-key m-1"></i>Account Roles</p>
             @await Component.InvokeAsync("RolesList", new {roles = Model.Profile.Roles, userId = RouteData.Values["id"]})
         </div>
         <div class="col">
-            <p class="h3 mb-3"><i class="fa fa-fw fa-book m-1"></i>Courses Roles</p>
+            <p class="h3 mb-5"><i class="fa fa-fw fa-book m-1"></i>Courses Roles</p>
             @await Component.InvokeAsync("PermissionsList", new {claims = Model.Profile.Courses})
         </div>
     </div>
