@@ -30,7 +30,10 @@ public class GetCoursesByIdsQuery : IRequest<IEnumerable<CourseDto>>
             return await this._context.Courses
                 .AsNoTracking()
                 .Where(c => request.Ids.Contains(c.Id))
-                .Select(c => new CourseDto(c.Id, c.Title, c.Year))
+                .Select(course => new CourseDto
+                {
+                    Id = course.Id, Title = course.Title, Year = course.Year, CreatedAt = course.CreateAt
+                })
                 .ToArrayAsync(cancellationToken);
         }
     }

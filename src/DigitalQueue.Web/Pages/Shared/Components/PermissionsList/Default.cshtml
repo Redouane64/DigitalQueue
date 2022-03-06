@@ -15,9 +15,10 @@
                 @foreach (var course in Model.Courses)
                 {
                     <tr>
-                        <th scope="row">
-                            <a class="link-dark" asp-area="Courses" asp-page="CourseDetail" asp-route-id="@course.Course.Id">@course.Course.Title</a>
-                        </th>
+                        <td>
+                            <i class="fa fa-book m-2"></i>
+                            <a class="link-dark" asp-area="Courses" asp-page="Details" asp-route-courseId="@course.CourseId">@course.CourseTitle</a>
+                        </td>
                         <td>
                             @foreach (var role in course.Roles)
                             {
