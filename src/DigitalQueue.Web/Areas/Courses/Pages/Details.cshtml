@@ -1,0 +1,75 @@
+@page "{courseId}"
+
+@model Details
+
+@{
+    ViewData["Title"] = $"{Model.Course.Title} Details";
+}
+
+<div class="container p-3">
+    <div class="row mt-5">
+        <div class="col">
+            <p class="h3 mb-4">
+                <i class="fa fa-user-circle m-2"></i>
+                Course Details
+            </p>
+            <form method="post">
+                <div class="row">
+                    <div class="col-6 form-group mt-4">
+                        <label class="form-label" for="title">Title</label>
+                        <input class="form-control" id="title" asp-for="Course.Title">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 form-group mt-4">
+                        <label class="form-label" for="year">Year</label>
+                        <input class="form-control" id="year" asp-for="Course.Year">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form-group mt-2">
+                            <div class="text-danger" asp-validation-summary="All"></div>
+                        </div>
+                        <div class="mt-5">
+                            <button type="submit" class="btn btn-success">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="row mt-4">
+                <div class="col-6 form-group mt-4">
+                    <label class="form-label" for="creationDate">Creation Date</label>
+                    <input class="form-control" id="creationDate" asp-for="Course.CreatedAt" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <p class="h3 mb-4">Actions</p>
+            <div class="row">
+                <div class="col">
+                    <div class="btn-group-vertical">
+                        <a class="btn btn-lg btn-outline-danger" href="#">
+                            <span class="fa fa-trash m-1"></span>Archive The Course
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col">
+            <p class="h3">
+                <i class="fa fa-user m-2"></i>
+                Teachers
+            </p>
+            @await Component.InvokeAsync("CourseTeachersList", new { courseId = Model.Course.Id })
+        </div>
+        <div class="col">
+            <p class="h3">
+                <i class="fa fa-user-graduate m-2"></i>
+                Students
+            </p>
+        </div>
+    </div>
+</div>

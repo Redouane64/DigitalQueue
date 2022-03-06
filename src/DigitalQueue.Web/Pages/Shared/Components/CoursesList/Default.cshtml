@@ -33,17 +33,17 @@
                 @if (Model.FullView)
                 {
                     <td>
-                        @course.TeachersCount
+                        @course.Teachers
                     </td>
                     <td>
-                        @course.StudentsCount
+                        0
                     </td>
                 }
                 <td>
                     @course.CreatedAt.Humanize(utcDate: false)
                 </td>
                 <td>
-                    <a href="#">View Details</a>
+                    <a asp-area="Courses" asp-page="Details" asp-route-id="@course.Id">View Details</a>
                 </td>
             </tr>
         }
