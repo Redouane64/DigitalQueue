@@ -7,19 +7,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Courses.Queries;
 
-public class GetCourseByQuery : IRequest<CourseDto?>
+public class FindCourseByTitleQuery : IRequest<CourseDto?>
 {
     public string? Name { get; }
 
     public int? Year { get; set; }
     
 
-    public GetCourseByQuery(string name)
+    public FindCourseByTitleQuery(string name)
     {
         this.Name = name;
     }
 
-    public class GetCourseByNameHandler : IRequestHandler<GetCourseByQuery, CourseDto?>
+    public class GetCourseByNameHandler : IRequestHandler<FindCourseByTitleQuery, CourseDto?>
     {
         private readonly DigitalQueueContext _context;
 
@@ -28,7 +28,7 @@ public class GetCourseByQuery : IRequest<CourseDto?>
             _context = context;
         }
         
-        public async Task<CourseDto?> Handle(GetCourseByQuery request, CancellationToken cancellationToken)
+        public async Task<CourseDto?> Handle(FindCourseByTitleQuery request, CancellationToken cancellationToken)
         {
             var query = _context.Courses
                 .AsNoTracking();
@@ -49,8 +49,11 @@ public class GetCourseByQuery : IRequest<CourseDto?>
             {
                 return null;
             }
-            
-            return new CourseDto(course.Id, course.Title);
+
+            return new CourseDto
+            {
+                Id = course.Id, Title = course.Title, Year = course.Year, CreatedAt = course.CreateAt
+            };
         }
     }
 }

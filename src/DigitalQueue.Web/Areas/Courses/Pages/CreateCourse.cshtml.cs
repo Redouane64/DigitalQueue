@@ -30,6 +30,7 @@ public class CreateCourseModel : PageModel
     [Required]
     public string[] Teachers { get; set; }
 
+    // TODO: add validation
     public int? Year { get; set; }
 
     public void OnGet()
@@ -39,11 +40,11 @@ public class CreateCourseModel : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        var existingCourse = await this._mediator.Send(new GetCourseByQuery(Title));
+        var existingCourse = await this._mediator.Send(new FindCourseByTitleQuery(Title));
 
         if (existingCourse is not null)
         {
-            ModelState.AddModelError(nameof(Title), "Course with same name already exisits.");
+            ModelState.AddModelError(nameof(Title), "Course with same name and year already exists.");
             return Page();
         }
         

@@ -25,14 +25,9 @@ public class GetCoursesQuery : IRequest<IEnumerable<CourseDto>>
                 .OrderByDescending(c => c.CreateAt)
                 .Include(c => c.Teachers)
                 .Select(
-                    c => new CourseDto(
-                        c.Id,
-                        c.Title, 
-                        c.Teachers.Count, 
-                        0
-                    ) {
-                        Year = c.Year,
-                        CreatedAt = c.CreateAt
+                    course => new CourseDto
+                    {
+                        Id = course.Id, Title = course.Title, Year = course.Year, CreatedAt = course.CreateAt, Teachers = course.Teachers.Count
                     }
                 )
                 .ToArrayAsync(cancellationToken);
