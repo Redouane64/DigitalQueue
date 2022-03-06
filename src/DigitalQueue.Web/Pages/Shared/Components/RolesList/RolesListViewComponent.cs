@@ -15,7 +15,7 @@ public class RolesListViewComponent : ViewComponent
         _httpContextAccessor = httpContextAccessor;
     }
     
-    public IViewComponentResult Invoke(IEnumerable<RoleDto> roles, string userId)
+    public IViewComponentResult Invoke(IEnumerable<AccountRoleDto> roles, string userId)
     {
         var editable = _httpContextAccessor.HttpContext
             .User.FindFirstValue(ClaimTypes.NameIdentifier).Equals(userId);

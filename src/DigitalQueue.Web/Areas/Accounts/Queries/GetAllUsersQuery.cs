@@ -59,20 +59,20 @@ public class GetAllUsersQuery : IRequest<IEnumerable<UserDto>>
             return allUsers;
         }
         
-        private async Task<RoleDto[]> ToRolesDtos(IEnumerable<string> roles) =>
+        private async Task<AccountRoleDto[]> ToRolesDtos(IEnumerable<string> roles) =>
             await this._roleManager.Roles
                 .Where(role => roles.Contains(role.Name))
-                .Select(role => new RoleDto(role.Name, role.Id))
+                .Select(role => new AccountRoleDto(role.Name, role.Id))
                 .ToArrayAsync();
 
-        private IEnumerable<CourseRolesDto> ToClaimsDtos(IEnumerable<Claim> claims) => claims
+        private IEnumerable<UserCourseRolesDto> ToClaimsDtos(IEnumerable<Claim> claims) => claims
             .Where(claim => 
                 claim.Type is not ClaimTypes.Email && 
                 claim.Type is not ClaimTypes.Role &&
                 claim.Type is not ClaimTypes.NameIdentifier)
             .GroupBy(claim => claim.Type)
             .Select(entry =>
-                new CourseRolesDto(entry.Key, entry.Select(claim => claim.Value).ToArray())
+                new UserCourseRolesDto(entry.Key, entry.Select(claim => claim.Value).ToArray())
             );
     }
 }

@@ -4,14 +4,14 @@ namespace DigitalQueue.Web.Areas.Accounts.Dtos;
 
 public class UserDto
 {
-    public UserDto(User user, IEnumerable<RoleDto> roles, IEnumerable<CourseRolesDto> courses)
+    public UserDto(User user, IEnumerable<AccountRoleDto> accountRoles, IEnumerable<UserCourseRolesDto> coursesRoles)
     {
         this.Id = user.Id;
         this.Email = user.Email;
         this.Username = user.UserName;
         this.FullName = user.FullName;
-        this.Roles = roles;
-        this.Courses = courses;
+        this.AccountRoles = accountRoles;
+        this.CoursesRoles = coursesRoles;
     }
 
     public string Id { get; }
@@ -19,7 +19,7 @@ public class UserDto
     public string Username { get; }
     public string FullName { get; }
     public DateTime CreatedAt { get; set; }
-    public IEnumerable<RoleDto> Roles { get; }
-    public IEnumerable<CourseRolesDto> Courses { get; }
+    public IEnumerable<AccountRoleDto> AccountRoles { get; }
+    public IEnumerable<UserCourseRolesDto> CoursesRoles { get; }
     
 }
