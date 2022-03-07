@@ -14,7 +14,9 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
         builder.Property(e => e.Id).HasColumnName("id");
         builder.Property(e => e.Title).HasColumnName("title");
         builder.Property(e => e.Year).HasColumnName("year");
-        builder.Property(e => e.Archived).HasColumnName("archived");
+        builder.Property(e => e.IsArchived)
+            .HasColumnName("is_archived")
+            .HasDefaultValue(false);
 
         builder.Property(e => e.CreateAt)
             .HasColumnName("create_at")

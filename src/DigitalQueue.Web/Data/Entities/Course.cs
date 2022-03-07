@@ -8,7 +8,7 @@ public class Course : IBaseEntity
 
     public int Year { get; set; }
     
-    public bool Archived { get; set; }
+    public bool IsArchived { get; set; }
 
     public DateTime CreateAt { get; set; }
 
