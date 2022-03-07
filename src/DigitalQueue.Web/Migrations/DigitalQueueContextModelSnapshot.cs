@@ -40,14 +40,16 @@ namespace DigitalQueue.Web.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("id");
 
-                    b.Property<bool>("Archived")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("archived");
-
                     b.Property<DateTime>("CreateAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT")
                         .HasColumnName("create_at");
+
+                    b.Property<bool>("IsArchived")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_archived");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -77,10 +79,6 @@ namespace DigitalQueue.Web.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("id");
 
-                    b.Property<bool>("Archived")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("archived");
-
                     b.Property<DateTime>("CreateAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT")
@@ -95,6 +93,10 @@ namespace DigitalQueue.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT")
                         .HasColumnName("fullname");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("is_active");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -159,13 +161,13 @@ namespace DigitalQueue.Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "3951323d-4e19-446d-89c8-08217a99abf5",
+                            Id = "50f09841-9547-4fc4-8d46-b34c16f598d9",
                             Name = "administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "795a3949-bf9a-45ef-9cd6-b7e43898eb9f",
+                            Id = "2f8f0b9a-40e8-41e7-bbbd-f42a93498db2",
                             Name = "user",
                             NormalizedName = "USER"
                         });
