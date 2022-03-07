@@ -29,7 +29,10 @@ public class SearchTeacherCommand : IRequest<SearchResult<TeacherDto>>
         
         public async Task<SearchResult<TeacherDto>> Handle(SearchTeacherCommand request, CancellationToken cancellationToken)
         {
-            var teachers = await _userManager.Users.Where(
+            var teachers = await _userManager.Users
+                .AsNoTracking()
+                .Where(u => !u.Archived)
+                .Where(
                 u => EF.Functions.Like(u.FullName, $"%{request.Query}%"))
                 .Select(u => new TeacherDto(u.FullName, u.Id))
                 .ToArrayAsync(cancellationToken);

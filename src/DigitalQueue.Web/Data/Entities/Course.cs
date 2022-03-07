@@ -7,6 +7,8 @@ public class Course : IBaseEntity
     public string Title { get; set; }
 
     public int Year { get; set; }
+    
+    public bool Archived { get; set; }
 
     public DateTime CreateAt { get; set; }
 

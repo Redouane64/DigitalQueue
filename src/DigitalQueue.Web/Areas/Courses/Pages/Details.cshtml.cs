@@ -34,4 +34,9 @@ public class Details : PageModel
 
         return Page();
     }
+
+    public async Task<IActionResult> OnPost(string title, int year, string[] teachers)
+    {
+        return Page();
+    }
 }

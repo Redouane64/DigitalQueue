@@ -31,7 +31,8 @@ public class FindCourseByTitleQuery : IRequest<CourseDto?>
         public async Task<CourseDto?> Handle(FindCourseByTitleQuery request, CancellationToken cancellationToken)
         {
             var query = _context.Courses
-                .AsNoTracking();
+                .AsNoTracking()
+                .Where(c => !c.Archived);
 
             if (request.Name is not null)
             {

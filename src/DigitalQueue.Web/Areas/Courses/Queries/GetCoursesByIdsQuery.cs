@@ -29,6 +29,7 @@ public class GetCoursesByIdsQuery : IRequest<IEnumerable<CourseDto>>
         {
             return await this._context.Courses
                 .AsNoTracking()
+                .Where(c => !c.Archived)
                 .Where(c => request.Ids.Contains(c.Id))
                 .Select(course => new CourseDto
                 {

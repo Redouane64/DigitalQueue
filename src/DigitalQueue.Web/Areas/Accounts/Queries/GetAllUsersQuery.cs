@@ -40,6 +40,7 @@ public class GetAllUsersQuery : IRequest<IEnumerable<UserDto>>
         
             var users = this._userManager.Users
                 .Where(user => user.Id != currentUser.Id)
+                .Where(user => !user.Archived)
                 .OrderByDescending(u => u.CreateAt)
                 .ToArray();
             

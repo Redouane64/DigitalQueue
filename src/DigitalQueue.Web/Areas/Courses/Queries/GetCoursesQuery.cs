@@ -22,8 +22,10 @@ public class GetCoursesQuery : IRequest<IEnumerable<CourseDto>>
         public async Task<IEnumerable<CourseDto>> Handle(GetCoursesQuery request, CancellationToken cancellationToken)
         {
             var courses = await _context.Courses
+                .AsNoTracking()
                 .OrderByDescending(c => c.CreateAt)
                 .Include(c => c.Teachers)
+                .Where(c => !c.Archived)
                 .Select(
                     course => new CourseDto
                     {

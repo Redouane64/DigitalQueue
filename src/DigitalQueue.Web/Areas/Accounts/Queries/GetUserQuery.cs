@@ -39,6 +39,7 @@ public class GetUserQuery : IRequest<UserDto?>
             var user = await this._userManager.Users
                 .AsNoTracking()
                 .Include(e => e.TeacherOf)
+                .Where(u => !u.Archived)
                 .FirstOrDefaultAsync(u => u.Id == request.Id, cancellationToken);
             
             if (user is null)

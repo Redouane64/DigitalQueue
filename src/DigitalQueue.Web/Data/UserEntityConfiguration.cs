@@ -25,6 +25,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.Email).HasColumnName("email");
         builder.Property(e => e.UserName).HasColumnName("username");
         builder.Property(e => e.FullName).HasColumnName("fullname");
+        builder.Property(e => e.Archived).HasColumnName("archived");
 
         builder.Property(e => e.NormalizedEmail).HasColumnName("normalized_email");
         builder.Property(e => e.NormalizedUserName).HasColumnName("normalized_username");
