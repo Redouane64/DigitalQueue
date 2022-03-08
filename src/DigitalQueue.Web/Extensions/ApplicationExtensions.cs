@@ -21,11 +21,13 @@ public static class ApplicationExtensions
         string email = defaultUser.GetValue<string>("Email");
         string password = defaultUser.GetValue<string>("Password");
 
-        await mediator.Send(new CreateAccountCommand(new[] { RoleDefaults.Administrator, RoleDefaults.User })
+        await mediator.Send(new CreateAccountCommand(
+            new[] { RoleDefaults.Administrator, RoleDefaults.User }, 
+            isActive: true)
         {
             Email = email,
             Password = password,
-            FullName = "Admin"
+            FullName = "Admin",
         });
     }
 }

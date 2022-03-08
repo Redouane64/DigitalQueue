@@ -9,19 +9,20 @@ using DigitalQueue.Web.Infrastructure;
 using MediatR;
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
 public class CreateAccountCommand : IRequest<AccessTokenDto?>
 {
+    protected bool _isActive = false;
     protected string[] _roles = null;
 
     public CreateAccountCommand()
     { }
 
-    public CreateAccountCommand(string[] roles)
+    public CreateAccountCommand(string[] roles, bool isActive = false)
     {
+        _isActive = isActive;
         _roles = roles;
     }
     
@@ -70,7 +71,8 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                 {
                     Email = request.Email,
                     FullName = request.FullName,
-                    UserName = request.Email
+                    UserName = request.Email,
+                    IsActive = request._isActive,
                 };
             
                 var createUser = await _userManager.CreateAsync(
