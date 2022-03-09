@@ -9,32 +9,33 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
-public class UpdateRoleCommand : IRequest<bool>
+public class UpdateUserRolesCommand : IRequest<bool>
 {
-    public UpdateRoleCommand(string user, string[] roles)
+    public UpdateUserRolesCommand(string user, string[] roles, bool remove = false)
     {
         User = user;
         Roles = roles;
+        Remove = remove;
     }
 
     public string User { get; }
-
     public string[] Roles { get; }
-    
-    public class UpdateRoleCommandHandler : IRequestHandler<UpdateRoleCommand, bool>
+    public bool Remove { get; }
+
+    public class UpdateUserRolesCommandHandler : IRequestHandler<UpdateUserRolesCommand, bool>
     {
         private readonly UserManager<User> _userManager;
         private readonly DigitalQueueContext _context;
-        private readonly ILogger<UpdateRoleCommandHandler> _logger;
+        private readonly ILogger<UpdateUserRolesCommandHandler> _logger;
 
-        public UpdateRoleCommandHandler(UserManager<User> userManager, DigitalQueueContext context, ILogger<UpdateRoleCommandHandler> logger)
+        public UpdateUserRolesCommandHandler(UserManager<User> userManager, DigitalQueueContext context, ILogger<UpdateUserRolesCommandHandler> logger)
         {
             _userManager = userManager;
             _context = context;
             _logger = logger;
         }
         
-        public async Task<bool> Handle(UpdateRoleCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync(cancellationToken))
             {
@@ -48,31 +49,32 @@ public class UpdateRoleCommand : IRequest<bool>
                     }
 
                     var existingRoles = await _userManager.GetRolesAsync(user);
-                    var newRoles = new List<string> { RoleDefaults.User };
-                    if (request.Roles.Length < existingRoles.Count)
+                    string[] roles = null;
+                    if (request.Remove)
                     {
-                        newRoles.AddRange(existingRoles.Except(request.Roles).ToArray());
+                        // roles to add
+                        roles = existingRoles.Where(r => !request.Roles.Contains(r)).ToArray();
                     }
                     else
                     {
-                        newRoles.AddRange(request.Roles.Except(existingRoles).ToArray());
+                        // roles to remove
+                        roles = existingRoles.Where(r => request.Roles.Contains(r)).ToArray();
                     }
-
-                    foreach (var role in newRoles
-                                            .Where(r => !r.Equals(RoleDefaults.User, StringComparison.InvariantCultureIgnoreCase))
-                                            .Distinct()
-                                            .ToArray())
+                    
+                    foreach (var role in roles
+                                 .Where(r => !r.Equals(RoleDefaults.User, StringComparison.InvariantCultureIgnoreCase))
+                                 .Distinct()
+                                 .ToArray())
                     {
-                        if (!await _userManager.IsInRoleAsync(user, role))
+                        if (request.Remove)
                         {
-                            await _userManager.AddToRoleAsync(user, role);
-                            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, role));
+                            await _userManager.RemoveFromRoleAsync(user, role);
+                            await _userManager.RemoveClaimAsync(user, new Claim(ClaimTypes.Role, role));
                         }
                         else
                         {
-                            
-                            await _userManager.RemoveFromRoleAsync(user, role);
-                            await _userManager.RemoveClaimAsync(user, new Claim(ClaimTypes.Role, role));
+                            await _userManager.AddToRoleAsync(user, role);
+                            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, role));
                         }
                     }
                     
