@@ -19,7 +19,6 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.Ignore(e => e.TwoFactorEnabled);
         builder.Ignore(e => e.PhoneNumberConfirmed);
         builder.Ignore(e => e.ConcurrencyStamp);
-        builder.Ignore(e => e.SecurityStamp);
 
         builder.Property(e => e.Id).HasColumnName("id");
         builder.Property(e => e.Email).HasColumnName("email");
@@ -33,11 +32,9 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.PasswordHash).HasColumnName("password_hash");
         
         builder.Property(e => e.CreateAt)
-            .HasColumnName("create_at")
-            .ValueGeneratedOnAdd();
+            .HasColumnName("create_at");
         
         builder.Property(e => e.UpdatedAt)
-            .HasColumnName("updated_at")
-            .ValueGeneratedOnUpdate();
+            .HasColumnName("updated_at");
     }
 }

@@ -19,12 +19,10 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
             .HasDefaultValue(false);
 
         builder.Property(e => e.CreateAt)
-            .HasColumnName("create_at")
-            .ValueGeneratedOnAdd();
+            .HasColumnName("create_at");
         
         builder.Property(e => e.UpdatedAt)
-            .HasColumnName("updated_at")
-            .ValueGeneratedOnUpdate();
+            .HasColumnName("updated_at");
         
         builder.HasMany(
             e => e.Teachers

@@ -51,7 +51,7 @@ public class DigitalQueueContext : IdentityDbContext<User>
         foreach (var entityEntry in entries)
         {
             ((IBaseEntity) entityEntry.Entity).UpdatedAt = DateTime.Now;
-
+            
             if (entityEntry.State == EntityState.Added)
             {
                 ((IBaseEntity) entityEntry.Entity).CreateAt = DateTime.Now;
