@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 using DigitalQueue.Web.Areas.Accounts.Commands;
 using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Areas.Accounts.Queries;
@@ -25,7 +27,9 @@ public class ProfileModel : PageModel
     public Boolean? PostResultMessage { get; set; }
 
     public UserDto? Profile { get; set; }
-    
+
+    public bool IsEditable { get; set; }
+
     public async Task<IActionResult> OnGetAsync(string id)
     {
         var profile = await _mediator.Send(new GetUserQuery(id));
@@ -34,6 +38,9 @@ public class ProfileModel : PageModel
         {
             return NotFound();
         }
+
+        IsEditable = HttpContext
+            .User.FindFirstValue(ClaimTypes.NameIdentifier).Equals(id);
 
         Profile = profile;
 
