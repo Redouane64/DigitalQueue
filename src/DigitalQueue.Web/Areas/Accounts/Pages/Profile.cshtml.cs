@@ -40,9 +40,16 @@ public class ProfileModel : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostUpdateRoles([FromForm]string id, [FromForm] string[] roles)
+    public async Task<IActionResult> OnPostRemoveRoleAsync([FromRoute]string id, [FromForm] string role)
     {
-        PostResultMessage = await this._mediator.Send(new UpdateRoleCommand(id, roles));
+        PostResultMessage = await this._mediator.Send(new UpdateUserRolesCommand(id, new [] { role }, remove: true));
+        
+        return RedirectToPage(new { id });
+    }
+
+    public async Task<IActionResult> OnPostAddRoles([FromRoute]string id, [FromForm] string[] roles)
+    {
+        PostResultMessage = await this._mediator.Send(new UpdateUserRolesCommand(id, roles));
         
         return RedirectToPage(new { id });
     }
