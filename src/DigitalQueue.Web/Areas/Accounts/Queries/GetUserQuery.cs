@@ -39,7 +39,6 @@ public class GetUserQuery : IRequest<UserDto?>
             var user = await this._userManager.Users
                 .AsNoTracking()
                 .Include(e => e.TeacherOf)
-                .Where(u => !u.Archived)
                 .FirstOrDefaultAsync(u => u.Id == request.Id, cancellationToken);
             
             if (user is null)
@@ -51,7 +50,7 @@ public class GetUserQuery : IRequest<UserDto?>
             var claims = await this._userManager.GetClaimsAsync(user);
 
             var userCourses = ToCourseRoles(claims);
-            return new UserDto(user, await ToAccountRoles(roles), userCourses);
+            return new UserDto(user, await ToAccountRoles(roles.Except(new [] { RoleDefaults.User })), userCourses);
         }
         
         private async Task<AccountRoleDto[]> ToAccountRoles(IEnumerable<string> roles) =>

@@ -47,6 +47,21 @@ public class ProfileModel : PageModel
         return Page();
     }
 
+    public async Task<IActionResult> OnPost([FromRoute] string id, [FromForm] string name, [FromForm] string email)
+    {
+        if (name is not null)
+        {
+            await this._mediator.Send(new UpdateNameCommand(id, name));
+        }
+
+        if (email is not null)
+        {
+            await this._mediator.Send(new UpdateEmailCommand(id, email));
+        }
+
+        return RedirectToPagePermanent("Profile", new { id });
+    }
+
     public async Task<IActionResult> OnPostRemoveRoleAsync([FromRoute]string id, [FromForm] string role)
     {
         PostResultMessage = await this._mediator.Send(new UpdateUserRolesCommand(id, new [] { role }, remove: true));

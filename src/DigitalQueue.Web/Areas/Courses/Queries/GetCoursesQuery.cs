@@ -25,7 +25,7 @@ public class GetCoursesQuery : IRequest<IEnumerable<CourseDto>>
                 .AsNoTracking()
                 .OrderByDescending(c => c.CreateAt)
                 .Include(c => c.Teachers)
-                .Where(c => !c.Archived)
+                .Where(c => !c.IsArchived)
                 .Select(
                     course => new CourseDto
                     {

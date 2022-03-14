@@ -31,7 +31,7 @@ public class SearchTeacherCommand : IRequest<SearchResult<TeacherDto>>
         {
             var teachers = await _userManager.Users
                 .AsNoTracking()
-                .Where(u => !u.Archived)
+                .Where(u => !u.IsActive)
                 .Where(
                 u => EF.Functions.Like(u.FullName, $"%{request.Query}%"))
                 .Select(u => new TeacherDto(u.FullName, u.Id))

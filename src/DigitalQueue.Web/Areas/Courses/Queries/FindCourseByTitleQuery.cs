@@ -32,7 +32,7 @@ public class FindCourseByTitleQuery : IRequest<CourseDto?>
         {
             var query = _context.Courses
                 .AsNoTracking()
-                .Where(c => !c.Archived);
+                .Where(c => !c.IsArchived);
 
             if (request.Name is not null)
             {
