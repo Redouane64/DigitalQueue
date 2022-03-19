@@ -3,6 +3,7 @@ using System;
 using DigitalQueue.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalQueue.Web.Migrations
 {
     [DbContext(typeof(DigitalQueueContext))]
-    partial class DigitalQueueContextModelSnapshot : ModelSnapshot
+    [Migration("20220319110945_AddEmailConfirmedConcurrencyStampAndFixColumnNames")]
+    partial class AddEmailConfirmedConcurrencyStampAndFixColumnNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
@@ -115,8 +117,7 @@ namespace DigitalQueue.Web.Migrations
                         .HasColumnName("password_hash");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("security_stamp");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT")
@@ -166,13 +167,13 @@ namespace DigitalQueue.Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b6eb37f5-61e4-45c8-9cde-08e56e51705f",
+                            Id = "fa44a5bc-ef2d-4cca-bb94-7549b57266ae",
                             Name = "administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "44bd76e7-43ec-47aa-8cdb-fbce6c370599",
+                            Id = "f30fbf8d-eada-4581-90f3-a6cd2ad16f8c",
                             Name = "user",
                             NormalizedName = "USER"
                         });

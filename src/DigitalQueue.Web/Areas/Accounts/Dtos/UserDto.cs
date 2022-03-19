@@ -10,7 +10,6 @@ public class UserDto
         this.Email = user.Email;
         this.Username = user.UserName;
         this.FullName = user.FullName;
-        this.IsActive = user.IsActive;
         this.CreatedAt = user.CreateAt;
         this.AccountRoles = accountRoles;
         this.CoursesRoles = coursesRoles;
@@ -21,7 +20,6 @@ public class UserDto
     public string Username { get; }
     public string FullName { get; }
     public DateTime CreatedAt { get; }
-    public bool IsActive { get; }
     public IEnumerable<AccountRoleDto> AccountRoles { get; }
     public IEnumerable<UserCourseRolesDto> CoursesRoles { get; }
     
