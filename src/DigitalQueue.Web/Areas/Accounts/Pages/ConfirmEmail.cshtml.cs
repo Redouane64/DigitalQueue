@@ -24,10 +24,8 @@ public class ConfirmEmail : PageModel
     {
         if (token is not null)
         {
-            // return RedirectToPagePermanent("Index", new { area = "" });
             Success = await this._mediator.Send(new ConfirmEmailCommand(email, token));
         }
-
 
         return Page();
     }

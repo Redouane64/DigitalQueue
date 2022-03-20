@@ -13,8 +13,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddRouting(options =>
 {
     options.LowercaseUrls = true;
-    options.LowercaseQueryStrings = true;
-    options.AppendTrailingSlash = true;
+    options.LowercaseQueryStrings = false;
+    options.AppendTrailingSlash = false;
 });
 
 builder.Services.AddSession(options =>

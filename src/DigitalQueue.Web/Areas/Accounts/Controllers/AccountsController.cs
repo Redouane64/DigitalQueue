@@ -76,8 +76,8 @@ public class AccountsController : ControllerBase
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPost("verify-email", Name = nameof(VerifyEmail))]
-    public async Task<IActionResult> VerifyEmail()
+    [HttpPost("create-verify-email", Name = nameof(CreateVerifyEmailRequest))]
+    public async Task<IActionResult> CreateVerifyEmailRequest()
     {
         _ = await this._mediator.Send(new SendEmailConfirmationCommand(User));
         return Ok();

@@ -16,6 +16,7 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 public class CreateAccountCommand : IRequest<AccessTokenDto?>
 {
     protected string[] _roles = null;
+    protected readonly bool _isActive;
 
     public CreateAccountCommand()
     { }
@@ -23,6 +24,7 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
     public CreateAccountCommand(string[] roles, bool isActive = false)
     {
         _roles = roles;
+        _isActive = isActive;
     }
     
     [Required]
@@ -73,7 +75,8 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                 {
                     Email = request.Email,
                     FullName = request.FullName,
-                    UserName = request.Email
+                    UserName = request.Email,
+                    EmailConfirmed = request._isActive,
                 };
             
                 var createUser = await _userManager.CreateAsync(
@@ -125,7 +128,10 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                     user
                 );
 
-                await this._mediator.Publish(new AccountCreatedEvent(user.Id, user.Email));
+                if (!user.EmailConfirmed)
+                {
+                    await this._mediator.Publish(new AccountCreatedEvent(user.Id, user.Email));
+                }
 
                 return new AccessTokenDto(token, refreshToken);
             }

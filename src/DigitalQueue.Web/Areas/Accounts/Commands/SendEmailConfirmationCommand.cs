@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using System.Text;
 
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Services.MailService;
@@ -7,7 +6,6 @@ using DigitalQueue.Web.Services.MailService;
 using MediatR;
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
@@ -44,14 +42,14 @@ public class SendEmailConfirmationCommand : IRequest<bool>
         
         public async Task<bool> Handle(SendEmailConfirmationCommand request, CancellationToken cancellationToken)
         {
-
+            // TODO: enqueue this message to a message broker or pub-sub
+            // for asynchronous processing because SMTP execution is slow
             try
             {
                 User user = await this._userManager.GetUserAsync(request.Principal);
                 
-                var token = WebEncoders.Base64UrlEncode(
-                    Encoding.UTF8.GetBytes(await _userManager.GenerateEmailConfirmationTokenAsync(user)));
-        
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                
                 var confirmationLink =
                     this._linkGenerator.GetUriByPage(_httpContextAccessor.HttpContext, 
                         "/ConfirmEmail", 

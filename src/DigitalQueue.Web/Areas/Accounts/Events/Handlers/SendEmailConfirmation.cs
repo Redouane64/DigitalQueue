@@ -34,7 +34,8 @@ public class SendEmailConfirmation : INotificationHandler<AccountCreatedEvent>
     
     public async Task Handle(AccountCreatedEvent notification, CancellationToken cancellationToken)
     {
-
+        // TODO: enqueue this message to a message broker or pub-sub
+        // for asynchronous processing because SMTP execution is slow
         try
         {
             User user = null;

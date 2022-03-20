@@ -1,12 +1,8 @@
-using System.Text;
-using System.Text.Encodings.Web;
-
 using DigitalQueue.Web.Data.Entities;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
@@ -42,9 +38,8 @@ public class ConfirmEmailCommand : IRequest<bool>
                 {
                     return false;
                 }
-                
-                
-                var result = await this._userManager.ConfirmEmailAsync(user, Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Token)));
+
+                var result = await this._userManager.ConfirmEmailAsync(user, request.Token);
 
                 if (!result.Succeeded)
                 {
