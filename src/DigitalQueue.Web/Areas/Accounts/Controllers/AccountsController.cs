@@ -82,4 +82,12 @@ public class AccountsController : ControllerBase
         _ = await this._mediator.Send(new SendEmailConfirmationCommand(User));
         return Ok();
     }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPost("create-password-reset", Name = nameof(CreatePasswordResetRequest))]
+    public async Task<IActionResult> CreatePasswordResetRequest()
+    {
+        _ = await this._mediator.Send(new CreatePasswordResetTokenCommand(User));
+        return Ok();
+    }
 }

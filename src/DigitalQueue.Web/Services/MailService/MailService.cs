@@ -49,4 +49,36 @@ public class MailService
         );
         
     }
+
+    public async Task SendPasswordReset(string to, string passwordResetLink)
+    {
+        using var client = new SmtpClient(_config.Host, _config.Port)
+        {
+            Credentials = new NetworkCredential(_config.Username, _config.Password),
+            EnableSsl = true,
+            UseDefaultCredentials = false
+        };
+
+        var templateFile = this.GetType().Assembly.GetManifestResourceStream(
+            "DigitalQueue.Web.Templates.PasswordReset_Template.html");
+
+        if (templateFile is null)
+        {
+            return;
+        }
+        
+        using var template = new StreamReader(templateFile);
+        var body = await template.ReadToEndAsync();
+        var regex = new Regex("{{passwordResetLink}}");
+        body = regex.Replace(body, passwordResetLink);
+        
+        await client.SendMailAsync(
+            new MailMessage(new MailAddress(_config.Username, _config.Name), new MailAddress(to))
+            {
+                IsBodyHtml = true,
+                Subject = "Reset Password For Digital Queue Account", 
+                Body = body
+            }
+        );
+    }
 }
