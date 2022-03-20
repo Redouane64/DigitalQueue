@@ -49,8 +49,11 @@ public class LoginCommand : IRequest<AccessTokenDto?>
                 _logger.LogWarning("Unable to authenticate user '{0}' reason: incorrect password", request.Email);
                 return null;
             }
-
-            var (token, refreshToken) = await _tokenService.GenerateToken(new User {Email = request.Email});
+            
+            var claims = await this._userManager.GetClaimsAsync(user);
+            
+            var (token, refreshToken) = await _tokenService.GenerateToken(claims,
+                new User {Email = request.Email});
 
             return new AccessTokenDto(token, refreshToken);
         }

@@ -104,7 +104,6 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.NameIdentifier, user.Id)
                 };
-                
                 var roleClaims = request._roles.Select(
                     role => new Claim(ClaimTypes.Role, role)
                 );
@@ -122,6 +121,7 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                 await transaction.CommitAsync(cancellationToken);
 
                 var (token, refreshToken) = await _tokenService.GenerateToken(
+                    identityClaims,
                     user
                 );
 
