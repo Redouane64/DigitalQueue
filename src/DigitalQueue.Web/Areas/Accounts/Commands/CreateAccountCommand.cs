@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Dtos;
+using DigitalQueue.Web.Areas.Accounts.Events;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Infrastructure;
@@ -14,7 +15,6 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
 public class CreateAccountCommand : IRequest<AccessTokenDto?>
 {
-    protected bool _isActive = false;
     protected string[] _roles = null;
 
     public CreateAccountCommand()
@@ -22,7 +22,6 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
 
     public CreateAccountCommand(string[] roles, bool isActive = false)
     {
-        _isActive = isActive;
         _roles = roles;
     }
     
@@ -48,17 +47,20 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
         private readonly UserManager<User> _userManager;
         private readonly JwtTokenService _tokenService;
         private readonly DigitalQueueContext _context;
+        private readonly IMediator _mediator;
         private readonly ILogger<CreateAccountCommandHandler> _logger;
 
         public CreateAccountCommandHandler(
             UserManager<User> userManager, 
             JwtTokenService tokenService,
             DigitalQueueContext context,
+            IMediator mediator,
             ILogger<CreateAccountCommandHandler> logger)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _context = context;
+            _mediator = mediator;
             _logger = logger;
         }
 
@@ -71,8 +73,7 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                 {
                     Email = request.Email,
                     FullName = request.FullName,
-                    UserName = request.Email,
-                    IsActive = request._isActive,
+                    UserName = request.Email
                 };
             
                 var createUser = await _userManager.CreateAsync(
@@ -123,6 +124,8 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                 var (token, refreshToken) = await _tokenService.GenerateToken(
                     user
                 );
+
+                await this._mediator.Publish(new AccountCreatedEvent(user.Id, user.Email));
 
                 return new AccessTokenDto(token, refreshToken);
             }

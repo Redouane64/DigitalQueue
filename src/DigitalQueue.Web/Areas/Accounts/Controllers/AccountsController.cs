@@ -74,4 +74,12 @@ public class AccountsController : ControllerBase
         
         return Ok(user);
     }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPost("verify-email", Name = nameof(VerifyEmail))]
+    public async Task<IActionResult> VerifyEmail()
+    {
+        _ = await this._mediator.Send(new SendEmailConfirmationCommand(User));
+        return Ok();
+    }
 }

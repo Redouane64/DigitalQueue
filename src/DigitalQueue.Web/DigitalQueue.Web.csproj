@@ -25,5 +25,9 @@
   <ItemGroup>
     <Folder Include="wwwroot\lib" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\ConfirmEmail_Template.html" />
+  </ItemGroup>
   
 </Project>

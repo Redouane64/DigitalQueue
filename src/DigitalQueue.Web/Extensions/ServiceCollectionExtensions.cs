@@ -146,7 +146,8 @@ public static class ServiceCollectionExtensions
             options.SignIn.RequireConfirmedPhoneNumber = false;
         }).AddRoles<IdentityRole>()
           .AddEntityFrameworkStores<DigitalQueueContext>()
-          .AddTokenProvider<JwtRefreshTokenProvider>(JwtRefreshTokenProvider.ProviderName);
+          .AddTokenProvider<JwtRefreshTokenProvider>(JwtRefreshTokenProvider.ProviderName)
+          .AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider);
         
         // Configure JWT refresh token provider
         services.Configure<JwtRefreshTokenProvider.JwtRefreshTokenProviderOptions>(options =>

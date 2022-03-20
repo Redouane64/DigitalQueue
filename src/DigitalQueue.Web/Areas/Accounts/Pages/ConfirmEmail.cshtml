@@ -1,0 +1,37 @@
+@page
+
+@model ConfirmEmail
+
+@{
+    ViewData["Title"] = "E-mail confirmation";
+}
+
+<div class="container-md mt-lg-5">
+    @if (Model.Success)
+    {
+        <div class="d-flex justify-content-center mt-5">
+            <h4 class="text-capitalize text-success">E-mail Confirmed Successfully!</h4>
+        </div>
+        <div class="d-flex justify-content-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" height="256" width="256" viewBox="0 0 30 30">
+                <g transform="translate(-1312.168 -162.92) scale(3.77953)">
+                    <path fill="#30d158" d="m 354.32145,47.074883 a 3.175,3.175 0 0 1 -3.175,3.174999 3.175,3.175 0 0 1 -3.175,-3.174999 3.175,3.175 0 0 1 3.175,-3.175 3.175,3.175 0 0 1 3.175,3.175 z"/><path fill="#2f9d3d" d="m 352.37406,46.484781 -1.5875,1.323 a 0.26458333,0.26458333 0 0 1 -0.3571,-0.016 l -0.5292,-0.5292 a 0.2656659,0.2656659 0 0 1 0.3757,-0.3757 l 0.3572,0.3598 1.4023,-1.1694 a 0.26491451,0.26491451 0 1 1 0.3386,0.4074 z"/>
+                </g>
+            </svg>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex justify-content-center mt-5">
+            <h4 class="text-capitalize text-danger">Something went wrong!</h4>
+        </div>
+        <div class="d-flex justify-content-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" height="256" width="256" viewBox="0 0 32 32">
+                <rect width="32" height="32" fill="#fff" opacity="0"/>
+                <circle cx="16" cy="16" r="14" fill="#ffde95"/>
+                <path fill="#e85869" d="M16,20a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0V19A1,1,0,0,1,16,20Z"/>
+                <circle cx="16" cy="23" r="1" fill="#e85869"/>
+            </svg>
+        </div>
+    }
+</div>
