@@ -25,6 +25,9 @@ public class ProfileModel : PageModel
 
     [TempData]
     public Boolean? PostResultMessage { get; set; }
+    
+    [TempData]
+    public Boolean? EmailChangedResult { get; set; }
 
     public UserDto? Profile { get; set; }
 
@@ -51,12 +54,12 @@ public class ProfileModel : PageModel
     {
         if (name is not null)
         {
-            await this._mediator.Send(new UpdateNameCommand(id, name));
+             await this._mediator.Send(new UpdateNameCommand(id, name));
         }
 
         if (email is not null)
         {
-            await this._mediator.Send(new UpdateEmailCommand(id, email));
+            PostResultMessage = EmailChangedResult = await this._mediator.Send(new UpdateEmailCommand(id, email));
         }
 
         return RedirectToPagePermanent("Profile", new { id });

@@ -15,6 +15,16 @@
             message=(result ? "User updated successfully." : "Something went wrong.")
         })
     }
+    
+    @if (TempData["EmailChangedResult"] is bool emailChangedResult)
+    {
+        @await Component.InvokeAsync("Alert", new
+        {
+            success=emailChangedResult, 
+            message=(emailChangedResult ? "Confirmation link is sent to your e-mail address." : "Something went wrong.")
+        })
+    }
+        
     <div class="row mt-5">
         <div class="col m-1">
             <p class="h4 mb-4"><i class="fa fa-fw fa-user m-1"></i>Basic Info</p>

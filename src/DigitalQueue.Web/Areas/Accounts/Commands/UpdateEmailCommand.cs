@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
-public class UpdateEmailCommand : IRequest
+public class UpdateEmailCommand : IRequest<bool>
 {
     public string UserId { get; }
     public string Email { get; }
@@ -21,7 +21,7 @@ public class UpdateEmailCommand : IRequest
         Email = email;
     }
     
-    public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand>
+    public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, bool>
     {
         private readonly UserManager<User> _userManager;
         private readonly DigitalQueueContext _context;
@@ -40,7 +40,7 @@ public class UpdateEmailCommand : IRequest
             _logger = logger;
         }
         
-        public async Task<Unit> Handle(UpdateEmailCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateEmailCommand request, CancellationToken cancellationToken)
         {
             await using (var transaction = await _context.Database.BeginTransactionAsync(cancellationToken))
             {
@@ -52,30 +52,36 @@ public class UpdateEmailCommand : IRequest
 
                     if (user is null)
                     {
-                        return await Unit.Task;
+                        return false;
                     }
 
                     if (request.Email is not null && !user.Email.Equals(request.Email))
                     {
-                        var updateResult = await _userManager.SetEmailAsync(user, request.Email);
-                        if (updateResult.Succeeded)
+                        var changeEmailToken = await _userManager.GenerateChangeEmailTokenAsync(user, request.Email);
+                        var updateEmailResult = await _userManager.ChangeEmailAsync(user, request.Email, changeEmailToken);
+
+                        if (!updateEmailResult.Succeeded)
                         {
-                            var allClaims = await _userManager.GetClaimsAsync(user);
-                            var emailClaim = allClaims.First(c => c.Type == ClaimTypes.Email);
+                            await transaction.RollbackAsync(cancellationToken);
+                            return false;
+                        }
+                        
+                        var allClaims = await _userManager.GetClaimsAsync(user);
+                        var emailClaim = allClaims.First(c => c.Type == ClaimTypes.Email);
 
-                            var result = await _userManager.ReplaceClaimAsync(user, emailClaim,
-                                new Claim(ClaimTypes.Email, request.Email));
+                        var replaceEmailClaimResult = await _userManager.ReplaceClaimAsync(user, emailClaim,
+                            new Claim(ClaimTypes.Email, request.Email));
 
-                            if (!result.Succeeded)
-                            {
-                                await transaction.RollbackAsync(cancellationToken);
-                            }
-                            else
-                            {
-                                await _mediator.Publish(new EmailChangedEvent(user.Id, user.Email));
-                            }
+                        if (!replaceEmailClaimResult.Succeeded)
+                        {
+                            await transaction.RollbackAsync(cancellationToken);
+                            return false;
                         }
 
+                        user.EmailConfirmed = false;
+                        await _userManager.UpdateAsync(user);
+                        
+                        await _mediator.Publish(new EmailChangedEvent(user.Id, user.Email), cancellationToken);
                     }
 
                     await transaction.CommitAsync(cancellationToken);
@@ -84,11 +90,13 @@ public class UpdateEmailCommand : IRequest
                 {
                     await transaction.RollbackAsync(cancellationToken);
                     _logger.LogError(e, "Unable to update account data");
+
+                    return false;
                 }
 
             }
 
-            return await Unit.Task;
+            return true;
         }
     }
 }

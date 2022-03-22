@@ -46,9 +46,8 @@ public class SendEmailConfirmation : INotificationHandler<AccountCreatedEvent>, 
         // for asynchronous processing because SMTP execution is slow
         try
         {
-            User user = new User { Id = data.AccountId, Email = data.Email };
-
-            string? token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var user = await this._userManager.FindByIdAsync(data.AccountId);
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
             string? confirmationLink =
                 _linkGenerator.GetUriByPage(_httpContextAccessor.HttpContext!,
