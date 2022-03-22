@@ -1,5 +1,6 @@
 using System.Security.Claims;
 
+using DigitalQueue.Web.Areas.Accounts.Events;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 
@@ -24,12 +25,18 @@ public class UpdateEmailCommand : IRequest
     {
         private readonly UserManager<User> _userManager;
         private readonly DigitalQueueContext _context;
+        private readonly IMediator _mediator;
         private readonly ILogger<UpdateEmailCommandHandler> _logger;
 
-        public UpdateEmailCommandHandler(UserManager<User> userManager, DigitalQueueContext context, ILogger<UpdateEmailCommandHandler> logger)
+        public UpdateEmailCommandHandler(
+            UserManager<User> userManager, 
+            DigitalQueueContext context,
+            IMediator mediator,
+            ILogger<UpdateEmailCommandHandler> logger)
         {
             _userManager = userManager;
             _context = context;
+            _mediator = mediator;
             _logger = logger;
         }
         
@@ -62,6 +69,10 @@ public class UpdateEmailCommand : IRequest
                             if (!result.Succeeded)
                             {
                                 await transaction.RollbackAsync(cancellationToken);
+                            }
+                            else
+                            {
+                                await _mediator.Publish(new EmailChangedEvent(user.Id, user.Email));
                             }
                         }
 

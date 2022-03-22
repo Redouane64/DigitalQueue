@@ -1,16 +1,14 @@
-using System.Text;
-
+using DigitalQueue.Web.Areas.Accounts.Events.Dtos;
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Services.MailService;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
 
 namespace DigitalQueue.Web.Areas.Accounts.Events.Handlers;
 
-public class SendEmailConfirmation : INotificationHandler<AccountCreatedEvent>
+public class SendEmailConfirmation : INotificationHandler<AccountCreatedEvent>, INotificationHandler<EmailChangedEvent>
 {
     private readonly UserManager<User> _userManager;
     private readonly MailService _mailService;
@@ -34,34 +32,43 @@ public class SendEmailConfirmation : INotificationHandler<AccountCreatedEvent>
     
     public async Task Handle(AccountCreatedEvent notification, CancellationToken cancellationToken)
     {
+        await SendEmailNotification(notification);
+    }
+    
+    public async Task Handle(EmailChangedEvent notification, CancellationToken cancellationToken)
+    {
+        await SendEmailNotification(notification);
+    }
+    
+    private async Task SendEmailNotification(IAccountEventDto data)
+    {
         // TODO: enqueue this message to a message broker or pub-sub
         // for asynchronous processing because SMTP execution is slow
         try
         {
-            User user = null;
-            if (notification.Principal is not null)
+            User user = new User { Id = data.AccountId, Email = data.Email };
+
+            string? token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            string? confirmationLink =
+                _linkGenerator.GetUriByPage(_httpContextAccessor.HttpContext!,
+                    "/ConfirmEmail",
+                    null,
+                    new {token, email = user.Email, area = "Accounts"});
+
+            if (confirmationLink is null)
             {
-                user = await this._userManager.GetUserAsync(notification.Principal);
-            }
-            else
-            {
-                user = new User {Id = notification.Id, Email = notification.Email};
+                _logger.LogWarning("Confirmation URL were not generated");
+                return;
             }
 
-            var token = WebEncoders.Base64UrlEncode(
-                Encoding.UTF8.GetBytes(await _userManager.GenerateEmailConfirmationTokenAsync(user)));
-        
-            var confirmationLink =
-                this._linkGenerator.GetUriByPage(_httpContextAccessor.HttpContext, 
-                    "/ConfirmEmail", 
-                    null, 
-                    new { token, email = user.Email, area = "Accounts" });
-
-            await this._mailService.SendEmailConfirmation(notification.Email, confirmationLink);
+            await _mailService.SendEmailConfirmation(data.Email, confirmationLink);
+            _logger.LogInformation("E-mail confirmation notification sent to {Email}", user.Email);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to send e-mail confirmation");
+            _logger.LogError(e, "Unable to send e-mail confirmation notification");
         }
     }
+
 }

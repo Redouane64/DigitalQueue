@@ -80,7 +80,7 @@ public class AccountsController : ControllerBase
     [HttpPost("create-verify-email", Name = nameof(CreateVerifyEmailRequest))]
     public async Task<IActionResult> CreateVerifyEmailRequest()
     {
-        _ = await this._mediator.Send(new SendEmailConfirmationCommand(User));
+        _ = await this._mediator.Send(new CreateEmailConfirmationTokenCommand(User));
         return Ok();
     }
 

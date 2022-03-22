@@ -9,29 +9,29 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
-public class SendEmailConfirmationCommand : IRequest<bool>
+public class CreateEmailConfirmationTokenCommand : IRequest<bool>
 {
     public ClaimsPrincipal Principal { get; }
 
-    public SendEmailConfirmationCommand(ClaimsPrincipal principal)
+    public CreateEmailConfirmationTokenCommand(ClaimsPrincipal principal)
     {
         Principal = principal;
     }
     
-    public class SendEmailConfirmationCommandHandler : IRequestHandler<SendEmailConfirmationCommand, bool>
+    public class CreateEmailConfirmationTokenCommandHandler : IRequestHandler<CreateEmailConfirmationTokenCommand, bool>
     {
         private readonly UserManager<User> _userManager;
         private readonly MailService _mailService;
         private readonly LinkGenerator _linkGenerator;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<SendEmailConfirmationCommandHandler> _logger;
+        private readonly ILogger<CreateEmailConfirmationTokenCommandHandler> _logger;
 
-        public SendEmailConfirmationCommandHandler(
+        public CreateEmailConfirmationTokenCommandHandler(
             UserManager<User> userManager,
             MailService mailService, 
             LinkGenerator linkGenerator, 
             IHttpContextAccessor httpContextAccessor,
-            ILogger<SendEmailConfirmationCommandHandler> logger)
+            ILogger<CreateEmailConfirmationTokenCommandHandler> logger)
         {
             _userManager = userManager;
             _mailService = mailService;
@@ -40,7 +40,7 @@ public class SendEmailConfirmationCommand : IRequest<bool>
             _logger = logger;
         }
         
-        public async Task<bool> Handle(SendEmailConfirmationCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(CreateEmailConfirmationTokenCommand request, CancellationToken cancellationToken)
         {
             // TODO: enqueue this message to a message broker or pub-sub
             // for asynchronous processing because SMTP execution is slow
