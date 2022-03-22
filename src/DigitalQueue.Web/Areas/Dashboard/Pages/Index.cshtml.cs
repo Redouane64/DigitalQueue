@@ -12,7 +12,8 @@ public class Index : PageModel
     {
     }
     
-    public async Task OnGet()
+    public Task OnGet()
     {
+        return Task.CompletedTask;
     }
 }

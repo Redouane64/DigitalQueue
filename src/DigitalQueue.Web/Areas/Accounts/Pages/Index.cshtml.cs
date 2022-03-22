@@ -16,7 +16,8 @@ public class Index : PageModel
         _mediator = mediator;
     }
     
-    public async Task OnGet()
+    public Task OnGet()
     {
+        return Task.CompletedTask;
     }
 }

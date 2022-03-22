@@ -52,7 +52,7 @@ public class CreatePasswordResetTokenCommand : IRequest<bool>
             
                 await this._mailService.SendPasswordReset(user.Email, url);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

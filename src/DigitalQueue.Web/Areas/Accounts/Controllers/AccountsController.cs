@@ -6,9 +6,10 @@ using DigitalQueue.Web.Areas.Accounts.Queries;
 using DigitalQueue.Web.Filters;
 
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalQueue.Web.Areas.Accounts.Controllers;
 

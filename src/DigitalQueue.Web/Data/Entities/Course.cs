@@ -4,7 +4,7 @@ public class Course : IBaseEntity
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     public int Year { get; set; }
     
@@ -14,6 +14,6 @@ public class Course : IBaseEntity
 
     public DateTime UpdatedAt { get; set; }
     
-    public ICollection<User> Teachers { get; set; }
+    public ICollection<User>? Teachers { get; set; }
 
 }

@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Filters;
+using DigitalQueue.Web.Infrastructure;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -11,8 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
-using DigitalQueue.Web.Infrastructure;
 
 using CookieOptions = DigitalQueue.Web.Infrastructure.CookieOptions;
 
