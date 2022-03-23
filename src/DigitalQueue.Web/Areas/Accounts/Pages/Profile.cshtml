@@ -16,13 +16,12 @@
         })
     }
     
-    @if (TempData["EmailChangedResult"] is bool emailChangedResult)
+    @if (TempData["EmailChangedResult"] is true)
     {
-        @await Component.InvokeAsync("Alert", new
-        {
-            success=emailChangedResult, 
-            message=(emailChangedResult ? "Confirmation link is sent to your e-mail address." : "Something went wrong.")
-        })
+        <div class="alert alert-primary alert-dismissible" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            Confirmation email sent to <strong>@Model.Profile.Email</strong>
+        </div>
     }
         
     <div class="row mt-5">
