@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DigitalQueue.Web.Infrastructure;
 
-public class TotpTokenProvider : TotpSecurityStampBasedTokenProvider<User>
+public class DefaultTokenProvider : TotpSecurityStampBasedTokenProvider<User>
 {
-  
+    
     public override Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<User> manager, User user)
     {
         return Task.FromResult(false);
