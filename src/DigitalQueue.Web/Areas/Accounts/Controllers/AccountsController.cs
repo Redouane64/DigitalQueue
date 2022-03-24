@@ -7,6 +7,7 @@ using DigitalQueue.Web.Filters;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -77,18 +78,36 @@ public class AccountsController : ControllerBase
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPost("create-verify-email", Name = nameof(CreateVerifyEmailRequest))]
+    [HttpPost("request-email-confirmation", Name = nameof(CreateVerifyEmailRequest))]
     public async Task<IActionResult> CreateVerifyEmailRequest()
     {
         _ = await this._mediator.Send(new CreateEmailConfirmationTokenCommand(User));
         return Ok();
     }
 
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPost("create-password-reset", Name = nameof(CreatePasswordResetRequest))]
+    [HttpPost("request-password-reset", Name = nameof(CreatePasswordResetRequest))]
     public async Task<IActionResult> CreatePasswordResetRequest()
     {
         _ = await this._mediator.Send(new CreatePasswordResetTokenCommand(User));
+        return Ok();
+    }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPatch("confirm-email", Name= nameof(ConfirmEmail))]
+    public IActionResult ConfirmEmail([FromBody]ConfirmEmailDto payload)
+    {
+        _ = this._mediator.Send(new ConfirmEmailCommand(payload.Email, payload.Token));
+        return Ok();
+    }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPatch("reset-password", Name= nameof(ChangePassword))]
+    public IActionResult ChangePassword([FromBody]ChangePasswordDto payload)
+    {
+        var currentUserEmail = User.FindFirstValue(ClaimTypes.Email);
+        _ = this._mediator.Send(new UpdatePasswordCommand(currentUserEmail, payload.Password, payload.Token));
         return Ok();
     }
 }
