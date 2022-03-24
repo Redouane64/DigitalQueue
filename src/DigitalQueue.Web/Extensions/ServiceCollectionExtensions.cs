@@ -146,7 +146,8 @@ public static class ServiceCollectionExtensions
         }).AddRoles<IdentityRole>()
           .AddEntityFrameworkStores<DigitalQueueContext>()
           .AddTokenProvider<JwtRefreshTokenProvider>(JwtRefreshTokenProvider.ProviderName)
-          .AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider);
+          .AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider)
+          .AddTokenProvider<TotpTokenProvider>(TokenOptions.DefaultProvider);
         
         // Configure JWT refresh token provider
         services.Configure<JwtRefreshTokenProvider.JwtRefreshTokenProviderOptions>(options =>

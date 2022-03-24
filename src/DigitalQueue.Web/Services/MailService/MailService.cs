@@ -50,7 +50,7 @@ public class MailService
         
     }
 
-    public async Task SendPasswordReset(string to, string passwordResetLink)
+    public async Task SendPasswordReset(string to, string code)
     {
         using var client = new SmtpClient(_config.Host, _config.Port)
         {
@@ -69,8 +69,8 @@ public class MailService
         
         using var template = new StreamReader(templateFile);
         var body = await template.ReadToEndAsync();
-        var regex = new Regex("{{passwordResetLink}}");
-        body = regex.Replace(body, passwordResetLink);
+        var regex = new Regex("{{code}}");
+        body = regex.Replace(body, code);
         
         await client.SendMailAsync(
             new MailMessage(new MailAddress(_config.Username, _config.Name), new MailAddress(to))
