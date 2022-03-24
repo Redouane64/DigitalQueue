@@ -42,15 +42,8 @@ public class CreatePasswordResetTokenCommand : IRequest<bool>
             try
             {
                 var user = await _userManager.GetUserAsync(create.Principal);
-            
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var url =
-                    this._linkGenerator.GetUriByPage(_httpContextAccessor.HttpContext, 
-                        "/ResetPassword", 
-                        null, 
-                        new { token, email = user.Email, area = "Accounts" });
-            
-                await this._mailService.SendPasswordReset(user.Email, url);
+                await this._mailService.SendPasswordReset(user.Email, token);
             }
             catch (Exception)
             {
