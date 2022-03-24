@@ -22,4 +22,18 @@ $(document).ready(function() {
         placeholder: 'Search for roles',
         minimumInputLength: 2,
     });
+    
+    $('.send-code').click(function () {
+        $.ajax('/api/accounts/request-password-reset', { 
+            method: 'POST',
+            success: function (data,status,xhr) { 
+                $('div.alert alert-info').toggleClass('alert alert-success');
+                $('div.alert').text('Code sent!');
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                $('div.alert alert-info').toggleClass('alert alert-danger');
+                $('div.alert').text('Something went wrong!');
+            }
+        });
+    })
 });

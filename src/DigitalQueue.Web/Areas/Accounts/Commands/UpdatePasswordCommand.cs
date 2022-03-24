@@ -6,23 +6,21 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
-public class UpdatePasswordCommand : IRequest
+public class UpdatePasswordCommand : IRequest<bool>
 {
 
-    public UpdatePasswordCommand(string currentPassword, string newPassword, string confirmNewPassword)
+    public UpdatePasswordCommand(string email, string newPassword, string token)
     {
-        CurrentPassword = currentPassword;
+        Email = email;
         NewPassword = newPassword;
-        ConfirmNewPassword = confirmNewPassword;
+        Token = token;
     }
-    
-    public string CurrentPassword { get; }
 
+    public string Email { get; }
     public string NewPassword { get; }
+    public string Token { get; }
 
-    public string ConfirmNewPassword { get; }
-
-    public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand>
+    public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, bool>
     {
         private readonly UserManager<User> _userManager;
 
@@ -31,9 +29,23 @@ public class UpdatePasswordCommand : IRequest
             _userManager = userManager;
         }
         
-        public Task<Unit> Handle(UpdatePasswordCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdatePasswordCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var user = await this._userManager.FindByEmailAsync(request.Email);
+            
+            // TODO: should verify old password but it is ok for now.
+
+            if (user is null)
+            {
+                return false;
+            }
+            
+            var changePasswordResult = await this._userManager.ResetPasswordAsync(
+                user, 
+                request.Token, 
+                request.NewPassword);
+
+            return changePasswordResult.Succeeded;
         }
     }
 }

@@ -1,14 +1,18 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Commands;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DigitalQueue.Web.Areas.Accounts.Pages;
 
+[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 public class ResetPassword : PageModel
 {
     private readonly IMediator _mediator;
@@ -19,24 +23,40 @@ public class ResetPassword : PageModel
     }
 
     [Required]
-    public string CurrentPassword { get; set; }
+    [BindProperty]
+    public string Code { get; set; }
 
     [Required]
+    [BindProperty]
     public string NewPassword { get; set; }
 
     [Required]
     [Compare(nameof(NewPassword))]
+    [BindProperty]
     public string ConfirmNewPassword { get; set; }
 
-    public async Task<IActionResult> OnPost([FromQuery] string token)
+    public void OnGet()
+    {
+
+    }
+
+    public async Task<IActionResult> OnPost()
     {
         if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        _ = await this._mediator.Send(new UpdatePasswordCommand(CurrentPassword, NewPassword, ConfirmNewPassword));
+        var currentUserEmail = User.FindFirstValue(ClaimTypes.Email);
+        var success = await this._mediator.Send(new UpdatePasswordCommand(currentUserEmail, NewPassword, Code));
 
+        if (!success)
+        {
+            ModelState.AddModelError("PasswordNotUpdated", "Something went wrong");
+            return Page();
+        }
+        
+        HttpContext.Session.SetInt32("password_updated", 1);
         return RedirectToPagePermanent("Index", new {area = "Dashboard"});
     }
 }
