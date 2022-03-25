@@ -18,13 +18,14 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.Ignore(e => e.TwoFactorEnabled);
         builder.Ignore(e => e.PhoneNumberConfirmed);
 
+        builder.Ignore(e => e.UserName);
+        builder.Ignore(e => e.NormalizedUserName);
+
         builder.Property(e => e.Id).HasColumnName("id");
         builder.Property(e => e.Email).HasColumnName("email");
-        builder.Property(e => e.UserName).HasColumnName("username");
-        builder.Property(e => e.FullName).HasColumnName("fullname");
+        builder.Property(e => e.Name).HasColumnName("name");
 
         builder.Property(e => e.NormalizedEmail).HasColumnName("normalized_email");
-        builder.Property(e => e.NormalizedUserName).HasColumnName("normalized_username");
         builder.Property(e => e.PasswordHash).HasColumnName("password_hash");
         builder.Property(e => e.EmailConfirmed).HasColumnName("email_confirmed");
         builder.Property(e => e.ConcurrencyStamp).HasColumnName("concurrency_stamp");

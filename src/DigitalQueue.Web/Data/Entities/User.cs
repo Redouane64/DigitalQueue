@@ -4,7 +4,7 @@ namespace DigitalQueue.Web.Data.Entities;
 
 public class User : IdentityUser, IBaseEntity
 {
-    public string? FullName { get; set; }
+    public string? Name { get; set; }
     
     public DateTime CreateAt { get; set; }
 

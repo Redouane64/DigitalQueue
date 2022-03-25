@@ -56,7 +56,7 @@ public class AccountsController : ControllerBase
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpGet("profile", Name = nameof(GetProfile))]
+    [HttpGet("get-profile", Name = nameof(GetProfile))]
     [ProducesResponseType(typeof(UserDto),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorDto),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetProfile()

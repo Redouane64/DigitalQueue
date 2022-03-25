@@ -74,8 +74,7 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                 var user = new User()
                 {
                     Email = request.Email,
-                    FullName = request.FullName,
-                    UserName = request.Email,
+                    Name = request.FullName,
                     EmailConfirmed = request._isActive,
                 };
             

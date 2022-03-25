@@ -8,8 +8,7 @@ public class UserDto
     {
         this.Id = user.Id;
         this.Email = user.Email;
-        this.Username = user.UserName;
-        this.FullName = user.FullName;
+        this.Name = user.Name;
         this.CreatedAt = user.CreateAt;
         this.AccountRoles = accountRoles;
         this.CoursesRoles = coursesRoles;
@@ -17,8 +16,7 @@ public class UserDto
 
     public string Id { get; }
     public string Email { get; }
-    public string Username { get; }
-    public string FullName { get; }
+    public string Name { get; }
     public DateTime CreatedAt { get; }
     public IEnumerable<AccountRoleDto> AccountRoles { get; }
     public IEnumerable<UserCourseRolesDto> CoursesRoles { get; }

@@ -46,10 +46,10 @@ public class UpdateNameCommand : IRequest
                         return await Unit.Task;
                     }
 
-                    if (request.Name is not null && user.FullName != request.Name)
+                    if (request.Name is not null && user.Name != request.Name)
                     {
-                        user.FullName = request.Name;
-                        _context.Entry(user).Property(u => u.FullName).IsModified = true;
+                        user.Name = request.Name;
+                        _context.Entry(user).Property(u => u.Name).IsModified = true;
                         var updateResult = await _userManager.UpdateAsync(user);
 
                         if (!updateResult.Succeeded)

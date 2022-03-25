@@ -32,8 +32,8 @@ public class SearchTeacherCommand : IRequest<SearchResult<TeacherDto>>
             var teachers = await _userManager.Users
                 .AsNoTracking()
                 .Where(
-                u => EF.Functions.Like(u.FullName, $"%{request.Query}%"))
-                .Select(u => new TeacherDto(u.FullName, u.Id))
+                u => EF.Functions.Like(u.Name, $"%{request.Query}%"))
+                .Select(u => new TeacherDto(u.Name, u.Id))
                 .ToArrayAsync(cancellationToken);
 
             return new SearchResult<TeacherDto>(teachers);

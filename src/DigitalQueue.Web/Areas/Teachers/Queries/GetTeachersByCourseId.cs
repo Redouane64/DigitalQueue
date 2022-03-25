@@ -37,7 +37,7 @@ public class GetTeachersByCourseId : IRequest<IEnumerable<TeacherDto>>
                 return Array.Empty<TeacherDto>();
             }
 
-            var teachers = course.Teachers.Select(t => new TeacherDto(t.FullName, t.Id));
+            var teachers = course.Teachers.Select(t => new TeacherDto(t.Name, t.Id));
 
             return teachers;
         }
