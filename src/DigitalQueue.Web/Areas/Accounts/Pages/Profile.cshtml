@@ -73,19 +73,13 @@
             }
         </div>
         <div class="col m-1">
-            <p class="h3 mb-4"><i class="fa fa-fw fa-tools m-1"></i>Actions</p>
-            <div class="btn-group-vertical">
             @if (RouteData.Values["id"].Equals(User.FindFirstValue(ClaimTypes.NameIdentifier)))
             {
+            <p class="h3 mb-4"><i class="fa fa-fw fa-tools m-1"></i>Actions</p>
+            <div class="btn-group-vertical">
                 <a asp-page="ResetPassword" class="btn btn-outline-dark btn-lg">Change Password</a>
-            }
-            else
-            {
-                <button type="button" class="btn btn-outline-danger btn-lg">
-                    <i class="fa fa-user-slash m-2"></i>Freeze Account
-                </button>
-            }
             </div>
+            }
         </div>
     </div>
     <div class="row mt-5">

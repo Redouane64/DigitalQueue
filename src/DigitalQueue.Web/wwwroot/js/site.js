@@ -27,12 +27,19 @@ $(document).ready(function() {
         $.ajax('/api/accounts/request-password-reset', { 
             method: 'POST',
             success: function (data,status,xhr) { 
-                $('div.alert alert-info').toggleClass('alert alert-success');
-                $('div.alert').text('Code sent!');
+                $('a.btn-outline-dark')
+                    .addClass('btn-outline-success')
+                    .removeClass('btn-outline-dark')
+                    .addClass('disabled');
+                
+                $('a.send-code').text('Code Sent!');
             },
             error: function (jqXhr, textStatus, errorMessage) {
-                $('div.alert alert-info').toggleClass('alert alert-danger');
-                $('div.alert').text('Something went wrong!');
+                $('a.btn-outline-dark')
+                    .addClass('btn-outline-danger')
+                    .removeClass('btn-outline-dark');
+                
+                $('a.send-code').text('Try Again!');
             }
         });
     })
