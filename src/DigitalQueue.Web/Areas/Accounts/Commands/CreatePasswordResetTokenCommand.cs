@@ -43,7 +43,7 @@ public class CreatePasswordResetTokenCommand : IRequest<bool>
             {
                 var user = await _userManager.GetUserAsync(create.Principal);
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                await this._mailService.SendPasswordReset(user.Email, token);
+                await this._mailService.SendPasswordResetCode(user.Email, token);
             }
             catch (Exception)
             {
