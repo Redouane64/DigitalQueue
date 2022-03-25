@@ -11,7 +11,7 @@ public static class ServiceCollectionExtensions
             options.EnableDetailedErrors();
             options.EnableSensitiveDataLogging();
 
-            options.UseSqlite("Data Source=digital-queue.db");
+            options.UseSqlite(configuration.GetConnectionString("Default"));
         });
     }
 }
