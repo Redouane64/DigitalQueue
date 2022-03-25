@@ -81,7 +81,11 @@ public class AccountsController : ControllerBase
     [HttpPost("request-email-confirmation", Name = nameof(CreateVerifyEmailRequest))]
     public async Task<IActionResult> CreateVerifyEmailRequest()
     {
-        _ = await this._mediator.Send(new CreateEmailConfirmationTokenCommand(User));
+        _ = await this._mediator.Send(new CreateEmailConfirmationTokenCommand(
+            User, 
+            CreateEmailConfirmationTokenCommand.ConfirmationMethod.Code)
+        );
+        
         return Ok();
     }
 
@@ -98,7 +102,8 @@ public class AccountsController : ControllerBase
     [HttpPatch("confirm-email", Name= nameof(ConfirmEmail))]
     public IActionResult ConfirmEmail([FromBody]ConfirmEmailDto payload)
     {
-        _ = this._mediator.Send(new ConfirmEmailCommand(payload.Email, payload.Token));
+        var currentUserEmail = User.FindFirstValue(ClaimTypes.Email);
+        _ = this._mediator.Send(new ConfirmEmailCommand(currentUserEmail, payload.Token));
         return Ok();
     }
 

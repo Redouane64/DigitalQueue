@@ -61,7 +61,7 @@ public class SendEmailConfirmation : INotificationHandler<AccountCreatedEvent>, 
                 return;
             }
 
-            await _mailService.SendEmailConfirmation(data.Email, confirmationLink);
+            await _mailService.SendEmailConfirmationUrl(data.Email, confirmationLink);
             _logger.LogInformation("E-mail confirmation notification sent to {Email}", user.Email);
         }
         catch (Exception e)

@@ -11,11 +11,19 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
 public class CreateEmailConfirmationTokenCommand : IRequest<bool>
 {
+    public enum ConfirmationMethod
+    {
+        Url,
+        Code
+    }
+    
     public ClaimsPrincipal Principal { get; }
+    public ConfirmationMethod Method { get; }
 
-    public CreateEmailConfirmationTokenCommand(ClaimsPrincipal principal)
+    public CreateEmailConfirmationTokenCommand(ClaimsPrincipal principal, ConfirmationMethod method)
     {
         Principal = principal;
+        Method = method;
     }
     
     public class CreateEmailConfirmationTokenCommandHandler : IRequestHandler<CreateEmailConfirmationTokenCommand, bool>
@@ -47,16 +55,25 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
             try
             {
                 User user = await this._userManager.GetUserAsync(request.Principal);
-                
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                
-                var confirmationLink =
-                    this._linkGenerator.GetUriByPage(_httpContextAccessor.HttpContext, 
-                        "/ConfirmEmail", 
-                        null, 
-                        new { token, email = user.Email, area = "Accounts" });
 
-                await this._mailService.SendEmailConfirmation(user.Email, confirmationLink);
+                switch (request.Method)
+                {
+                    case ConfirmationMethod.Code:
+                        await this._mailService.SendEmailConfirmationCode(user.Email, token);
+                        break;
+                    
+                    case ConfirmationMethod.Url:
+                        var confirmationLink =
+                            this._linkGenerator.GetUriByPage(_httpContextAccessor.HttpContext, 
+                                "/ConfirmEmail", 
+                                null, 
+                                new { token, email = user.Email, area = "Accounts" });
+                        
+                        await this._mailService.SendEmailConfirmationUrl(user.Email, confirmationLink);
+                        break;
+                }
+
 
                 return true;
             }
