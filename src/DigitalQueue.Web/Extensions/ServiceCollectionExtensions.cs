@@ -139,14 +139,23 @@ public static class ServiceCollectionExtensions
             options.Password.RequiredLength = 4;
 
             options.User.RequireUniqueEmail = true;
-
+            options.Tokens.ChangeEmailTokenProvider = StringTokenProvider.ProviderName;
+            options.Tokens.PasswordResetTokenProvider = SixDigitsTokenProvider.ProviderName;
+            
             options.SignIn.RequireConfirmedAccount = false;
             options.SignIn.RequireConfirmedEmail = false;
             options.SignIn.RequireConfirmedPhoneNumber = false;
         }).AddRoles<IdentityRole>()
           .AddEntityFrameworkStores<DigitalQueueContext>()
           .AddTokenProvider<JwtRefreshTokenProvider>(JwtRefreshTokenProvider.ProviderName)
-          .AddTokenProvider<DefaultTokenProvider>(TokenOptions.DefaultProvider);
+          .AddTokenProvider<SixDigitsTokenProvider>(SixDigitsTokenProvider.ProviderName)
+          .AddTokenProvider<StringTokenProvider>(StringTokenProvider.ProviderName);
+
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.Name = StringTokenProvider.ProviderName;
+            options.TokenLifespan = TimeSpan.FromHours(24);
+        });
         
         // Configure JWT refresh token provider
         services.Configure<JwtRefreshTokenProvider.JwtRefreshTokenProviderOptions>(options =>

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Infrastructure;
 using DigitalQueue.Web.Services.MailService;
 
 using MediatR;
@@ -55,15 +56,19 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
             try
             {
                 User user = await this._userManager.GetUserAsync(request.Principal);
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                 switch (request.Method)
                 {
                     case ConfirmationMethod.Code:
-                        await this._mailService.SendEmailConfirmationCode(user.Email, token);
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        await this._mailService.SendEmailConfirmationCode(user.Email, code);
                         break;
                     
                     case ConfirmationMethod.Url:
+                        var token = await _userManager.GenerateUserTokenAsync(
+                            user, StringTokenProvider.ProviderName,
+                            UserManager<User>.ConfirmEmailTokenPurpose);
+
                         var confirmationLink =
                             this._linkGenerator.GetUriByPage(_httpContextAccessor.HttpContext, 
                                 "/ConfirmEmail", 
