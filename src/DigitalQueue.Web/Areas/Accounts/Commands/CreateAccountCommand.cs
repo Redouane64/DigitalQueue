@@ -75,7 +75,8 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                 {
                     Email = request.Email,
                     Name = request.FullName,
-                    EmailConfirmed = request._isActive,
+                    UserName = request.Email,
+                    EmailConfirmed = request._isActive
                 };
             
                 var createUser = await _userManager.CreateAsync(
