@@ -1,3 +1,4 @@
+using DigitalQueue.Web.Areas.Courses.Commands;
 using DigitalQueue.Web.Areas.Courses.Dtos;
 using DigitalQueue.Web.Areas.Courses.Queries;
 
@@ -22,6 +23,9 @@ public class Details : PageModel
 
     public CourseDto Course { get; set; }
 
+    [TempData]
+    public bool? PostResultMessage { get; set; }
+
     public async Task<IActionResult> OnGet([FromRoute]string courseId)
     {
         var course = await this._mediator.Send(new GetCoursesByIdsQuery(new[] {courseId}));
@@ -35,8 +39,10 @@ public class Details : PageModel
         return Page();
     }
 
-    public IActionResult OnPost(string title, int year, string[] teachers)
+    public async Task<IActionResult> OnPost([FromRoute]string courseId, [FromForm]string title, [FromForm]int year)
     {
-        return Page();
+        PostResultMessage = await this._mediator.Send(new UpdateCourseCommand(courseId, title, year));
+
+        return RedirectToPagePermanent("Details", new {courseId});
     }
 }

@@ -7,6 +7,15 @@
 }
 
 <div class="container p-3">
+    @if (TempData["PostResultMessage"] is bool result)
+    {
+        @await Component.InvokeAsync("Alert", new
+        {
+            success=result, 
+            message=(result ? "Course updated successfully." : "Something went wrong.")
+        })
+    }
+    
     <div class="row mt-5">
         <div class="col">
             <p class="h3 mb-4">
@@ -17,13 +26,13 @@
                 <div class="row">
                     <div class="col-6 form-group mt-4">
                         <label class="form-label" for="title">Title</label>
-                        <input class="form-control" id="title" asp-for="Course.Title">
+                        <input class="form-control" id="title" name="title" value="@Model.Course.Title">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-6 form-group mt-4">
                         <label class="form-label" for="year">Year</label>
-                        <input class="form-control" id="year" asp-for="Course.Year">
+                        <input class="form-control" type="number" id="year" name="year" value="@Model.Course.Year">
                     </div>
                 </div>
                 <div class="row">
