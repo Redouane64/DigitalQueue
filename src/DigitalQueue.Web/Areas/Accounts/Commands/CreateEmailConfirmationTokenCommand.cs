@@ -1,5 +1,3 @@
-using System.Security.Claims;
-
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Infrastructure;
 using DigitalQueue.Web.Services.MailService;
@@ -60,13 +58,18 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
                 switch (request.Method)
                 {
                     case ConfirmationMethod.Code:
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var code = await _userManager.GenerateUserTokenAsync(
+                            user, 
+                            SixDigitsTokenProvider.ProviderName, 
+                            UserManager<User>.ConfirmEmailTokenPurpose
+                        );
                         await this._mailService.SendEmailConfirmationCode(user.Email, code);
                         break;
                     
                     case ConfirmationMethod.Url:
                         var token = await _userManager.GenerateUserTokenAsync(
-                            user, StringTokenProvider.ProviderName,
+                            user, 
+                            StringTokenProvider.ProviderName,
                             UserManager<User>.ConfirmEmailTokenPurpose);
 
                         var confirmationLink =
@@ -84,7 +87,7 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Unable to send e-mail confirmation");
+                _logger.LogError(e, "Unable to send confirmation email");
 
                 return false;
             }

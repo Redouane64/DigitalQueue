@@ -50,7 +50,7 @@ public class ProfileModel : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPost([FromRoute] string id, [FromForm] string name, [FromForm] string email)
+    public async Task<IActionResult> OnPost([FromRoute] string id, [FromForm] string? name, [FromForm] string? email)
     {
         if (name is not null)
         {

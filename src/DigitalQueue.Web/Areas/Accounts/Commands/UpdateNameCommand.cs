@@ -10,7 +10,7 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 public class UpdateNameCommand : IRequest
 {
     public string UserId { get; }
-    public string Name { get; }
+    public string? Name { get; }
 
     public UpdateNameCommand(string userId, string name)
     {
