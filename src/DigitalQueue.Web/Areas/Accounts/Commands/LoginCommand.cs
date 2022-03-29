@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Data.Entities;
@@ -49,8 +50,8 @@ public class LoginCommand : IRequest<AccessTokenDto?>
                 _logger.LogWarning("Unable to authenticate user '{0}' reason: incorrect password", request.Email);
                 return null;
             }
-            
-            var claims = await this._userManager.GetClaimsAsync(user);
+
+            var claims = new[] {new Claim(ClaimTypes.NameIdentifier, user.Id)};
             
             var (token, refreshToken) = await _tokenService.GenerateToken(claims,
                 new User {Email = request.Email});

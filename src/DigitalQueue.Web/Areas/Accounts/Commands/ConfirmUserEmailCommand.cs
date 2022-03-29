@@ -6,18 +6,18 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
-public class ConfirmEmailCommand : IRequest<bool>
+public class ConfirmUserEmailCommand : IRequest<bool>
 {
-    public string Email { get; }
+    public string UserId { get; }
     public string Token { get; }
 
-    public ConfirmEmailCommand(string email, string token)
+    public ConfirmUserEmailCommand(string userId, string token)
     {
-        Email = email;
+        UserId = userId;
         Token = token;
     }
     
-    public class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailCommand, bool>
+    public class ConfirmEmailCommandHandler : IRequestHandler<ConfirmUserEmailCommand, bool>
     {
         private readonly UserManager<User> _userManager;
         private readonly ILogger<ConfirmEmailCommandHandler> _logger;
@@ -28,11 +28,11 @@ public class ConfirmEmailCommand : IRequest<bool>
             _logger = logger;
         }
         
-        public async Task<bool> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(ConfirmUserEmailCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var user = await this._userManager.FindByEmailAsync(request.Email);
+                var user = await this._userManager.FindByIdAsync(request.UserId);
 
                 if (user is null)
                 {
@@ -43,7 +43,8 @@ public class ConfirmEmailCommand : IRequest<bool>
 
                 if (!result.Succeeded)
                 {
-                    _logger.LogError("Unable to verify e-mail address: {0}", result.Errors.Select(e => e.Description).FirstOrDefault());
+                    var error = result.Errors.Select(e => e.Description).FirstOrDefault();
+                    _logger.LogError("Unable to verify e-mail address: {email}", error);
                     return false;
                 }
             }

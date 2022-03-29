@@ -17,13 +17,13 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
         Url,
         Code
     }
-    
-    public ClaimsPrincipal Principal { get; }
+
+    public string UserId { get; }
     public ConfirmationMethod Method { get; }
 
-    public CreateEmailConfirmationTokenCommand(ClaimsPrincipal principal, ConfirmationMethod method)
+    public CreateEmailConfirmationTokenCommand(string userId, ConfirmationMethod method)
     {
-        Principal = principal;
+        UserId = userId;
         Method = method;
     }
     
@@ -55,7 +55,7 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
             // for asynchronous processing because SMTP execution is slow
             try
             {
-                User user = await this._userManager.GetUserAsync(request.Principal);
+                User user = await this._userManager.FindByIdAsync(request.UserId);
 
                 switch (request.Method)
                 {

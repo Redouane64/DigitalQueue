@@ -9,14 +9,14 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 public class UpdatePasswordCommand : IRequest<bool>
 {
 
-    public UpdatePasswordCommand(string email, string newPassword, string token)
+    public UpdatePasswordCommand(string userId, string newPassword, string token)
     {
-        Email = email;
+        UserId = userId;
         NewPassword = newPassword;
         Token = token;
     }
 
-    public string Email { get; }
+    public string UserId { get; }
     public string NewPassword { get; }
     public string Token { get; }
 
@@ -31,7 +31,7 @@ public class UpdatePasswordCommand : IRequest<bool>
         
         public async Task<bool> Handle(UpdatePasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await this._userManager.FindByEmailAsync(request.Email);
+            var user = await this._userManager.FindByEmailAsync(request.UserId);
             
             // TODO: should verify old password but it is ok for now.
 

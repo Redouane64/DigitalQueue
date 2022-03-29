@@ -24,7 +24,7 @@ public class ConfirmEmail : PageModel
     {
         if (token is not null)
         {
-            Success = await this._mediator.Send(new ConfirmEmailCommand(email, token));
+            Success = await this._mediator.Send(new ConfirmUserEmailCommand(email, token));
         }
 
         return Page();

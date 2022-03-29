@@ -1,5 +1,3 @@
-using System.Security.Claims;
-
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Services.MailService;
 
@@ -11,11 +9,11 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
 public class CreatePasswordResetTokenCommand : IRequest<bool>
 {
-    public ClaimsPrincipal Principal { get; }
+    public string UserId { get; }
 
-    public CreatePasswordResetTokenCommand(ClaimsPrincipal principal)
+    public CreatePasswordResetTokenCommand(string userId)
     {
-        Principal = principal;
+        UserId = userId;
     }
 
     public class CreatePasswordResetTokenCommandHandler : IRequestHandler<CreatePasswordResetTokenCommand, bool>
@@ -37,11 +35,11 @@ public class CreatePasswordResetTokenCommand : IRequest<bool>
             _httpContextAccessor = httpContextAccessor;
         }
         
-        public async Task<bool> Handle(CreatePasswordResetTokenCommand create, CancellationToken cancellationToken)
+        public async Task<bool> Handle(CreatePasswordResetTokenCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var user = await _userManager.GetUserAsync(create.Principal);
+                var user = await _userManager.FindByIdAsync(request.UserId);
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 await this._mailService.SendPasswordResetCode(user.Email, token);
             }

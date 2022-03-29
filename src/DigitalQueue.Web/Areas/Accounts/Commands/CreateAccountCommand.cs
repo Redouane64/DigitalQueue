@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Dtos;
@@ -15,35 +14,18 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
 public class CreateAccountCommand : IRequest<AccessTokenDto?>
 {
-    protected string[] _roles = null;
-    protected readonly bool _isActive;
+    private readonly string[] _roles;
+    private readonly bool _isActive;
 
-    public CreateAccountCommand()
-    { }
-
-    public CreateAccountCommand(string[] roles, bool isActive = false)
+    public CreateUserDto User { get; }
+    
+    public CreateAccountCommand(CreateUserDto user, string[]? roles = null, bool isActive = false)
     {
-        _roles = roles;
+        User = user;
+        _roles = (roles ?? Array.Empty<string>()).Union(new[] {RoleDefaults.User}).ToArray();
         _isActive = isActive;
     }
-    
-    [Required]
-    [EmailAddress]
-    public string Email { get; set; }
-    
-    [Required]
-    [RegularExpression("^[a-zA-Z ]*$")]
-    [DataType(DataType.Text)]
-    public string FullName { get; set; }
 
-    [Required]
-    [DataType(DataType.Password)]
-    public string Password { get; set; }
-
-    [Required]
-    [Compare(nameof(Password))]
-    public string ConfirmPassword { get; set; }
-    
     public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, AccessTokenDto?>
     {
         private readonly UserManager<User> _userManager;
@@ -73,14 +55,14 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
             {
                 var user = new User()
                 {
-                    Email = request.Email,
-                    Name = request.FullName,
-                    UserName = request.Email,
+                    Email = request.User.Email,
+                    Name = request.User.FullName,
+                    UserName = request.User.Email,
                     EmailConfirmed = request._isActive
                 };
             
                 var createUser = await _userManager.CreateAsync(
-                    user, request.Password
+                    user, request.User.Password
                 );
 
                 if (!createUser.Succeeded)
@@ -91,8 +73,7 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                         createUser.Errors.Select(e => e.Description).First());
                     return null;
                 }
-
-                request._roles ??= new[] { RoleDefaults.User };
+                
                 var assignRole = await _userManager.AddToRolesAsync(user, request._roles);
                 if (!assignRole.Succeeded)
                 {
@@ -104,7 +85,6 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                 }
 
                 Claim[] identityClaims = {
-                    new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.NameIdentifier, user.Id)
                 };
                 var roleClaims = request._roles.Select(
@@ -115,9 +95,9 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                 if (!assignClaims.Succeeded)
                 {
                     await transaction.RollbackAsync(cancellationToken);
+                    var error = assignClaims.Errors.Select(e => e.Description).First();
+                    _logger.LogWarning("Unable to set user claims: {error}", error);
                     
-                    _logger.LogWarning("Unable to set user claims: {0}",
-                        assignClaims.Errors.Select(e => e.Description).First());
                     return null;
                 }
 
@@ -130,7 +110,7 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
 
                 if (!user.EmailConfirmed)
                 {
-                    await this._mediator.Publish(new AccountCreatedEvent(user.Id, user.Email));
+                    await this._mediator.Publish(new AccountCreatedEvent(user.Id, user.Email), cancellationToken);
                 }
 
                 return new AccessTokenDto(token, refreshToken);

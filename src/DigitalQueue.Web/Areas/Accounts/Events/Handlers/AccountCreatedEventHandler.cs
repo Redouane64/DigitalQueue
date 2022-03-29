@@ -21,11 +21,9 @@ public class AccountCreatedEventHandler : INotificationHandler<AccountCreatedEve
     
     public async Task Handle(AccountCreatedEvent notification, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new CreateEmailConfirmationTokenCommand(new ClaimsPrincipal(new ClaimsIdentity(new[]
-        {
-            new Claim(ClaimTypes.Email, notification.Email),
-            new Claim(ClaimTypes.NameIdentifier, notification.AccountId)
-        })), CreateEmailConfirmationTokenCommand.ConfirmationMethod.Url), cancellationToken);
+        await _mediator.Send(new CreateEmailConfirmationTokenCommand(
+            notification.AccountId, 
+            CreateEmailConfirmationTokenCommand.ConfirmationMethod.Url), cancellationToken);
     }
 
 }

@@ -44,9 +44,9 @@ public class AccountsController : ControllerBase
     [HttpPost("signup", Name = nameof(SignUp))]
     [ProducesResponseType(typeof(AccessTokenDto),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorDto),StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignUp([FromBody] CreateAccountCommand command)
+    public async Task<IActionResult> SignUp([FromBody] CreateUserDto payload)
     {
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(new CreateAccountCommand(payload));
         if (result is null)
         {
             return BadRequest();
@@ -81,8 +81,9 @@ public class AccountsController : ControllerBase
     [HttpPost("request-email-confirmation", Name = nameof(CreateVerifyEmailRequest))]
     public async Task<IActionResult> CreateVerifyEmailRequest()
     {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         _ = await this._mediator.Send(new CreateEmailConfirmationTokenCommand(
-            User, 
+            currentUserId, 
             CreateEmailConfirmationTokenCommand.ConfirmationMethod.Code)
         );
         
@@ -94,7 +95,8 @@ public class AccountsController : ControllerBase
     [HttpPost("request-password-reset", Name = nameof(CreatePasswordResetRequest))]
     public async Task<IActionResult> CreatePasswordResetRequest()
     {
-        _ = await this._mediator.Send(new CreatePasswordResetTokenCommand(User));
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        _ = await this._mediator.Send(new CreatePasswordResetTokenCommand(currentUserId));
         return Ok();
     }
 
@@ -102,8 +104,8 @@ public class AccountsController : ControllerBase
     [HttpPatch("confirm-email", Name= nameof(ConfirmEmail))]
     public IActionResult ConfirmEmail([FromBody]ConfirmEmailDto payload)
     {
-        var currentUserEmail = User.FindFirstValue(ClaimTypes.Email);
-        _ = this._mediator.Send(new ConfirmEmailCommand(currentUserEmail, payload.Token));
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        _ = this._mediator.Send(new ConfirmUserEmailCommand(currentUserId, payload.Token));
         return Ok();
     }
 
@@ -111,8 +113,8 @@ public class AccountsController : ControllerBase
     [HttpPatch("reset-password", Name= nameof(ChangePassword))]
     public IActionResult ChangePassword([FromBody]ChangePasswordDto payload)
     {
-        var currentUserEmail = User.FindFirstValue(ClaimTypes.Email);
-        _ = this._mediator.Send(new UpdatePasswordCommand(currentUserEmail, payload.Password, payload.Token));
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        _ = this._mediator.Send(new UpdatePasswordCommand(currentUserId, payload.Password, payload.Token));
         return Ok();
     }
 }
