@@ -102,19 +102,28 @@ public class AccountsController : ControllerBase
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPatch("confirm-email", Name= nameof(ConfirmEmail))]
-    public IActionResult ConfirmEmail([FromBody]ConfirmEmailDto payload)
+    public async Task<IActionResult> ConfirmEmail([FromBody]ConfirmEmailDto payload)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        _ = this._mediator.Send(new ConfirmUserEmailCommand(currentUserId, payload.Token));
+        _ = await this._mediator.Send(new ConfirmUserEmailCommand(currentUserId, payload.Token));
         return Ok();
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPatch("reset-password", Name= nameof(ChangePassword))]
-    public IActionResult ChangePassword([FromBody]ChangePasswordDto payload)
+    public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordDto payload)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        _ = this._mediator.Send(new UpdatePasswordCommand(currentUserId, payload.Password, payload.Token));
+        _ = await this._mediator.Send(new UpdatePasswordCommand(currentUserId, payload.Password, payload.Token));
+        return Ok();
+    }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPatch("change-email", Name= nameof(ChangeEmail))]
+    public async Task<IActionResult> ChangeEmail([FromBody] UpdateEmailDto payload)
+    {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        _ = await _mediator.Send(new UpdateEmailCommand(currentUserId, payload.Email));
         return Ok();
     }
 }

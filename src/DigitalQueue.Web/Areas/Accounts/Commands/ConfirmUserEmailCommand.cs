@@ -1,4 +1,8 @@
+using System.Text.RegularExpressions;
+
+using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Infrastructure;
 
 using MediatR;
 
@@ -20,11 +24,16 @@ public class ConfirmUserEmailCommand : IRequest<bool>
     public class ConfirmEmailCommandHandler : IRequestHandler<ConfirmUserEmailCommand, bool>
     {
         private readonly UserManager<User> _userManager;
+        private readonly DigitalQueueContext _context;
         private readonly ILogger<ConfirmEmailCommandHandler> _logger;
 
-        public ConfirmEmailCommandHandler(UserManager<User> userManager, ILogger<ConfirmEmailCommandHandler> logger)
+        public ConfirmEmailCommandHandler(
+            UserManager<User> userManager,
+            DigitalQueueContext context,
+            ILogger<ConfirmEmailCommandHandler> logger)
         {
             _userManager = userManager;
+            _context = context;
             _logger = logger;
         }
         
@@ -32,21 +41,38 @@ public class ConfirmUserEmailCommand : IRequest<bool>
         {
             try
             {
-                var user = await this._userManager.FindByIdAsync(request.UserId);
+                var user = await this._userManager.FindByEmailAsync(request.UserId);
 
                 if (user is null)
                 {
                     return false;
                 }
 
-                var result = await this._userManager.ConfirmEmailAsync(user, request.Token);
-
-                if (!result.Succeeded)
+                string provider;
+                if (Regex.Match(request.Token, "\\d{6}", RegexOptions.Compiled).Success)
                 {
-                    var error = result.Errors.Select(e => e.Description).FirstOrDefault();
-                    _logger.LogError("Unable to verify e-mail address: {email}", error);
+                    provider = SixDigitsTokenProvider.ProviderName;
+                }
+                else
+                {
+                    provider = StringTokenProvider.ProviderName;
+                }
+                
+                var success = await this._userManager.VerifyUserTokenAsync(
+                    user, 
+                    provider, 
+                    UserManager<User>.ConfirmEmailTokenPurpose, 
+                    request.Token);
+
+                if (!success)
+                {
+                    _logger.LogError("Unable to verify e-mail address");
                     return false;
                 }
+
+                user.EmailConfirmed = true;
+                _context.Entry(user).Property(e => e.EmailConfirmed).IsModified = true;
+                await _context.SaveChangesAsync(cancellationToken);
             }
             catch (Exception e)
             {
