@@ -1,6 +1,6 @@
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Infrastructure;
-using DigitalQueue.Web.Services.MailService;
+using DigitalQueue.Web.Services.Notifications;
 
 using MediatR;
 
@@ -28,20 +28,20 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
     public class CreateEmailConfirmationTokenCommandHandler : IRequestHandler<CreateEmailConfirmationTokenCommand, bool>
     {
         private readonly UserManager<User> _userManager;
-        private readonly MailService _mailService;
+        private readonly NotificationService _notificationService;
         private readonly LinkGenerator _linkGenerator;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<CreateEmailConfirmationTokenCommandHandler> _logger;
 
         public CreateEmailConfirmationTokenCommandHandler(
             UserManager<User> userManager,
-            MailService mailService, 
+            NotificationService notificationService,
             LinkGenerator linkGenerator, 
             IHttpContextAccessor httpContextAccessor,
             ILogger<CreateEmailConfirmationTokenCommandHandler> logger)
         {
             _userManager = userManager;
-            _mailService = mailService;
+            _notificationService = notificationService;
             _linkGenerator = linkGenerator;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
@@ -49,8 +49,6 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
         
         public async Task<bool> Handle(CreateEmailConfirmationTokenCommand request, CancellationToken cancellationToken)
         {
-            // TODO: enqueue this message to a message broker or pub-sub
-            // for asynchronous processing because SMTP execution is slow
             try
             {
                 User user = await this._userManager.FindByIdAsync(request.UserId);
@@ -63,7 +61,16 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
                             SixDigitsTokenProvider.ProviderName, 
                             UserManager<User>.ConfirmEmailTokenPurpose
                         );
-                        await this._mailService.SendEmailConfirmationCode(user.Email, code);
+                        
+                        await this._notificationService.Publish(
+                            new Notification<SendEmailConfirmation>(
+                                new(
+                                    user.Email, 
+                                    ConfirmationMethod.Code, 
+                                    code)
+                                )
+                            );
+                        
                         break;
                     
                     case ConfirmationMethod.Url:
@@ -77,8 +84,16 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
                                 "/ConfirmEmail", 
                                 null, 
                                 new { token, email = user.Email, area = "Accounts" });
+
+                        await this._notificationService.Publish(
+                            new Notification<SendEmailConfirmation>(
+                                new (
+                                user.Email, 
+                                ConfirmationMethod.Url, 
+                                confirmationLink)
+                            )
+                        );
                         
-                        await this._mailService.SendEmailConfirmationUrl(user.Email, confirmationLink);
                         break;
                 }
 

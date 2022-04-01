@@ -1,5 +1,5 @@
 using DigitalQueue.Web.Data.Entities;
-using DigitalQueue.Web.Services.MailService;
+using DigitalQueue.Web.Services.Notifications;
 
 using MediatR;
 
@@ -19,20 +19,14 @@ public class CreatePasswordResetTokenCommand : IRequest<bool>
     public class CreatePasswordResetTokenCommandHandler : IRequestHandler<CreatePasswordResetTokenCommand, bool>
     {
         private readonly UserManager<User> _userManager;
-        private readonly MailService _mailService;
-        private readonly LinkGenerator _linkGenerator;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly NotificationService _notificationService;
 
         public CreatePasswordResetTokenCommandHandler(
-            UserManager<User> userManager, 
-            MailService mailService, 
-            LinkGenerator linkGenerator, 
-            IHttpContextAccessor httpContextAccessor)
+            UserManager<User> userManager,
+            NotificationService notificationService)
         {
             _userManager = userManager;
-            _mailService = mailService;
-            _linkGenerator = linkGenerator;
-            _httpContextAccessor = httpContextAccessor;
+            _notificationService = notificationService;
         }
         
         public async Task<bool> Handle(CreatePasswordResetTokenCommand request, CancellationToken cancellationToken)
@@ -41,7 +35,12 @@ public class CreatePasswordResetTokenCommand : IRequest<bool>
             {
                 var user = await _userManager.FindByIdAsync(request.UserId);
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                await this._mailService.SendPasswordResetCode(user.Email, token);
+
+                await this._notificationService.Publish(
+                    new Notification<SendPasswordResetCode>(
+                        new(user.Email, token)
+                    )
+                );
             }
             catch (Exception)
             {

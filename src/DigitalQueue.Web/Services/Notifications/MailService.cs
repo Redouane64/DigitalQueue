@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 using Microsoft.Extensions.Options;
 
-namespace DigitalQueue.Web.Services.MailService;
+namespace DigitalQueue.Web.Services.Notifications;
 
 public class MailService
 {

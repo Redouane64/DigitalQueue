@@ -1,4 +1,4 @@
-namespace DigitalQueue.Web.Services.MailService;
+namespace DigitalQueue.Web.Services.Notifications;
 
 public class SmtpConfig
 {
