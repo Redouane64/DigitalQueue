@@ -26,6 +26,7 @@ public class DigitalQueueContext : IdentityDbContext<User>
         builder.Entity<IdentityUserRole<string>>().ToTable("users_roles");
 
         builder.ApplyConfiguration(new CourseEntityConfiguration());
+        builder.ApplyConfiguration(new RequestEntityConfiguration());
     }
 
     public override int SaveChanges()
@@ -60,5 +61,6 @@ public class DigitalQueueContext : IdentityDbContext<User>
     }
 
     public DbSet<Course> Courses { get; set; }
-    
+
+    public DbSet<Request> Requests { get; set; }
 }
