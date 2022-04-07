@@ -61,9 +61,9 @@
             <div class="row">
                 <div class="col">
                     <div class="btn-group-vertical">
-                        <a class="btn btn-lg btn-outline-danger" href="#">
-                            <span class="fa fa-trash m-1"></span>Archive The Course
-                        </a>
+                        <form asp-page-handler="ArchiveCourse">
+                            <input type="submit" class="btn btn-lg btn-outline-danger" value="Archive The Course" />
+                        </form>
                     </div>
                 </div>
             </div>

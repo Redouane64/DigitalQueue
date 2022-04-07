@@ -45,4 +45,11 @@ public class Details : PageModel
 
         return RedirectToPagePermanent("Details", new {courseId});
     }
+
+    public async Task<IActionResult> OnPostArchiveCourse([FromRoute] string courseId)
+    {
+        await _mediator.Send(new ArchiveCourseCommand(courseId));
+        
+        return RedirectToPagePermanent("Index");
+    }
 }
