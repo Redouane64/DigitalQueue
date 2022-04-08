@@ -16,4 +16,5 @@ public class Course : IBaseEntity
     
     public ICollection<User>? Teachers { get; set; }
 
+    public ICollection<Request>? Requests { get; set; }
 }

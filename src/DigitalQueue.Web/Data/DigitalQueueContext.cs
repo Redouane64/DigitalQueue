@@ -1,3 +1,4 @@
+using DigitalQueue.Web.Areas.Courses.Dtos;
 using DigitalQueue.Web.Data.Entities;
 
 using Microsoft.AspNetCore.Identity;
@@ -27,6 +28,8 @@ public class DigitalQueueContext : IdentityDbContext<User>
 
         builder.ApplyConfiguration(new CourseEntityConfiguration());
         builder.ApplyConfiguration(new RequestEntityConfiguration());
+
+        builder.Entity<CourseRequest>().HasNoKey();
     }
 
     public override int SaveChanges()
@@ -63,4 +66,6 @@ public class DigitalQueueContext : IdentityDbContext<User>
     public DbSet<Course> Courses { get; set; }
 
     public DbSet<Request> Requests { get; set; }
+
+    public DbSet<CourseRequest> CourseRequests { get; set; }
 }

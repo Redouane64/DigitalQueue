@@ -35,6 +35,10 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
             e.Property("TeachersId").HasColumnName("teacher_id");
         });
 
+        builder.HasMany(e => e.Requests)
+            .WithOne(e => e.Course)
+            .HasForeignKey(e => e.CourseId);
+
         builder.HasIndex(e => new { e.Title, e.Year }).IsUnique();
     }
 }
