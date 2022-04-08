@@ -56,7 +56,7 @@ public class CreateCourseRequestCommand : IRequest
                 _context.Add(courseRequest);
 
                 await _context.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync();
+                await transaction.CommitAsync(cancellationToken);
             }
             catch (Exception e)
             {
