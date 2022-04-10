@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 
@@ -56,6 +58,8 @@ public class CreateCourseRequestCommand : IRequest
                 _context.Add(courseRequest);
 
                 await _context.SaveChangesAsync(cancellationToken);
+                await _userManager.AddClaimAsync(user, new Claim(ClaimTypesDefaults.Student, courseRequest.Id));
+                
                 await transaction.CommitAsync(cancellationToken);
             }
             catch (Exception e)
