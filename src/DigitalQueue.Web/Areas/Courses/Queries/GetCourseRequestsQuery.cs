@@ -37,20 +37,21 @@ public class GetCourseRequestsQuery : IRequest<RequestsQueueDto>
         public async Task<RequestsQueueDto> Handle(GetCourseRequestsQuery requestQuery, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                var sent = await _context.Requests.Include(e => e.Course)
+                    .Include(e => e.Creator)
+                    .Where(r => r.CreatorId == requestQuery.UserId)
+                    .GroupBy(r => r.Course.Title)
+                    .Select(r => new
+                        UserRequestsDto(r.Key, r.Count(), r.Select(e => new RequestInfoDto
+                        {
+                            RequestId = e.Id,
+                            CreatedAt = e.CreateAt
+                        })))
+                    .ToArrayAsync(cancellationToken);
 
-            var sent = await _context.Requests.Include(e => e.Course)
-                .Include(e => e.Creator)
-                .Where(r => r.CreatorId == requestQuery.UserId)
-                .GroupBy(r => r.Course.Title)
-                .Select(r => new
-                UserRequestsDto(r.Key, r.Count(), r.Select(e => new RequestInfoDto
-                {
-                    RequestId = e.Id,
-                    CreatedAt = e.CreateAt
-                })))
-                .ToArrayAsync(cancellationToken);
-
-            var courseRequests = await _context.CourseRequests.FromSqlInterpolated(@$"
+                var courseRequests = await _context.CourseRequests.FromSqlInterpolated(@$"
                     select
                            r.id as RequestId,
                            r.create_at as CreatedAt,
@@ -66,27 +67,34 @@ public class GetCourseRequestsQuery : IRequest<RequestsQueueDto>
                     join users a on r.creator_id = a.id
                     where u.id = {requestQuery.UserId}
                 ")
-                .ToArrayAsync(cancellationToken);
+                    .ToArrayAsync(cancellationToken);
                 
                 var received = courseRequests
-                .GroupBy(r => r.CourseTitle)
-                .Select(r => 
-                    new CourseRequestsDto(
-                        r.Key, 
-                        r.Count(), 
-                        r.Select(e => new RequestInfoDto
-                        {
-                            RequestId = e.RequestId,
-                            CreatedAt = e.CreatedAt,
-                            StudentName = e.StudentName,
-                        })
+                    .GroupBy(r => r.CourseTitle)
+                    .Select(r => 
+                        new CourseRequestsDto(
+                            r.Key, 
+                            r.Count(), 
+                            r.Select(e => new RequestInfoDto
+                            {
+                                RequestId = e.RequestId,
+                                CreatedAt = e.CreatedAt,
+                                StudentName = e.StudentName,
+                            })
+                        )
                     )
-                )
-                .ToArray();
+                    .ToArray();
 
-            await transaction.CommitAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
 
-            return new RequestsQueueDto(sent, received);
+                return new RequestsQueueDto(sent, received);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unable to fetch course requests");
+            }
+
+            return new RequestsQueueDto(Array.Empty<UserRequestsDto>(), Array.Empty<CourseRequestsDto>());
         }
     }
 }

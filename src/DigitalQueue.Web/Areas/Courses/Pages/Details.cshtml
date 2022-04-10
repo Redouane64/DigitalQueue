@@ -82,6 +82,7 @@
                 <i class="fa fa-user-graduate m-2"></i>
                 Students
             </p>
+            @await Component.InvokeAsync("CourseStudentsList", new { courseId = Model.Course.Id })
         </div>
     </div>
 </div>
