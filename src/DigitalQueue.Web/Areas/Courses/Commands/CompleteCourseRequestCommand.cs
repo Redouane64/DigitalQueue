@@ -44,6 +44,7 @@ public class CompleteCourseRequestCommand : IRequest
                 
                 courseRequest.Completed = true;
                 await _context.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
             }
             catch (Exception e)
             {
