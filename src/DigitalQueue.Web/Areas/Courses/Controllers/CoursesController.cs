@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 
 using DigitalQueue.Web.Areas.Courses.Commands;
+using DigitalQueue.Web.Areas.Courses.Dtos;
 using DigitalQueue.Web.Areas.Courses.Queries;
 
 using MediatR;
@@ -29,13 +30,15 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
         }
 
         [HttpGet(Name = nameof(GetCourses))]
-        public async Task<IActionResult> GetCourses()
+        [Produces(typeof(IEnumerable<CourseDto>))]
+        public async Task<IActionResult> GetCourses([FromQuery]string q)
         {
-            var courses = await this._mediator.Send(new GetCoursesQuery());
+            var courses = await this._mediator.Send(new GetCoursesQuery(q));
             return Ok(courses);
         }
 
         [HttpGet("get-requests-queue", Name = nameof(GetRequestsQueue))]
+        [Produces(typeof(RequestsQueueDto))]
         public async Task<IActionResult> GetRequestsQueue()
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);

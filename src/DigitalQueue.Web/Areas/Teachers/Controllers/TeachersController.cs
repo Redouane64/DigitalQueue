@@ -1,4 +1,6 @@
+using DigitalQueue.Web.Areas.Common.Dtos;
 using DigitalQueue.Web.Areas.Teachers.Commands;
+using DigitalQueue.Web.Areas.Teachers.Dtos;
 
 using MediatR;
 
@@ -24,6 +26,7 @@ public class TeachersController : ControllerBase
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     [HttpPost("search", Name = nameof(Search))]
     [Consumes("application/x-www-form-urlencoded")]
+    [Produces(typeof(SearchResult<TeacherDto>))]
     public async Task<IActionResult> Search([FromForm] string q)
     {
         return Ok(await _mediator.Send(new SearchTeacherCommand(q)));
