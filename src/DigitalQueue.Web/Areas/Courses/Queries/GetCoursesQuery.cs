@@ -9,6 +9,12 @@ namespace DigitalQueue.Web.Areas.Courses.Queries;
 
 public class GetCoursesQuery : IRequest<IEnumerable<CourseDto>>
 {
+    public string? SearchQuery { get; }
+
+    public GetCoursesQuery(string? searchQuery)
+    {
+        SearchQuery = searchQuery;
+    }
     
     public class GetCourseQueryHandler : IRequestHandler<GetCoursesQuery, IEnumerable<CourseDto>>
     {
@@ -21,20 +27,27 @@ public class GetCoursesQuery : IRequest<IEnumerable<CourseDto>>
         
         public async Task<IEnumerable<CourseDto>> Handle(GetCoursesQuery request, CancellationToken cancellationToken)
         {
-            var courses = await _context.Courses
+            var query = _context.Courses
                 .AsNoTracking()
                 .OrderByDescending(c => c.CreateAt)
                 .Include(c => c.Teachers)
-                .Where(c => !c.IsArchived)
-                .Select(
-                    course => new CourseDto
-                    {
-                        Id = course.Id, Title = course.Title, Year = course.Year, CreatedAt = course.CreateAt, Teachers = course.Teachers.Count
-                    }
-                )
-                .ToArrayAsync(cancellationToken);
+                .Where(c => !c.IsArchived);
 
-            return courses;
+            if (request.SearchQuery is not null)
+            {
+                query.Where(c => EF.Functions.Like(c.Title,$"%{request.SearchQuery}%"));
+            }
+
+            return await query.Select(
+                course => new CourseDto
+                {
+                    Id = course.Id, 
+                    Title = course.Title, 
+                    Year = course.Year, 
+                    CreatedAt = course.CreateAt, 
+                    Teachers = course.Teachers.Count
+                }
+            ).ToArrayAsync(cancellationToken);
         }
     }
 }
