@@ -7,16 +7,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Teachers.Queries;
 
-public class GetTeachersByCourseId : IRequest<IEnumerable<TeacherDto>>
+public class GetTeachersByCourseIdQuery : IRequest<IEnumerable<TeacherDto>>
 {
     public string CourseId { get; }
 
-    public GetTeachersByCourseId(string courseId)
+    public GetTeachersByCourseIdQuery(string courseId)
     {
         CourseId = courseId;
     }
     
-    public class GetTeachersByCourseIdQueryHandler : IRequestHandler<GetTeachersByCourseId, IEnumerable<TeacherDto>>
+    public class GetTeachersByCourseIdQueryHandler : IRequestHandler<GetTeachersByCourseIdQuery, IEnumerable<TeacherDto>>
     {
         private readonly DigitalQueueContext _context;
 
@@ -25,12 +25,13 @@ public class GetTeachersByCourseId : IRequest<IEnumerable<TeacherDto>>
             _context = context;
         }
         
-        public async Task<IEnumerable<TeacherDto>> Handle(GetTeachersByCourseId request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<TeacherDto>> Handle(GetTeachersByCourseIdQuery request, CancellationToken cancellationToken)
         {
 
             var course = await this._context.Courses
+                .AsNoTracking()
                 .Include(c => c.Teachers)
-                .FirstOrDefaultAsync(c => c.Id == request.CourseId);
+                .FirstOrDefaultAsync(c => c.Id == request.CourseId, cancellationToken: cancellationToken);
 
             if (course is null)
             {

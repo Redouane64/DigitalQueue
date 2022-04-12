@@ -7,30 +7,31 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace DigitalQueue.Web.Areas.Teachers.Commands;
+namespace DigitalQueue.Web.Areas.Teachers.Queries;
 
-public class SearchTeacherCommand : IRequest<SearchResult<TeacherDto>>
+public class SearchTeacherQuery : IRequest<SearchResult<TeacherDto>>
 {
     public string Query { get; }
 
-    public SearchTeacherCommand(string query)
+    public SearchTeacherQuery(string query)
     {
         Query = query;
     }
     
-    public class SearchTeacherCommandHandler : IRequestHandler<SearchTeacherCommand, SearchResult<TeacherDto>>
+    public class SearchTeacherQueryHandler : IRequestHandler<SearchTeacherQuery, SearchResult<TeacherDto>>
     {
         private readonly UserManager<User> _userManager;
 
-        public SearchTeacherCommandHandler(UserManager<User> userManager)
+        public SearchTeacherQueryHandler(UserManager<User> userManager)
         {
             _userManager = userManager;
         }
         
-        public async Task<SearchResult<TeacherDto>> Handle(SearchTeacherCommand request, CancellationToken cancellationToken)
+        public async Task<SearchResult<TeacherDto>> Handle(SearchTeacherQuery request, CancellationToken cancellationToken)
         {
             var teachers = await _userManager.Users
                 .AsNoTracking()
+                .Where(u => u.EmailConfirmed)
                 .Where(
                 u => EF.Functions.Like(u.Name, $"%{request.Query}%"))
                 .Select(u => new TeacherDto(u.Name, u.Id))

@@ -18,7 +18,7 @@ public class CourseTeachersListViewComponent : ViewComponent
 
     public async Task<IViewComponentResult> InvokeAsync(string courseId)
     {
-        var teachers = await this._mediator.Send(new GetTeachersByCourseId(courseId));
+        var teachers = await this._mediator.Send(new GetTeachersByCourseIdQuery(courseId));
         return View(teachers);
     }
 }

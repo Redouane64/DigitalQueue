@@ -1,6 +1,6 @@
 using DigitalQueue.Web.Areas.Common.Dtos;
-using DigitalQueue.Web.Areas.Teachers.Commands;
 using DigitalQueue.Web.Areas.Teachers.Dtos;
+using DigitalQueue.Web.Areas.Teachers.Queries;
 
 using MediatR;
 
@@ -29,6 +29,6 @@ public class TeachersController : ControllerBase
     [Produces(typeof(SearchResult<TeacherDto>))]
     public async Task<IActionResult> Search([FromForm] string q)
     {
-        return Ok(await _mediator.Send(new SearchTeacherCommand(q)));
+        return Ok(await _mediator.Send(new SearchTeacherQuery(q)));
     }
 }
