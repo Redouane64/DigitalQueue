@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+  backend:
+    build:
+      context: .
+      args:
+        - ConnectionStrings__Default=${ConnectionStrings__Default}
+    container_name: 'digital-queue-backend'
+    network_mode: bridge
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - PORT=${PORT}
+      - ConnectionStrings__Default=${ConnectionStrings__Default}
+      - JwtOptions__Secret=${JwtOptions__Secret}
+      - JwtOptions__Issuer=${JwtOptions__Issuer}
+      - JwtOptions__Audience=${JwtOptions__Audience}
+      - JwtOptions__TokenLifeTime=${JwtOptions__TokenLifeTime}
+      - JwtOptions__RefreshTokenLifeTime=${JwtOptions__RefreshTokenLifeTime}
+      - CookieOptions__Name=${CookieOptions__Name}
+      - CookieOptions__ExpireTimeSpan=${CookieOptions__ExpireTimeSpan}
+      - DefaultUser__Email=${DefaultUser__Email}
+      - DefaultUser__Password=${DefaultUser__Password}
+      - Redis__Server=${Redis__Server}
+      - SmtpConfig__Host=${SmtpConfig__Host}
+      - SmtpConfig__Port=${SmtpConfig__Port}
+      - SmtpConfig__Name=${SmtpConfig__Name}
+      - SmtpConfig__Username=${SmtpConfig__Username}
+      - SmtpConfig__Password=${SmtpConfig__Password}
+      
+    ports:
+      - "${PORT}:5241"
+    restart:
+      always
