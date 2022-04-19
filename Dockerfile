@@ -11,6 +11,6 @@ RUN dotnet tool restore
 
 COPY src/DigitalQueue.Web/ .
 RUN dotnet libman restore
-RUN dotnet ef database update
+RUN --mount=type=secret,id=_env,dst=/etc/secrets/.env dotnet ef database update
 
 ENTRYPOINT ["dotnet", "run", "-c", "Release"]
