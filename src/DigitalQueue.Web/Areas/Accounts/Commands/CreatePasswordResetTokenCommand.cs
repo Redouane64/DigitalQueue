@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
-public class CreatePasswordResetTokenCommand : IRequest<bool>
+public class CreatePasswordResetTokenCommand : IRequest
 {
     public string UserId { get; }
 
@@ -16,38 +16,41 @@ public class CreatePasswordResetTokenCommand : IRequest<bool>
         UserId = userId;
     }
 
-    public class CreatePasswordResetTokenCommandHandler : IRequestHandler<CreatePasswordResetTokenCommand, bool>
+    public class CreatePasswordResetTokenCommandHandler : IRequestHandler<CreatePasswordResetTokenCommand>
     {
         private readonly UserManager<User> _userManager;
         private readonly NotificationService _notificationService;
+        private readonly ILogger<CreatePasswordResetTokenCommandHandler> _logger;
 
         public CreatePasswordResetTokenCommandHandler(
             UserManager<User> userManager,
-            NotificationService notificationService)
+            NotificationService notificationService,
+            ILogger<CreatePasswordResetTokenCommandHandler> logger)
         {
             _userManager = userManager;
             _notificationService = notificationService;
+            _logger = logger;
         }
         
-        public async Task<bool> Handle(CreatePasswordResetTokenCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreatePasswordResetTokenCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 var user = await _userManager.FindByIdAsync(request.UserId);
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                await this._notificationService.Publish(
-                    new Notification<SendPasswordResetCode>(
+                await this._notificationService.Send(
+                    new Notification<PasswordResetToken>(
                         new(user.Email, token)
                     )
                 );
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return false;
+                _logger.LogError(e, "Unable to send password reset code");
             }
             
-            return true;
+            return Unit.Value;
         }
     }
 }

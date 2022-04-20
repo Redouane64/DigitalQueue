@@ -62,8 +62,8 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
                             UserManager<User>.ConfirmEmailTokenPurpose
                         );
                         
-                        await this._notificationService.Publish(
-                            new Notification<SendEmailConfirmation>(
+                        await this._notificationService.Send(
+                            new Notification<EmailConfirmationToken>(
                                 new(
                                     user.Email, 
                                     ConfirmationMethod.Code, 
@@ -85,8 +85,8 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
                                 null, 
                                 new { token, email = user.Email, area = "Accounts" });
 
-                        await this._notificationService.Publish(
-                            new Notification<SendEmailConfirmation>(
+                        await this._notificationService.Send(
+                            new Notification<EmailConfirmationToken>(
                                 new (
                                 user.Email, 
                                 ConfirmationMethod.Url, 
@@ -102,8 +102,7 @@ public class CreateEmailConfirmationTokenCommand : IRequest<bool>
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Unable to send confirmation email");
-
+                _logger.LogError(e, "Unable to send email confirmation token");
                 return false;
             }
         }

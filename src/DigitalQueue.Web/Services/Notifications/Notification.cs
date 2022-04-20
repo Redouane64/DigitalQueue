@@ -6,18 +6,16 @@ public class Notification<T> where T : class
 {
     public Notification(T payload)
     {
-        Type = typeof(T).Name;
         Payload = payload;
     }
 
-    public string Type { get; }
     public T Payload { get; }
 }
 
-public record SendEmailConfirmation(
+public record EmailConfirmationToken(
     string Email, 
     CreateEmailConfirmationTokenCommand.ConfirmationMethod Method,
     string Token
 );
 
-public record SendPasswordResetCode(string Email, string Token);
+public record PasswordResetToken(string Email, string Token);
