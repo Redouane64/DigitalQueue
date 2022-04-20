@@ -61,8 +61,17 @@ public class NotificationService : RedisPubSubService
 
     public Task Publish<T>(T value)
     {
-        var json = JsonSerializer.Serialize(value);
-        return base.Publish(ChannelName, json);
+        try
+        {
+            var json = JsonSerializer.Serialize(value);
+            return base.Publish(ChannelName, json);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to publish payload");
+        }
+        
+        return Task.CompletedTask;
     }
 
 }
