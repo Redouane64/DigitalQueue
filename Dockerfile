@@ -1,6 +1,6 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:6.0
 
-ARG ConnectionStrings__Default
+ARG ConnectionStrings__Default="Data Source=digital-queue.db"
 
 WORKDIR /app
 COPY src/DigitalQueue.Web/*.csproj .
@@ -11,6 +11,7 @@ RUN dotnet tool restore
 
 COPY src/DigitalQueue.Web/ .
 RUN dotnet libman restore
-RUN --mount=type=secret,id=_env,dst=/etc/secrets/.env dotnet ef database update
+
+RUN dotnet ef database update
 
 ENTRYPOINT ["dotnet", "run", "-c", "Release"]
