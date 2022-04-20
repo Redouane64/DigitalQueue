@@ -9,7 +9,10 @@ public static class MailServiceExtensions
         service.AddSingleton<IConnectionMultiplexer>((provider) =>
         {
             var server = configuration.GetValue<string>("Redis:Server");
-            return ConnectionMultiplexer.Connect(server);
+            return ConnectionMultiplexer.Connect(new ConfigurationOptions()
+            {
+                EndPoints = { server }
+            });
         });
         
         service.Configure<SmtpConfig>(configuration.GetSection("SmtpConfig"));
