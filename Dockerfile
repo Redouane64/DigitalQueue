@@ -1,6 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:6.0
-
-ARG PORT
+﻿FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 
 WORKDIR /app
 COPY src/DigitalQueue.Web/*.csproj .
@@ -12,4 +10,5 @@ RUN dotnet tool restore
 COPY src/DigitalQueue.Web/ .
 RUN dotnet libman restore
 
-ENTRYPOINT ["dotnet", "run", "-c", "Release", "urls=\"http://*:$PORT\""]
+ARG PORT
+CMD dotnet run --urls "http://*:$PORT"

@@ -34,10 +34,5 @@
     <EmbeddedResource Include="Templates\PasswordReset_Template.html" />
     <EmbeddedResource Include="Templates\ConfirmEmail_Template.html" />
   </ItemGroup>
-
-  <Target Name="PrePublishTarget" BeforeTargets="Publish">
-    <!-- <Exec Command="dotnet ef database update" /> -->
-    <Exec Command="dotnet libman restore" />
-  </Target>
   
 </Project>

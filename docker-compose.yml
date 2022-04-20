@@ -29,6 +29,6 @@ services:
       - SmtpConfig__Password=${SmtpConfig__Password}
       
     ports:
-      - "${PORT}:5241"
+      - "${PORT}:${PORT}"
     restart:
       always
