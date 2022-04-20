@@ -4,6 +4,8 @@ using DigitalQueue.Web.Data;
 
 using MediatR;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace DigitalQueue.Web.Extensions;
 
 public static class ApplicationExtensions
@@ -29,5 +31,12 @@ public static class ApplicationExtensions
         }, new[] { RoleDefaults.Administrator, RoleDefaults.User }, 
             isActive: true)
         );
+    }
+
+    public static async Task ApplyMigrations(this WebApplication app)
+    {
+        using var serviceScope = app.Services.CreateScope();
+        var dbContext = serviceScope.ServiceProvider.GetRequiredService<DigitalQueueContext>();
+        await dbContext.Database.MigrateAsync();
     }
 }

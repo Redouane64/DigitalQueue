@@ -60,6 +60,7 @@ app.UseSession();
 app.MapRazorPages();
 app.MapControllers();
 
-// application data initialization
+// application initialization
+await app.ApplyMigrations();
 await app.InitializeDefaultUser();
 app.Run();
