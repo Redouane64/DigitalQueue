@@ -31,7 +31,7 @@ public class UpdatePasswordCommand : IRequest<bool>
         
         public async Task<bool> Handle(UpdatePasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await this._userManager.FindByEmailAsync(request.UserId);
+            var user = await this._userManager.FindByIdAsync(request.UserId);
             
             // TODO: should verify old password but it is ok for now.
 
