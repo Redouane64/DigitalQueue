@@ -1,5 +1,5 @@
 # Digital Queue
-
+[![CI](https://github.com/Redouane64/DigitalQueue/actions/workflows/main.yml/badge.svg)](https://github.com/Redouane64/DigitalQueue/actions/workflows/main.yml)
 
 ## Resources
 
