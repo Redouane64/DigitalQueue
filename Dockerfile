@@ -11,4 +11,4 @@ COPY src/DigitalQueue.Web/ .
 RUN dotnet libman restore
 
 ARG PORT
-CMD dotnet run --urls "http://*:$PORT"
+CMD dotnet run --urls "http://*:$PORT" -c Release
