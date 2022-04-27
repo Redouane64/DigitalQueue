@@ -39,12 +39,14 @@ public class ConfirmUserEmailCommand : IRequest<bool>
         
         public async Task<bool> Handle(ConfirmUserEmailCommand request, CancellationToken cancellationToken)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
             try
             {
-                var user = await this._userManager.FindByEmailAsync(request.UserId);
+                var user = await this._userManager.FindByIdAsync(request.UserId);
 
                 if (user is null)
                 {
+                    _logger.LogWarning("Unable to find user with the provided email confirmation code");
                     return false;
                 }
 
@@ -73,9 +75,14 @@ public class ConfirmUserEmailCommand : IRequest<bool>
                 user.EmailConfirmed = true;
                 _context.Entry(user).Property(e => e.EmailConfirmed).IsModified = true;
                 await _context.SaveChangesAsync(cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+                _logger.LogInformation("user {Email} confirmed successfully", user.Email);
             }
             catch (Exception e)
             {
+                await transaction.RollbackAsync(cancellationToken);
+                
                 _logger.LogError(e, "Unable to verify e-mail address");
                 return false;
             }
