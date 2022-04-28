@@ -36,5 +36,9 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         
         builder.Property(e => e.UpdatedAt)
             .HasColumnName("updated_at");
+
+        builder.HasMany(e => e.Sessions)
+            .WithOne(e => e.User)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

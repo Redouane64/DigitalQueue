@@ -28,7 +28,8 @@ public class DigitalQueueContext : IdentityDbContext<User>
 
         builder.ApplyConfiguration(new CourseEntityConfiguration());
         builder.ApplyConfiguration(new RequestEntityConfiguration());
-
+        builder.ApplyConfiguration(new SessionEntityConfiguration());
+        
         builder.Entity<CourseRequest>().HasNoKey();
     }
 
@@ -68,4 +69,7 @@ public class DigitalQueueContext : IdentityDbContext<User>
     public DbSet<Request> Requests { get; set; }
 
     public DbSet<CourseRequest> CourseRequests { get; set; }
+
+    public DbSet<Session> Sessions { get; set; }
+    
 }
