@@ -118,6 +118,8 @@ public static class ServiceCollectionExtensions
                 ValidAudience = jwtOptions.Audience,
                 ValidIssuer = jwtOptions.Issuer,
             };
+
+            options.EventsType = typeof(DigitalQueueJwtEvents);
         });
 
         services.AddAuthorizationCore(options =>
@@ -165,7 +167,7 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddScoped<JwtTokenService>();
-
+        services.AddScoped<DigitalQueueJwtEvents>();
     }
     
 }
