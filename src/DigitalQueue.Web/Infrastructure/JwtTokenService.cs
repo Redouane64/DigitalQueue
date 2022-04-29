@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Data.Entities;
 
 using Microsoft.AspNetCore.Identity;
@@ -14,20 +15,22 @@ public sealed class JwtTokenService
 {
     private readonly JwtRefreshTokenProvider _jwtRefreshTokenProvider;
     private readonly UserManager<User> _userManager;
+    private readonly ILogger<JwtTokenService> _logger;
     private readonly JwtOptions _jwtTokenOptions;
 
     public JwtTokenService(
         IOptions<JwtOptions> jwtTokenOptions,
         JwtRefreshTokenProvider jwtRefreshTokenProvider,
-        UserManager<User> userManager
-    )
+        UserManager<User> userManager,
+        ILogger<JwtTokenService> logger)
     {
         _jwtRefreshTokenProvider = jwtRefreshTokenProvider;
         _userManager = userManager;
+        _logger = logger;
         _jwtTokenOptions = jwtTokenOptions.Value;
     }
 
-    public async Task<(string Token, string RefreshToken)> GenerateToken(
+    public async Task<AccessTokenDto> GenerateToken(
         IEnumerable<Claim> claims,
         User user)
     {
@@ -57,10 +60,10 @@ public sealed class JwtTokenService
 
         var stringifiedToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return (Token: stringifiedToken, RefreshToken: refreshToken);
+        return new AccessTokenDto(stringifiedToken, refreshToken);
     }
 
-    public async Task<(string? Token, string? RefreshToken)> RefreshToken(string refreshToken, User user,
+    public async Task<AccessTokenDto?> RefreshToken(string refreshToken, User user,
         IEnumerable<Claim> claims)
     {
         var isValid =
@@ -69,7 +72,8 @@ public sealed class JwtTokenService
 
         if (!isValid)
         {
-            return (null, null);
+            _logger.LogWarning("Invalid refresh token from user {Id}", user.Id);
+            return null;
         }
 
         return await this.GenerateToken(claims, user);

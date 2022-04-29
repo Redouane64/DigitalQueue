@@ -18,7 +18,7 @@ public class JwtRefreshTokenProvider : DataProtectorTokenProvider<User>
     public JwtRefreshTokenProvider(
         IDataProtectionProvider dataProtectionProvider,
         IOptions<JwtRefreshTokenProviderOptions> options,
-        ILogger<DataProtectorTokenProvider<User>> logger)
+        ILogger<JwtRefreshTokenProvider> logger)
         : base(dataProtectionProvider, options, logger)
     {
     }
