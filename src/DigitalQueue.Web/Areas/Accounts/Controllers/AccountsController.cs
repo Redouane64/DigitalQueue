@@ -105,7 +105,7 @@ public class AccountsController : ControllerBase
     public async Task<IActionResult> ConfirmEmail([FromBody]ConfirmEmailDto payload)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        _ = await this._mediator.Send(new ConfirmUserEmailCommand(currentUserId, payload.Token));
+        _ = await this._mediator.Send(new ConfirmUserEmailCommand(payload.Token, userId: currentUserId));
         return Ok();
     }
 

@@ -20,11 +20,11 @@ public class ConfirmEmail : PageModel
 
     public bool Success { get; set; }
 
-    public async Task<IActionResult> OnGet([FromQuery]string? token, [FromQuery]string? email)
+    public async Task<IActionResult> OnGet([FromQuery]string? token, [FromQuery]string email)
     {
         if (token is not null)
         {
-            Success = await this._mediator.Send(new ConfirmUserEmailCommand(email, token));
+            Success = await this._mediator.Send(new ConfirmUserEmailCommand(token, email: email));
         }
 
         return Page();

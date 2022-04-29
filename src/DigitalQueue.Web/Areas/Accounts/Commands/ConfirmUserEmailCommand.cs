@@ -12,12 +12,14 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
 public class ConfirmUserEmailCommand : IRequest<bool>
 {
-    public string UserId { get; }
+    public string? UserId { get; }
+    public string? Email { get; }
     public string Token { get; }
 
-    public ConfirmUserEmailCommand(string userId, string token)
+    public ConfirmUserEmailCommand(string token, string? userId = null, string? email = null)
     {
         UserId = userId;
+        Email = email;
         Token = token;
     }
     
@@ -42,7 +44,15 @@ public class ConfirmUserEmailCommand : IRequest<bool>
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
             try
             {
-                var user = await this._userManager.FindByIdAsync(request.UserId);
+                User user = null;
+                if (request.UserId is not null)
+                {
+                    user = await this._userManager.FindByIdAsync(request.UserId);
+                }
+                else if (request.Email is not null && user is null)
+                {
+                    user = await this._userManager.FindByEmailAsync(request.Email);
+                }
 
                 if (user is null)
                 {
