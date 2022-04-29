@@ -22,7 +22,14 @@ public class JsonExceptionFilter : IExceptionFilter
         ErrorDto error;
         if (_env.IsDevelopment())
         {
-            error = new ErrorDto(context.Exception.Message, context.Exception.StackTrace);
+            if (context.Exception.InnerException is not null)
+            {
+                error = new ErrorDto(context.Exception.InnerException.Message, context.Exception.StackTrace!);
+            }
+            else
+            {
+                error = new ErrorDto(context.Exception.Message, context.Exception.StackTrace!);
+            }
         }
         else
         {
