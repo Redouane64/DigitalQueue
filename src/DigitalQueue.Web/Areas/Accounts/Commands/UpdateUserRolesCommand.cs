@@ -26,17 +26,30 @@ public class UpdateUserRolesCommand : IRequest<bool>
     {
         private readonly UserManager<User> _userManager;
         private readonly DigitalQueueContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<UpdateUserRolesCommandHandler> _logger;
 
-        public UpdateUserRolesCommandHandler(UserManager<User> userManager, DigitalQueueContext context, ILogger<UpdateUserRolesCommandHandler> logger)
+        public UpdateUserRolesCommandHandler(
+            UserManager<User> userManager, 
+            DigitalQueueContext context, 
+            IHttpContextAccessor httpContextAccessor,
+            ILogger<UpdateUserRolesCommandHandler> logger)
         {
             _userManager = userManager;
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
         
         public async Task<bool> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
         {
+            var currentUserId = _httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (currentUserId == request.User)
+            {
+                _logger.LogWarning("Current user is not allowed to change their own roles");
+                return false;
+            }
+            
             using (var transaction = await _context.Database.BeginTransactionAsync(cancellationToken))
             {
                 try
