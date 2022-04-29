@@ -30,9 +30,9 @@ public class AccountsController : ControllerBase
     [HttpPost("signin", Name = nameof(SignIn))]
     [ProducesResponseType(typeof(AccessTokenDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorDto), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignIn([FromBody]LoginCommand command)
+    public async Task<IActionResult> SignIn([FromBody]AuthenticateUserDto body)
     {
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(new AuthenticateUserCommand(body.Email!, body.Password!));
         if (result is null)
         {
             return BadRequest();

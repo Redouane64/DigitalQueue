@@ -2,6 +2,8 @@ using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Areas.Accounts.Events;
+using DigitalQueue.Web.Areas.Common.Interfaces;
+using DigitalQueue.Web.Areas.Sessions.Commands;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Infrastructure;
@@ -12,7 +14,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
-public class CreateAccountCommand : IRequest<AccessTokenDto?>
+public class CreateAccountCommand : IAuthenticationCommand<AccessTokenDto?>
 {
     private readonly string[] _roles;
     private readonly bool _isActive;
@@ -84,14 +86,16 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                     return null;
                 }
 
-                Claim[] identityClaims = {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id)
+                var sessionId = Guid.NewGuid().ToString();
+                var claims = new[] {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypesDefaults.Session, sessionId)
                 };
                 var roleClaims = request._roles.Select(
                     role => new Claim(ClaimTypes.Role, role)
                 );
 
-                var assignClaims = await _userManager.AddClaimsAsync(user, identityClaims.Concat(roleClaims));
+                var assignClaims = await _userManager.AddClaimsAsync(user, claims.Concat(roleClaims));
                 if (!assignClaims.Succeeded)
                 {
                     await transaction.RollbackAsync(cancellationToken);
@@ -103,8 +107,8 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
 
                 await transaction.CommitAsync(cancellationToken);
 
-                var (token, refreshToken) = await _tokenService.GenerateToken(
-                    identityClaims,
+                var (accessToken, refreshToken) = await _tokenService.GenerateToken(
+                    claims,
                     user
                 );
 
@@ -113,7 +117,9 @@ public class CreateAccountCommand : IRequest<AccessTokenDto?>
                     await this._mediator.Publish(new AccountCreatedEvent(user.Id, user.Email), cancellationToken);
                 }
 
-                return new AccessTokenDto(token, refreshToken);
+                await _mediator.Send(new CreateSessionCommand(user.Id, sessionId, accessToken, refreshToken), cancellationToken);
+
+                return new AccessTokenDto(accessToken, refreshToken);
             }
             catch (Exception exception)
             {
