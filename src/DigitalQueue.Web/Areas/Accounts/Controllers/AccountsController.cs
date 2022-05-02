@@ -46,6 +46,7 @@ public class AccountsController : ControllerBase
             return BadRequest();
         }
         
+        HttpContext.Response.Headers.Add("X-Session-Id", result.Session);
         return Ok(result);
     }
 
@@ -56,12 +57,6 @@ public class AccountsController : ControllerBase
     public async Task<IActionResult> GetProfile()
     {
         var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (userId is null)
-        {
-            return BadRequest();
-        }
-        
         var user = await _mediator.Send(new GetUserQuery(userId));
         if (user is null)
         {

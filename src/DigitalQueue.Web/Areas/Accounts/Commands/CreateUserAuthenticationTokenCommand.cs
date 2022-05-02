@@ -43,7 +43,7 @@ public class CreateUserAuthenticationTokenCommand : IRequest
             if (user is null)
             {
                 // create user.
-                user = new User { Email = request.Email };
+                user = new User { Email = request.Email, UserName = request.Email, Name = request.Email };
                 var createUserResult = await _userManager.CreateAsync(user);
 
                 if (!createUserResult.Succeeded)
@@ -89,7 +89,8 @@ public class CreateUserAuthenticationTokenCommand : IRequest
                 }
             }
             
-            var token = await _userManager.GenerateUserTokenAsync(user, AuthenticationTokenProvider.ProviderName, "authentication");
+            var token = await _userManager.GenerateUserTokenAsync(user, AuthenticationTokenProvider.ProviderName
+                , AuthenticationTokenProvider.AuthenticationPurposeName);
 
             try
             {
@@ -105,7 +106,7 @@ public class CreateUserAuthenticationTokenCommand : IRequest
             
             await transaction.CommitAsync(cancellationToken);
             
-            _logger.LogInformation("User '{Email}' created successfully", user.Email);
+            _logger.LogInformation("User '{Email}' authenticated successfully", user.Email);
             return Unit.Value;
         }
     }

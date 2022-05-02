@@ -11,7 +11,7 @@ public class MailService
     private readonly static string ResetPasswordCodeTemplate = "DigitalQueue.Web.Templates.PasswordReset_Template.html";
 
     private readonly static string AuthenticationCodeTemplate =
-        "DigitalQueue.Web.Templates.AuthenticationCode_Template.html.html";
+        "DigitalQueue.Web.Templates.AuthenticationCode_Template.html";
 
     private readonly ILogger<MailService> _logger;
     private readonly SmtpConfig _config;
@@ -104,6 +104,7 @@ public class MailService
 
         if (templateFile is null)
         {
+            _logger.LogError("E-mail template '{template}' not found", template);
             return null;
         }
 
