@@ -30,9 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Templates\ConfirmEmailWithCode_Template.html" />
+    <EmbeddedResource Include="Templates\AuthenticationCode_Template.html" />
     <EmbeddedResource Include="Templates\PasswordReset_Template.html" />
-    <EmbeddedResource Include="Templates\ConfirmEmail_Template.html" />
   </ItemGroup>
   
 </Project>
