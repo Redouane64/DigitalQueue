@@ -9,9 +9,10 @@ namespace DigitalQueue.Web.Services.Notifications;
 public class MailService
 {
     private readonly static string ResetPasswordCodeTemplate = "DigitalQueue.Web.Templates.PasswordReset_Template.html";
-    private readonly static string ConfirmEmailUrlTemplate = "DigitalQueue.Web.Templates.ConfirmEmail_Template.html";
-    private readonly static string ConfirmEmailCodeTemplate = "DigitalQueue.Web.Templates.ConfirmEmailWithCode_Template.html";
-    
+
+    private readonly static string AuthenticationCodeTemplate =
+        "DigitalQueue.Web.Templates.AuthenticationCode_Template.html.html";
+
     private readonly ILogger<MailService> _logger;
     private readonly SmtpConfig _config;
 
@@ -21,68 +22,80 @@ public class MailService
         _config = config.Value;
     }
 
-    public async Task SendEmailConfirmationUrl(string to, string confirmationLink)
+    public async Task SendAuthenticationCode(string to, string code)
     {
+        if (to == null)
+        {
+            throw new ArgumentNullException(nameof(to));
+        }
+
+        if (code == null)
+        {
+            throw new ArgumentNullException(nameof(code));
+        }
+
+
         var body = await this.ParseTemplate(
-            ConfirmEmailUrlTemplate, 
-            new("{{confirmationLink}}", confirmationLink)
+            AuthenticationCodeTemplate,
+            new("{{code}}", code)
         );
-        
+
         if (body is null)
         {
             return;
         }
-        
-        await Send(to, "Confirm Digital Queue Account", body);
+
+        await Send(to, "Digital Queue Account Authentication Code", body);
     }
 
-    public async Task SendEmailConfirmationCode(string to, string code)
-    {
-        var body = await this.ParseTemplate(
-            ConfirmEmailCodeTemplate, 
-            new("{{code}}", code)
-        );
-        
-        if (body is null)
-        {
-            return;
-        }
-        
-        await Send(to, "Confirm Digital Queue Account", body);
-    }
-    
     public async Task SendPasswordResetCode(string to, string code)
     {
+        if (to == null)
+        {
+            throw new ArgumentNullException(nameof(to));
+        }
+
+        if (code == null)
+        {
+            throw new ArgumentNullException(nameof(code));
+        }
+
         var body = await this.ParseTemplate(
-            ResetPasswordCodeTemplate, 
+            ResetPasswordCodeTemplate,
             new("{{code}}", code)
         );
-        
+
         if (body is null)
         {
             return;
         }
-        
+
         await Send(to, "Password Reset Code For Digital Queue Account", body);
     }
 
     private async Task Send(string to, string subject, string body)
     {
-        using var client = new SmtpClient(_config.Host, _config.Port)
+        try
         {
-            Credentials = new NetworkCredential(_config.Username, _config.Password),
-            EnableSsl = true,
-            UseDefaultCredentials = false
-        };
-
-        await client.SendMailAsync(
-            new MailMessage(new MailAddress(_config.Username, _config.Name), new MailAddress(to))
+            using var client = new SmtpClient(_config.Host, _config.Port)
             {
-                IsBodyHtml = true,
-                Subject = subject,
-                Body = body
-            }
-        );
+                Credentials = new NetworkCredential(_config.Username, _config.Password),
+                EnableSsl = true,
+                UseDefaultCredentials = false
+            };
+
+            await client.SendMailAsync(
+                new MailMessage(new MailAddress(_config.Username, _config.Name), new MailAddress(to))
+                {
+                    IsBodyHtml = true, Subject = subject, Body = body
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unable to send authentication code to user {to}", to);
+            throw;
+        }
     }
 
     private async Task<string?> ParseTemplate(string template, KeyValuePair<string, string> value)
@@ -99,5 +112,4 @@ public class MailService
 
         return Regex.Replace(body, value.Key, value.Value);
     }
-    
 }
