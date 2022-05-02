@@ -141,7 +141,7 @@ public static class ServiceCollectionExtensions
             options.Password.RequiredLength = 4;
 
             options.User.RequireUniqueEmail = true;
-            options.Tokens.ChangeEmailTokenProvider = AuthenticationTokenProvider.ProviderName;
+            options.Tokens.ChangeEmailTokenProvider = AuthenticationTokenProvider.ProviderName; // Not needed
             options.Tokens.PasswordResetTokenProvider = AuthenticationTokenProvider.ProviderName;
             
             options.SignIn.RequireConfirmedAccount = false;

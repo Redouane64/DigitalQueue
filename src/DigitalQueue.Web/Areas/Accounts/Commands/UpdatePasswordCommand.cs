@@ -9,32 +9,30 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 public class UpdatePasswordCommand : IRequest<bool>
 {
 
-    public UpdatePasswordCommand(string userId, string newPassword, string token)
+    public UpdatePasswordCommand(string password, string token)
     {
-        UserId = userId;
-        NewPassword = newPassword;
+        Password = password;
         Token = token;
     }
-
-    public string UserId { get; }
-    public string NewPassword { get; }
+    
+    public string Password { get; }
     public string Token { get; }
 
     public class UpdatePasswordCommandHandler : IRequestHandler<UpdatePasswordCommand, bool>
     {
         private readonly UserManager<User> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UpdatePasswordCommandHandler(UserManager<User> userManager)
+        public UpdatePasswordCommandHandler(UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
         
         public async Task<bool> Handle(UpdatePasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await this._userManager.FindByIdAsync(request.UserId);
+            var user = await this._userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
             
-            // TODO: should verify old password but it is ok for now.
-
             if (user is null)
             {
                 return false;
@@ -43,7 +41,7 @@ public class UpdatePasswordCommand : IRequest<bool>
             var changePasswordResult = await this._userManager.ResetPasswordAsync(
                 user, 
                 request.Token, 
-                request.NewPassword);
+                request.Password);
 
             return changePasswordResult.Succeeded;
         }

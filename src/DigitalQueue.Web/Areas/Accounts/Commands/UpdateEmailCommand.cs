@@ -1,7 +1,6 @@
-using System.Security.Claims;
-
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Infrastructure;
 
 using MediatR;
 
@@ -11,12 +10,12 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
 public class UpdateEmailCommand : IRequest<bool>
 {
-    public string UserId { get; }
+    public string Token { get; }
     public string Email { get; }
 
-    public UpdateEmailCommand(string userId, string email)
+    public UpdateEmailCommand(string token, string email)
     {
-        UserId = userId;
+        Token = token;
         Email = email;
     }
     
@@ -24,15 +23,18 @@ public class UpdateEmailCommand : IRequest<bool>
     {
         private readonly UserManager<User> _userManager;
         private readonly DigitalQueueContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<UpdateEmailCommandHandler> _logger;
 
         public UpdateEmailCommandHandler(
             UserManager<User> userManager, 
             DigitalQueueContext context,
+            IHttpContextAccessor httpContextAccessor,
             ILogger<UpdateEmailCommandHandler> logger)
         {
             _userManager = userManager;
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
         
@@ -40,13 +42,21 @@ public class UpdateEmailCommand : IRequest<bool>
         {
             await using (var transaction = await _context.Database.BeginTransactionAsync(cancellationToken))
             {
-
                 try
                 {
-
-                    var user = await _userManager.FindByIdAsync(request.UserId);
+                    var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
 
                     if (user is null)
+                    {
+                        _logger.LogWarning("User does not exist");
+                        return false;
+                    }
+
+                    var isValidToken = await _userManager.VerifyUserTokenAsync(user,
+                        AuthenticationTokenProvider.ProviderName,
+                        AuthenticationTokenProvider.AuthenticationPurposeName, request.Token);
+
+                    if (!isValidToken)
                     {
                         return false;
                     }
@@ -61,22 +71,6 @@ public class UpdateEmailCommand : IRequest<bool>
                             await transaction.RollbackAsync(cancellationToken);
                             return false;
                         }
-                        
-                        var allClaims = await _userManager.GetClaimsAsync(user);
-                        var emailClaim = allClaims.First(c => c.Type == ClaimTypes.Email);
-
-                        var replaceEmailClaimResult = await _userManager.ReplaceClaimAsync(user, emailClaim,
-                            new Claim(ClaimTypes.Email, request.Email));
-
-                        if (!replaceEmailClaimResult.Succeeded)
-                        {
-                            await transaction.RollbackAsync(cancellationToken);
-                            return false;
-                        }
-
-                        user.EmailConfirmed = false;
-                        await _userManager.UpdateAsync(user);
-                        
                     }
 
                     await transaction.CommitAsync(cancellationToken);

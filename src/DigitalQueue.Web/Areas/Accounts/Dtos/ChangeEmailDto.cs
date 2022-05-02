@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DigitalQueue.Web.Areas.Accounts.Dtos;
 
-public class ConfirmEmailDto
+public class ChangeEmailDto
 {
     [Required]
-    public string Token { get; set; }
+    public string Email { get; set; }
 }

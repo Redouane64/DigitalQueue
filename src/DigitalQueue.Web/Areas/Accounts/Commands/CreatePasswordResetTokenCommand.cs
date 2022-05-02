@@ -9,26 +9,23 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
 public class CreatePasswordResetTokenCommand : IRequest
 {
-    public string UserId { get; }
-
-    public CreatePasswordResetTokenCommand(string userId)
-    {
-        UserId = userId;
-    }
-
+    
     public class CreatePasswordResetTokenCommandHandler : IRequestHandler<CreatePasswordResetTokenCommand>
     {
         private readonly UserManager<User> _userManager;
         private readonly NotificationService _notificationService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<CreatePasswordResetTokenCommandHandler> _logger;
 
         public CreatePasswordResetTokenCommandHandler(
             UserManager<User> userManager,
             NotificationService notificationService,
+            IHttpContextAccessor httpContextAccessor,
             ILogger<CreatePasswordResetTokenCommandHandler> logger)
         {
             _userManager = userManager;
             _notificationService = notificationService;
+            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
         
@@ -36,7 +33,13 @@ public class CreatePasswordResetTokenCommand : IRequest
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(request.UserId);
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
+                
+                if (user is null)
+                {
+                    return Unit.Value;
+                }
+                
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
                 await this._notificationService.Send(
