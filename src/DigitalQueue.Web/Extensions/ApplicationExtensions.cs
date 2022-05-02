@@ -1,5 +1,4 @@
 using DigitalQueue.Web.Areas.Accounts.Commands;
-using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Data;
 
 using MediatR;
@@ -23,14 +22,7 @@ public static class ApplicationExtensions
 
         string email = defaultUser.GetValue<string>("Email");
         string password = defaultUser.GetValue<string>("Password");
-
-        await mediator.Send(new CreateAccountCommand(new CreateUserDto {
-            Email = email,
-            Password = password,
-            FullName = "Admin",
-        }, new[] { RoleDefaults.Administrator, RoleDefaults.User }, 
-            isActive: true)
-        );
+        await mediator.Send(new CreateDefaultAccountCommand(email, password));
     }
 
     public static async Task ApplyMigrations(this WebApplication app)

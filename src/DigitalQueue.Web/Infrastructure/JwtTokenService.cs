@@ -30,9 +30,7 @@ public sealed class JwtTokenService
         _jwtTokenOptions = jwtTokenOptions.Value;
     }
 
-    public async Task<AccessTokenDto> GenerateToken(
-        IEnumerable<Claim> claims,
-        User user)
+    public async Task<TokenResult> GenerateToken(IEnumerable<Claim> claims, User user)
     {
         if (claims == null)
         {
@@ -44,31 +42,35 @@ public sealed class JwtTokenService
             throw new ArgumentNullException(nameof(user));
         }
 
-        SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this._jwtTokenOptions.Secret));
+        SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this._jwtTokenOptions.Secret!));
         SigningCredentials signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+        var tokenExpiryDate = DateTime.Now.AddMinutes(this._jwtTokenOptions.TokenLifeTime);
         JwtSecurityToken token = new JwtSecurityToken(
             issuer: this._jwtTokenOptions.Issuer,
             audience: this._jwtTokenOptions.Audience,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(this._jwtTokenOptions.TokenLifeTime),
+            expires: tokenExpiryDate,
             signingCredentials: signingCredentials
         );
 
-        var refreshToken =
-            await this._jwtRefreshTokenProvider.GenerateAsync(JwtRefreshTokenProvider.Purpose, _userManager, user);
+        var refreshToken = await this._jwtRefreshTokenProvider.GenerateAsync(
+            JwtRefreshTokenProvider.Purpose, 
+            _userManager, 
+            user);
 
-        var stringifiedToken = new JwtSecurityTokenHandler().WriteToken(token);
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return new AccessTokenDto(stringifiedToken, refreshToken);
+        return new TokenResult(accessToken, refreshToken, tokenExpiryDate);
     }
 
-    public async Task<AccessTokenDto?> RefreshToken(string refreshToken, User user,
-        IEnumerable<Claim> claims)
+    public async Task<TokenResult?> RefreshToken(string refreshToken, User user, IEnumerable<Claim> claims)
     {
-        var isValid =
-            await this._jwtRefreshTokenProvider.ValidateAsync(JwtRefreshTokenProvider.Purpose, refreshToken,
-                _userManager, user);
+        var isValid = await this._jwtRefreshTokenProvider.ValidateAsync(
+            JwtRefreshTokenProvider.Purpose, 
+            refreshToken,
+            _userManager, 
+            user);
 
         if (!isValid)
         {

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Sessions.Commands;
 
-public class RefreshSessionCommand : IRequest<AccessTokenDto?>
+public class RefreshSessionCommand : IRequest<TokenResult?>
 {
     public string RefreshToken { get; }
 
@@ -19,7 +19,7 @@ public class RefreshSessionCommand : IRequest<AccessTokenDto?>
         RefreshToken = refreshToken;
     }
     
-    class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionCommand, AccessTokenDto?>
+    class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionCommand, TokenResult?>
     {
         private readonly JwtTokenService _jwtTokenService;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -38,7 +38,7 @@ public class RefreshSessionCommand : IRequest<AccessTokenDto?>
             _logger = logger;
         }
         
-        public async Task<AccessTokenDto?> Handle(RefreshSessionCommand request, CancellationToken cancellationToken)
+        public async Task<TokenResult?> Handle(RefreshSessionCommand request, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
@@ -68,8 +68,8 @@ public class RefreshSessionCommand : IRequest<AccessTokenDto?>
             var deviceIp = _httpContextAccessor.HttpContext.Request.Headers["X-Forwarded-For"].ToString() 
                            ?? _httpContextAccessor.HttpContext!.Connection.RemoteIpAddress!.ToString();
 
-            session.AccessToken = tokens.accessToken;
-            session.RefreshToken = tokens.refreshToken;
+            session.AccessToken = tokens.AccessToken;
+            session.RefreshToken = tokens.RefreshToken;
             session.DeviceToken = deviceToken;
             session.DeviceIP = deviceIp;
 

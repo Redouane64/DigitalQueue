@@ -141,8 +141,8 @@ public static class ServiceCollectionExtensions
             options.Password.RequiredLength = 4;
 
             options.User.RequireUniqueEmail = true;
-            options.Tokens.ChangeEmailTokenProvider = StringTokenProvider.ProviderName;
-            options.Tokens.PasswordResetTokenProvider = SixDigitsTokenProvider.ProviderName;
+            options.Tokens.ChangeEmailTokenProvider = AuthenticationTokenProvider.ProviderName;
+            options.Tokens.PasswordResetTokenProvider = AuthenticationTokenProvider.ProviderName;
             
             options.SignIn.RequireConfirmedAccount = false;
             options.SignIn.RequireConfirmedEmail = false;
@@ -150,13 +150,12 @@ public static class ServiceCollectionExtensions
         }).AddRoles<IdentityRole>()
           .AddEntityFrameworkStores<DigitalQueueContext>()
           .AddTokenProvider<JwtRefreshTokenProvider>(JwtRefreshTokenProvider.ProviderName)
-          .AddTokenProvider<SixDigitsTokenProvider>(SixDigitsTokenProvider.ProviderName)
-          .AddTokenProvider<StringTokenProvider>(StringTokenProvider.ProviderName);
+          .AddTokenProvider<AuthenticationTokenProvider>(AuthenticationTokenProvider.ProviderName);
 
         services.Configure<DataProtectionTokenProviderOptions>(options =>
         {
-            options.Name = StringTokenProvider.ProviderName;
-            options.TokenLifespan = TimeSpan.FromHours(24);
+            options.Name = AuthenticationTokenProvider.ProviderName;
+            options.TokenLifespan = TimeSpan.FromMinutes(5);
         });
         
         // Configure JWT refresh token provider

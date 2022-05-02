@@ -61,13 +61,8 @@ public class LoginModel : PageModel
             return Page();
         }
 
-        // verify password
-        var correct = await _userManager.CheckPasswordAsync(user, Password);
-        if (!correct)
-        {
-            ModelState.AddModelError("invalid_credentials", "Invalid credentials.");
-            return Page();
-        }
+        // populate user claims and create cookie
+        var claims = await this._userManager.GetClaimsAsync(user);
         
         // verify user role
         var roles = await this._userManager.GetRolesAsync(user);
@@ -79,9 +74,29 @@ public class LoginModel : PageModel
             ModelState.AddModelError("access_denied", "Access denied.");
             return Page();
         }
+
+        // verify password
+        if (!await _userManager.HasPasswordAsync(user))
+        {
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
+                new AuthenticationProperties()
+                {
+                    IsPersistent = RememberMe,
+                });
+            
+            return RedirectToPagePermanent("CreatePassword", new { returnUrl });
+        }
         
-        // populate user claims and create cookie
-        var claims = await this._userManager.GetClaimsAsync(user);
+        var correct = await _userManager.CheckPasswordAsync(user, Password);
+        if (!correct)
+        {
+            ModelState.AddModelError("invalid_credentials", "Invalid credentials.");
+            return Page();
+        }
+        
         await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),

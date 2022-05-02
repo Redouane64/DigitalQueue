@@ -1,6 +1,5 @@
 using System.Security.Claims;
 
-using DigitalQueue.Web.Areas.Accounts.Events;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 
@@ -25,18 +24,15 @@ public class UpdateEmailCommand : IRequest<bool>
     {
         private readonly UserManager<User> _userManager;
         private readonly DigitalQueueContext _context;
-        private readonly IMediator _mediator;
         private readonly ILogger<UpdateEmailCommandHandler> _logger;
 
         public UpdateEmailCommandHandler(
             UserManager<User> userManager, 
             DigitalQueueContext context,
-            IMediator mediator,
             ILogger<UpdateEmailCommandHandler> logger)
         {
             _userManager = userManager;
             _context = context;
-            _mediator = mediator;
             _logger = logger;
         }
         
@@ -55,7 +51,7 @@ public class UpdateEmailCommand : IRequest<bool>
                         return false;
                     }
 
-                    if (request.Email is not null && !user.Email.Equals(request.Email))
+                    if (!user.Email.Equals(request.Email))
                     {
                         var changeEmailToken = await _userManager.GenerateChangeEmailTokenAsync(user, request.Email);
                         var updateEmailResult = await _userManager.ChangeEmailAsync(user, request.Email, changeEmailToken);
@@ -81,7 +77,6 @@ public class UpdateEmailCommand : IRequest<bool>
                         user.EmailConfirmed = false;
                         await _userManager.UpdateAsync(user);
                         
-                        await _mediator.Publish(new EmailChangedEvent(user.Id, user.Email), cancellationToken);
                     }
 
                     await transaction.CommitAsync(cancellationToken);
