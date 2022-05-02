@@ -31,7 +31,6 @@ public class SearchTeacherQuery : IRequest<SearchResult<TeacherDto>>
         {
             var teachers = await _userManager.Users
                 .AsNoTracking()
-                .Where(u => u.EmailConfirmed)
                 .Where(
                 u => EF.Functions.Like(u.Name, $"%{request.Query}%"))
                 .Select(u => new TeacherDto(u.Name, u.Id))
