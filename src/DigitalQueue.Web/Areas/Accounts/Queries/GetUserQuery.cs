@@ -48,7 +48,7 @@ public class GetUserQuery : IRequest<UserDto?>
             var roles = await this._userManager.GetRolesAsync(user);
             var userCourses = await _mediator.Send(new GetUserPermissionsQuery(user.Id));
             
-            return new UserDto(user, await ToAccountRoles(roles.Except(new [] { RoleDefaults.User })), userCourses);
+            return new UserDto(user, await ToAccountRoles(roles), userCourses);
         }
         
         private async Task<AccountRoleDto[]> ToAccountRoles(IEnumerable<string> roles) =>
