@@ -1,5 +1,3 @@
-using DigitalQueue.Web.Areas.Accounts.Commands;
-
 namespace DigitalQueue.Web.Services.Notifications;
 
 public class NotificationService
@@ -15,36 +13,17 @@ public class NotificationService
         _mailService = mailService;
         _logger = logger;
     }
-    
+
     public async Task Send<T>(Notification<T> notification) where T : class
     {
-        try
+        switch (notification.Payload)
         {
-            if (notification.Payload is EmailConfirmationToken emailConfirmationToken)
-            {
-                switch (emailConfirmationToken.Method)
-                {
-                    case CreateEmailConfirmationTokenCommand.ConfirmationMethod.Url:
-                        await this._mailService.SendEmailConfirmationUrl(emailConfirmationToken.Email, emailConfirmationToken.Token);
-                        break;
-                    case CreateEmailConfirmationTokenCommand.ConfirmationMethod.Code:
-                        await this._mailService.SendEmailConfirmationCode(emailConfirmationToken.Email, emailConfirmationToken.Token);
-                        break;
-                }
+            case VerificationToken verificationToken:
+                await this._mailService.SendEmailConfirmationCode(verificationToken.Email, verificationToken.Token);
                 return;
-            }
-            
-            if (notification.Payload is PasswordResetToken passwordResetToken)
-            {
+            case PasswordResetToken passwordResetToken:
                 await this._mailService.SendPasswordResetCode(passwordResetToken.Email, passwordResetToken.Token);
-                return;
-            }
-            
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Unable to publish payload");
+                break;
         }
     }
-
 }

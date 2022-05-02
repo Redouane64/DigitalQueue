@@ -26,7 +26,7 @@ namespace DigitalQueue.Web.Areas.Sessions.Controllers
         }
         
         [AllowAnonymous]
-        [ProducesResponseType(typeof(AccessTokenDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TokenResult), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorDto), StatusCodes.Status400BadRequest)]
         [HttpPatch("refresh-session", Name = nameof(RefreshSession))]
         public async Task<IActionResult> RefreshSession([FromBody] SessionTokenDto body)

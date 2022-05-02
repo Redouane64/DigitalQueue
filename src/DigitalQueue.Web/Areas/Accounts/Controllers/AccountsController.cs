@@ -27,26 +27,20 @@ public class AccountsController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost("signin", Name = nameof(SignIn))]
-    [ProducesResponseType(typeof(AccessTokenDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorDto), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignIn([FromBody]AuthenticateUserDto body)
+    [HttpPost("authenticate", Name = nameof(SignIn))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> SignIn([FromBody]CreateAuthenticationCodeDto body)
     {
-        var result = await _mediator.Send(new AuthenticateUserCommand(body.Email!, body.Password!));
-        if (result is null)
-        {
-            return BadRequest();
-        }
-        
-        return Ok(result);
+        await _mediator.Send(new CreateUserAuthenticationTokenCommand(body.Email!));
+        return NoContent();
     }
 
-    [HttpPost("signup", Name = nameof(SignUp))]
-    [ProducesResponseType(typeof(AccessTokenDto),StatusCodes.Status200OK)]
+    [HttpPost("verify-authentication", Name = nameof(SignUp))]
+    [ProducesResponseType(typeof(TokenResult),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorDto),StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignUp([FromBody] CreateUserDto payload)
+    public async Task<IActionResult> SignUp([FromBody] VerifyAuthenticationCodeDto payload)
     {
-        var result = await _mediator.Send(new CreateAccountCommand(payload));
+        var result = await _mediator.Send(new VerifyUserAuthenticationTokenCommand(payload.Email, payload.Code));
         if (result is null)
         {
             return BadRequest();
@@ -77,19 +71,6 @@ public class AccountsController : ControllerBase
         return Ok(user);
     }
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPost("request-email-confirmation", Name = nameof(CreateVerifyEmailRequest))]
-    public async Task<IActionResult> CreateVerifyEmailRequest()
-    {
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        _ = await this._mediator.Send(new CreateEmailConfirmationTokenCommand(
-            currentUserId, 
-            CreateEmailConfirmationTokenCommand.ConfirmationMethod.Code)
-        );
-        
-        return Ok();
-    }
-
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("request-password-reset", Name = nameof(CreatePasswordResetRequest))]
@@ -97,15 +78,6 @@ public class AccountsController : ControllerBase
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         _ = await this._mediator.Send(new CreatePasswordResetTokenCommand(currentUserId));
-        return Ok();
-    }
-
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPatch("confirm-email", Name= nameof(ConfirmEmail))]
-    public async Task<IActionResult> ConfirmEmail([FromBody]ConfirmEmailDto payload)
-    {
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        _ = await this._mediator.Send(new ConfirmUserEmailCommand(payload.Token, userId: currentUserId));
         return Ok();
     }
 

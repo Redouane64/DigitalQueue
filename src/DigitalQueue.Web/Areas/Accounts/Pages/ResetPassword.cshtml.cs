@@ -35,11 +35,6 @@ public class ResetPassword : PageModel
     [BindProperty]
     public string ConfirmNewPassword { get; set; }
 
-    public void OnGet()
-    {
-
-    }
-
     public async Task<IActionResult> OnPost()
     {
         if (!ModelState.IsValid)
