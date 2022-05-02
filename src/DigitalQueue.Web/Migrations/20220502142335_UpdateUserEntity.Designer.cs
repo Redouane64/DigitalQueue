@@ -3,6 +3,7 @@ using System;
 using DigitalQueue.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalQueue.Web.Migrations
 {
     [DbContext(typeof(DigitalQueueContext))]
-    partial class DigitalQueueContextModelSnapshot : ModelSnapshot
+    [Migration("20220502142335_UpdateUserEntity")]
+    partial class UpdateUserEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
@@ -62,7 +64,7 @@ namespace DigitalQueue.Web.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.ToTable("CourseRequests", (string)null);
+                    b.ToTable("CourseRequests");
                 });
 
             modelBuilder.Entity("DigitalQueue.Web.Data.Entities.Course", b =>
@@ -207,11 +209,6 @@ namespace DigitalQueue.Web.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("email");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("name");
-
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT")
@@ -278,13 +275,13 @@ namespace DigitalQueue.Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "0ef6b980-8578-4729-88c0-82c7b0681e6c",
+                            Id = "ea2d39de-80f8-477e-8a2d-d43a776d679d",
                             Name = "administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "21f92ab2-d0ce-4c2c-b75b-cf73c2b51bf4",
+                            Id = "d0a15b64-3b09-4662-b67f-c494df48f0a7",
                             Name = "user",
                             NormalizedName = "USER"
                         });
