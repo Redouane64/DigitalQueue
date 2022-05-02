@@ -45,12 +45,11 @@ public sealed class JwtTokenService
         SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this._jwtTokenOptions.Secret!));
         SigningCredentials signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var tokenExpiryDate = DateTime.Now.AddMinutes(this._jwtTokenOptions.TokenLifeTime);
         JwtSecurityToken token = new JwtSecurityToken(
             issuer: this._jwtTokenOptions.Issuer,
             audience: this._jwtTokenOptions.Audience,
             claims: claims,
-            expires: tokenExpiryDate,
+            expires: DateTime.Now.AddMinutes(this._jwtTokenOptions.TokenLifeTime),
             signingCredentials: signingCredentials
         );
 
@@ -61,7 +60,7 @@ public sealed class JwtTokenService
 
         var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return new TokenResult(accessToken, refreshToken, tokenExpiryDate);
+        return new TokenResult(accessToken, refreshToken);
     }
 
     public async Task<TokenResult?> RefreshToken(string refreshToken, User user, IEnumerable<Claim> claims)

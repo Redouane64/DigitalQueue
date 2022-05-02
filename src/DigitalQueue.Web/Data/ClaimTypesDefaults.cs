@@ -2,8 +2,7 @@ namespace DigitalQueue.Web.Data;
 
 public static class ClaimTypesDefaults
 {
-    public static readonly string Teacher = "Teacher";
-    public static readonly string Student = "Student";
-    public static readonly string LastChanged = "LastChanged";
-    public static readonly string Session = "Session";
+    public static readonly string Teacher = "teacher";
+    public static readonly string Student = "student";
+    public static readonly string Session = "session";
 }

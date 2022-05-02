@@ -1,6 +1,7 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Dtos;
+using DigitalQueue.Web.Areas.Sessions.Commands;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Infrastructure;
@@ -27,17 +28,20 @@ public class VerifyUserAuthenticationTokenCommand : IRequest<AuthenticationResul
         private readonly UserManager<User> _userManager;
         private readonly DigitalQueueContext _context;
         private readonly JwtTokenService _jwtTokenService;
+        private readonly IMediator _mediator;
         private readonly ILogger<VerifyUserAuthenticationTokenCommandHandler> _logger;
 
         public VerifyUserAuthenticationTokenCommandHandler(
             UserManager<User> userManager, 
             DigitalQueueContext context, 
             JwtTokenService jwtTokenService, 
+            IMediator mediator,
             ILogger<VerifyUserAuthenticationTokenCommandHandler> logger)
         {
             _userManager = userManager;
             _context = context;
             _jwtTokenService = jwtTokenService;
+            _mediator = mediator;
             _logger = logger;
         }
         
@@ -56,7 +60,7 @@ public class VerifyUserAuthenticationTokenCommand : IRequest<AuthenticationResul
             }
 
             var validToken = await _userManager.VerifyUserTokenAsync(user, AuthenticationTokenProvider.ProviderName,
-                "Authentication", request.Token);
+                AuthenticationTokenProvider.AuthenticationPurposeName, request.Token);
 
             if (!validToken)
             {
@@ -65,19 +69,21 @@ public class VerifyUserAuthenticationTokenCommand : IRequest<AuthenticationResul
                 _logger.LogWarning("User token is not valid");
                 return null;
             }
-
-            var userClaims = await _userManager.GetClaimsAsync(user);
+            
             var sessionClaim = new Claim(ClaimTypesDefaults.Session, Guid.NewGuid().ToString());
+            var userClaims = await _userManager.GetClaimsAsync(user);
             var claims = userClaims.Union(new [] { sessionClaim });
             var tokenResult = await _jwtTokenService.GenerateToken(claims, user);
+            
+            await _mediator.Send(new CreateSessionCommand(user.Id, sessionClaim.Value,
+                tokenResult.AccessToken, tokenResult.RefreshToken), cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
 
             return new AuthenticationResultDto(
-                sessionClaim.Value, 
+                sessionClaim.Value, // <- FYI: field is ignored
                 tokenResult.AccessToken, 
-                tokenResult.RefreshToken,
-                tokenResult.Expires);
+                tokenResult.RefreshToken);
         }
     }
 }

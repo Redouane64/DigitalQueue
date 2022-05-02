@@ -18,10 +18,10 @@ public class DigitalQueueJwtEvents : JwtBearerEvents
     
     public override async Task TokenValidated(TokenValidatedContext context)
     {
-        var sessionId = context.Principal.FindFirstValue(ClaimTypesDefaults.Session);
-        var userId = context.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        var session = context.Principal.FindFirstValue(ClaimTypesDefaults.Session);
+        var user = context.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var isValidSession = await _context.Sessions.AnyAsync(s => s.Id == sessionId && s.UserId == userId);
+        var isValidSession = await _context.Sessions.AnyAsync(s => s.Id == session && s.UserId == user);
         if (!isValidSession)
         {
             context.Fail("Invalid session");

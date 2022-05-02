@@ -45,6 +45,7 @@ public class CreateDefaultAccountCommand : IRequest
                 {
                     Email = request.Email,
                     UserName = request.Email,
+                    Name = request.Email
                 };
             
                 var createUser = await _userManager.CreateAsync(

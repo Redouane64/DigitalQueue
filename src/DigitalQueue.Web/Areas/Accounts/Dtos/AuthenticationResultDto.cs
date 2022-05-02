@@ -1,12 +1,15 @@
+using System.Text.Json.Serialization;
+
 namespace DigitalQueue.Web.Areas.Accounts.Dtos;
 
 public class AuthenticationResultDto : TokenResult
 {
-    public string SessionId { get; }
+    [JsonIgnore]
+    public string Session { get; }
 
-    public AuthenticationResultDto(string sessionId, string accessToken, string refreshToken, DateTime expires) 
-        : base(accessToken, refreshToken, expires)
+    public AuthenticationResultDto(string session, string accessToken, string refreshToken) 
+        : base(accessToken, refreshToken)
     {
-        SessionId = sessionId;
+        Session = session;
     }
 }
