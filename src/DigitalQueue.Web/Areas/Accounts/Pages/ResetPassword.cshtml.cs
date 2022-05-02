@@ -42,8 +42,7 @@ public class ResetPassword : PageModel
             return Page();
         }
 
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var success = await this._mediator.Send(new UpdatePasswordCommand(currentUserId, NewPassword, Code));
+        var success = await this._mediator.Send(new UpdatePasswordCommand(NewPassword, Code));
 
         if (!success)
         {

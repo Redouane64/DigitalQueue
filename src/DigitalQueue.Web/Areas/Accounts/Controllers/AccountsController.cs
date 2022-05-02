@@ -71,26 +71,31 @@ public class AccountsController : ControllerBase
     [HttpPost("request-password-reset", Name = nameof(CreatePasswordResetRequest))]
     public async Task<IActionResult> CreatePasswordResetRequest()
     {
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        _ = await this._mediator.Send(new CreatePasswordResetTokenCommand(currentUserId));
-        return Ok();
+        await this._mediator.Send(new CreatePasswordResetTokenCommand());
+        return NoContent();
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPatch("reset-password", Name= nameof(ChangePassword))]
     public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordDto payload)
     {
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        _ = await this._mediator.Send(new UpdatePasswordCommand(currentUserId, payload.Password, payload.Token));
-        return Ok();
+        var passwordUpdated = await this._mediator.Send(new UpdatePasswordCommand(payload.Password, payload.Token));
+        return passwordUpdated ? Ok() : BadRequest();
     }
-
+    
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPost("request-email-change", Name= nameof(ConfirmEmail))]
+    public async Task<IActionResult> ConfirmEmail([FromBody] ChangeEmailDto payload)
+    {
+        await _mediator.Send(new SendChangeEmailCodeCommand(payload.Email));
+        return NoContent();
+    }
+    
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPatch("change-email", Name= nameof(ChangeEmail))]
     public async Task<IActionResult> ChangeEmail([FromBody] UpdateEmailDto payload)
     {
-        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        _ = await _mediator.Send(new UpdateEmailCommand(currentUserId, payload.Email));
-        return Ok();
+        var emailUpdated = await _mediator.Send(new UpdateEmailCommand(payload.Token, payload.Email));
+        return emailUpdated ? Ok() : BadRequest();
     }
 }
