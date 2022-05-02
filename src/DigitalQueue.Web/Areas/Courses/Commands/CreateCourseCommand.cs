@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 using DigitalQueue.Web.Data;
@@ -6,10 +7,7 @@ using DigitalQueue.Web.Data.Entities;
 using MediatR;
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
-
-using ILogger = Microsoft.Build.Framework.ILogger;
 
 namespace DigitalQueue.Web.Areas.Courses.Commands;
 
