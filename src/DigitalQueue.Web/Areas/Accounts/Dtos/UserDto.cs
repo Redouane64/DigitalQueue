@@ -1,3 +1,4 @@
+using DigitalQueue.Web.Areas.Sessions.Dtos;
 using DigitalQueue.Web.Data.Entities;
 
 namespace DigitalQueue.Web.Areas.Accounts.Dtos;
@@ -20,5 +21,5 @@ public class UserDto
     public DateTime CreatedAt { get; }
     public IEnumerable<AccountRoleDto> Roles { get; }
     public IEnumerable<UserCourseRolesDto> Permissions { get; }
-    
+    public IEnumerable<SessionDto> Sessions { get; set; }
 }

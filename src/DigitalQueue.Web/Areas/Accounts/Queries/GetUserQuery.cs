@@ -1,6 +1,6 @@
-using System.Security.Claims;
-
+using DigitalQueue.Web.Areas.Accounts.Commands;
 using DigitalQueue.Web.Areas.Accounts.Dtos;
+using DigitalQueue.Web.Areas.Sessions.Queries;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 
@@ -25,16 +25,20 @@ public class GetUserQuery : IRequest<UserDto?>
         private readonly IMediator _mediator;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly DigitalQueueContext _context;
 
-        public GetUserQueryHandler(IMediator mediator, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public GetUserQueryHandler(IMediator mediator, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, DigitalQueueContext context)
         {
             _mediator = mediator;
             _userManager = userManager;
             _roleManager = roleManager;
+            _context = context;
         }
         
         public async Task<UserDto?> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            
             var user = await this._userManager.Users
                 .AsNoTracking()
                 .Include(e => e.TeacherOf)
@@ -44,18 +48,15 @@ public class GetUserQuery : IRequest<UserDto?>
             {
                 return null;
             }
-        
-            var roles = await this._userManager.GetRolesAsync(user);
-            var userCourses = await _mediator.Send(new GetUserPermissionsQuery(user.Id));
+
+            var roles = await _mediator.Send(
+                new SearchRoleCommand(filter: await this._userManager.GetRolesAsync(user), returnIds: true));
+            var permissions = await _mediator.Send(new GetUserPermissionsQuery(user.Id), cancellationToken);
+            var sessions = await _mediator.Send(new GetUserSessionsQuery(user.Id), cancellationToken);
             
-            return new UserDto(user, await ToAccountRoles(roles), userCourses);
+            await transaction.CommitAsync(cancellationToken);
+            
+            return new UserDto(user, roles.Results, permissions) { Sessions =  sessions };
         }
-        
-        private async Task<AccountRoleDto[]> ToAccountRoles(IEnumerable<string> roles) =>
-            await this._roleManager.Roles
-                .Where(role => roles.Contains(role.Name))
-                .Select(role => new AccountRoleDto(role.Name, role.Id))
-                .ToArrayAsync();
-        
     }
 }
