@@ -54,12 +54,12 @@ public class ProfileModel : PageModel
     {
         if (name is not null)
         {
-             await this._mediator.Send(new UpdateNameCommand(id, name));
+            PostResultMessage = await this._mediator.Send(new UpdateNameCommand(id, name));
         }
 
         if (email is not null)
         {
-            PostResultMessage = EmailChangedResult = await this._mediator.Send(new UpdateEmailCommand(id, email));
+            EmailChangedResult = await this._mediator.Send(new UpdateEmailCommand(id, email));
         }
 
         return RedirectToPagePermanent("Profile", new { id });
