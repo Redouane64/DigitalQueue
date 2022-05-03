@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Templates\AdminAccountPassword_Template.html" />
     <EmbeddedResource Include="Templates\AuthenticationCode_Template.html" />
     <EmbeddedResource Include="Templates\PasswordReset_Template.html" />
   </ItemGroup>

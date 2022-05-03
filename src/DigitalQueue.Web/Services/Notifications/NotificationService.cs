@@ -24,6 +24,9 @@ public class NotificationService
             case PasswordResetToken passwordResetToken:
                 await this._mailService.SendPasswordResetCode(passwordResetToken.Email, passwordResetToken.Token);
                 break;
+            case AdminDashboardPassword adminDashboardPassword:
+                await this._mailService.SendAdminDashboardPassword(adminDashboardPassword.Email, adminDashboardPassword.Password);
+                break;
         }
     }
 }

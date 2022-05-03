@@ -1,3 +1,5 @@
+using MediatR;
+
 namespace DigitalQueue.Web.Services.Notifications;
 
 public class Notification<T> where T : class
