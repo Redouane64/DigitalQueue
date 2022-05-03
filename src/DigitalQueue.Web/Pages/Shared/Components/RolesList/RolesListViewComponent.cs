@@ -1,6 +1,7 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Dtos;
+using DigitalQueue.Web.Data;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,9 @@ public class RolesListViewComponent : ViewComponent
     
     public IViewComponentResult Invoke(IEnumerable<AccountRoleDto> roles, string userId)
     {
-        var editable = _httpContextAccessor.HttpContext
+        var editable = _httpContextAccessor.HttpContext!
             .User.FindFirstValue(ClaimTypes.NameIdentifier).Equals(userId);
         
-        return View(new UserRolesDto(roles, userId, editable));
+        return View(new UserRolesDto(roles.Where(r => r.Text != RoleDefaults.User), userId, editable));
     }
 }

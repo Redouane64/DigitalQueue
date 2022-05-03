@@ -29,7 +29,7 @@ namespace DigitalQueue.Web.Areas.Accounts.Controllers
         [Produces(typeof(SearchResult<AccountRoleDto>))]
         public async Task<IActionResult> SearchRoles([FromForm] string q)
         {
-            return Ok(await _mediator.Send(new SearchRoleCommand(q)));
+            return Ok(await _mediator.Send(new SearchRoleCommand(query: q)));
         }
     }
 }
