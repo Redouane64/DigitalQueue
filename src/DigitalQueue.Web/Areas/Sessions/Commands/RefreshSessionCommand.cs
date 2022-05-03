@@ -44,7 +44,7 @@ public class RefreshSessionCommand : IRequest<TokenResult?>
 
             var session = await _context.Sessions
                 .Include(s => s.User)
-                .FirstOrDefaultAsync(s => s.RefreshToken == request.RefreshToken, cancellationToken);
+                .FirstOrDefaultAsync(s => s.RefreshToken.Equals(request.RefreshToken), cancellationToken);
 
             if (session is null)
             {
