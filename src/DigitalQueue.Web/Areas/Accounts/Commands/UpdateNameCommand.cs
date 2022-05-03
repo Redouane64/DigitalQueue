@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
-public class UpdateNameCommand : IRequest
+public class UpdateNameCommand : IRequest<bool>
 {
     public string UserId { get; }
     public string? Name { get; }
@@ -18,7 +18,7 @@ public class UpdateNameCommand : IRequest
         Name = name;
     }
     
-    public class UpdateNameCommandHandler : IRequestHandler<UpdateNameCommand>
+    public class UpdateNameCommandHandler : IRequestHandler<UpdateNameCommand, bool>
     {
         private readonly UserManager<User> _userManager;
         private readonly DigitalQueueContext _context;
@@ -31,7 +31,7 @@ public class UpdateNameCommand : IRequest
             _logger = logger;
         }
         
-        public async Task<Unit> Handle(UpdateNameCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateNameCommand request, CancellationToken cancellationToken)
         {
             await using (var transaction = await _context.Database.BeginTransactionAsync(cancellationToken))
             {
@@ -43,7 +43,7 @@ public class UpdateNameCommand : IRequest
 
                     if (user is null)
                     {
-                        return await Unit.Task;
+                        return false;
                     }
 
                     if (request.Name is not null && user.Name != request.Name)
@@ -65,11 +65,13 @@ public class UpdateNameCommand : IRequest
                 {
                     await transaction.RollbackAsync(cancellationToken);
                     _logger.LogError(e, "Unable to update account data");
+
+                    return false;
                 }
 
             }
 
-            return await Unit.Task;
+            return true;
         }
     }
 }

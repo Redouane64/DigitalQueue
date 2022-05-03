@@ -13,6 +13,9 @@ public class MailService
     private readonly static string AuthenticationCodeTemplate =
         "DigitalQueue.Web.Templates.AuthenticationCode_Template.html";
 
+    private readonly static string AdminDashboardAccountPasswordTemplate = 
+        "DigitalQueue.Web.Templates.AdminAccountPassword_Template.html";
+
     private readonly ILogger<MailService> _logger;
     private readonly SmtpConfig _config;
 
@@ -71,6 +74,31 @@ public class MailService
         }
 
         await Send(to, "Password Reset Code For Digital Queue Account", body);
+    }
+
+    public async Task SendAdminDashboardPassword(string to, string password)
+    {
+        if (to == null)
+        {
+            throw new ArgumentNullException(nameof(to));
+        }
+
+        if (password == null)
+        {
+            throw new ArgumentNullException(nameof(password));
+        }
+
+        var body = await this.ParseTemplate(
+            AdminDashboardAccountPasswordTemplate,
+            new("{{password}}", password)
+        );
+
+        if (body is null)
+        {
+            return;
+        }
+
+        await Send(to, "Login Password For Digital Queue Admin Dashboard", body);
     }
 
     private async Task Send(string to, string subject, string body)

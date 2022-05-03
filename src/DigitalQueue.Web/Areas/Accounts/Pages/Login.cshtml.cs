@@ -74,21 +74,6 @@ public class LoginModel : PageModel
             ModelState.AddModelError("access_denied", "Access denied.");
             return Page();
         }
-
-        // verify password
-        if (!await _userManager.HasPasswordAsync(user))
-        {
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
-                new AuthenticationProperties()
-                {
-                    IsPersistent = RememberMe,
-                });
-            
-            return RedirectToPagePermanent("CreatePassword", new { returnUrl });
-        }
         
         var correct = await _userManager.CheckPasswordAsync(user, Password);
         if (!correct)
