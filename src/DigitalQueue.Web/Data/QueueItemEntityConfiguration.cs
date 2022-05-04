@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DigitalQueue.Web.Data;
 
-public class RequestEntityConfiguration : IEntityTypeConfiguration<Request>
+public class QueueItemEntityConfiguration : IEntityTypeConfiguration<QueueItem>
 {
-    public void Configure(EntityTypeBuilder<Request> builder)
+    public void Configure(EntityTypeBuilder<QueueItem> builder)
     {
-        builder.ToTable("requests");
+        builder.ToTable("queue_items");
         
         builder.Property(e => e.Id).HasColumnName("id");
         builder.Property(e => e.CourseId).HasColumnName("course_id");

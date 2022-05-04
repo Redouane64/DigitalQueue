@@ -10,7 +10,9 @@ namespace DigitalQueue.Web.Data;
 public class DigitalQueueContext : IdentityDbContext<User>
 {
     public DigitalQueueContext(DbContextOptions<DigitalQueueContext> options)
-    : base(options) { }
+        : base(options)
+    {
+    }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -27,10 +29,10 @@ public class DigitalQueueContext : IdentityDbContext<User>
         builder.Entity<IdentityUserRole<string>>().ToTable("users_roles");
 
         builder.ApplyConfiguration(new CourseEntityConfiguration());
-        builder.ApplyConfiguration(new RequestEntityConfiguration());
+        builder.ApplyConfiguration(new QueueItemEntityConfiguration());
         builder.ApplyConfiguration(new SessionEntityConfiguration());
-        
-        builder.Entity<CourseRequest>().HasNoKey();
+
+        builder.Entity<CourseQueueItem>().HasNoKey().ToTable(name: null);
     }
 
     public override int SaveChanges()
@@ -55,21 +57,18 @@ public class DigitalQueueContext : IdentityDbContext<User>
 
         foreach (var entityEntry in entries)
         {
-            ((IBaseEntity) entityEntry.Entity).UpdatedAt = DateTime.Now;
-            
+            ((IBaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
+
             if (entityEntry.State == EntityState.Added)
             {
-                ((IBaseEntity) entityEntry.Entity).CreateAt = DateTime.Now;
+                ((IBaseEntity)entityEntry.Entity).CreateAt = DateTime.Now;
             }
         }
     }
 
     public DbSet<Course> Courses { get; set; }
 
-    public DbSet<Request> Requests { get; set; }
-
-    public DbSet<CourseRequest> CourseRequests { get; set; }
+    public DbSet<QueueItem> Queues { get; set; }
 
     public DbSet<Session> Sessions { get; set; }
-    
 }

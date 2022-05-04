@@ -54,7 +54,7 @@ public class CreateCourseRequestCommand : IRequest
                     return Unit.Value;
                 }
 
-                var courseRequest = new Request { Course = course, Creator = user };
+                var courseRequest = new QueueItem { Id = Guid.NewGuid().ToString(), Course = course, Creator = user };
                 _context.Add(courseRequest);
 
                 await _context.SaveChangesAsync(cancellationToken);

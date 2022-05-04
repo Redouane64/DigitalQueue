@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Courses.Queries;
 
-public class GetCourseRequestsQuery : IRequest<RequestsQueueDto>
+public class GetCourseRequestsQuery : IRequest<QueueDto>
 {
     public string UserId { get; }
 
@@ -18,7 +18,7 @@ public class GetCourseRequestsQuery : IRequest<RequestsQueueDto>
         UserId = userId;
     }
     
-    public class GetCourseRequestsQueryHandler : IRequestHandler<GetCourseRequestsQuery, RequestsQueueDto>
+    public class GetCourseRequestsQueryHandler : IRequestHandler<GetCourseRequestsQuery, QueueDto>
     {
         private readonly DigitalQueueContext _context;
         private readonly UserManager<User> _userManager;
@@ -34,67 +34,66 @@ public class GetCourseRequestsQuery : IRequest<RequestsQueueDto>
             _logger = logger;
         }
         
-        public async Task<RequestsQueueDto> Handle(GetCourseRequestsQuery requestQuery, CancellationToken cancellationToken)
+        public async Task<QueueDto> Handle(GetCourseRequestsQuery requestQuery, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
             try
             {
-                var sent = await _context.Requests.Include(e => e.Course)
+                var sent = await _context.Queues.Include(e => e.Course)
                     .Include(e => e.Creator)
                     .Where(r => r.CreatorId == requestQuery.UserId)
                     .GroupBy(r => r.Course.Title)
                     .Select(r => new
-                        UserRequestsDto(r.Key, r.Count(), r.Select(e => new RequestInfoDto
+                        UserQueueDto(r.Key, r.Count(), r.Select(e => new QueueItemDto
                         {
-                            RequestId = e.Id,
+                            Id = e.Id,
                             CreatedAt = e.CreateAt
                         })))
                     .ToArrayAsync(cancellationToken);
 
-                var courseRequests = await _context.CourseRequests.FromSqlInterpolated(@$"
-                    select
-                           r.id as RequestId,
-                           r.create_at as CreatedAt,
-                           c.id as CourseId, 
-                           c.title as CourseTitle, 
-                           c.year as CourseYear, 
-                           r.creator_id as StudentId, 
-                           a.name as StudentName
-                    from users as u
-                    join course_teacher ct on u.id = ct.teacher_id
-                    join requests r on ct.course_id = r.course_id
-                    join courses c on ct.course_id = c.id
-                    join users a on r.creator_id = a.id
-                    where u.id = {requestQuery.UserId}
-                ")
+                var items = await _context.Set<CourseQueueItem>()
+                    .FromSqlInterpolated(@$"
+                        select
+                               q.id as ItemId,
+                               q.create_at as CreatedAt, 
+                               c.title as Course,
+                               a.name as Student
+                        from users as u
+                        join course_teacher ct on u.id = ct.teacher_id
+                        join queue q on ct.course_id = q.course_id
+                        join courses c on ct.course_id = c.id
+                        join users a on q.creator_id = a.id
+                        where u.id = {requestQuery.UserId}
+                    ")
                     .ToArrayAsync(cancellationToken);
                 
-                var received = courseRequests
-                    .GroupBy(r => r.CourseTitle)
+                var received = items
+                    .GroupBy(r => r.Course)
                     .Select(r => 
-                        new CourseRequestsDto(
+                        new CourseQueueDto(
                             r.Key, 
                             r.Count(), 
-                            r.Select(e => new RequestInfoDto
+                            r.Select(e => new QueueItemDto
                             {
-                                RequestId = e.RequestId,
+                                Id = e.ItemId,
                                 CreatedAt = e.CreatedAt,
-                                StudentName = e.StudentName,
+                                Student = e.Student,
                             })
+                            .OrderBy(e => e.CreatedAt)
                         )
                     )
                     .ToArray();
 
                 await transaction.CommitAsync(cancellationToken);
 
-                return new RequestsQueueDto(sent, received);
+                return new QueueDto(sent, received);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Unable to fetch course requests");
             }
 
-            return new RequestsQueueDto(Array.Empty<UserRequestsDto>(), Array.Empty<CourseRequestsDto>());
+            return new QueueDto(Array.Empty<UserQueueDto>(), Array.Empty<CourseQueueDto>());
         }
     }
 }

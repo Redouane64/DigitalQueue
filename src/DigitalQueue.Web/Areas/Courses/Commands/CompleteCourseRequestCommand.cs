@@ -34,7 +34,7 @@ public class CompleteCourseRequestCommand : IRequest
             try
             {
                 var courseRequest =
-                    await _context.Requests.FirstOrDefaultAsync(r =>
+                    await _context.Queues.FirstOrDefaultAsync(r =>
                         r.Id == request.RequestId && r.CreatorId == request.UserId, cancellationToken: cancellationToken);
 
                 if (courseRequest is null)

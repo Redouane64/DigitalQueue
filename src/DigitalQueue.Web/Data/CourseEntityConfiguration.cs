@@ -27,15 +27,15 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
         builder.HasMany(
             e => e.Teachers
         ).WithMany(
-            e => e.TeacherOf
+            e => e.Courses
         ).UsingEntity(e =>
         {
             e.ToTable("course_teacher");
-            e.Property("TeacherOfId").HasColumnName("course_id");
+            e.Property("CoursesId").HasColumnName("course_id");
             e.Property("TeachersId").HasColumnName("teacher_id");
         });
 
-        builder.HasMany(e => e.Requests)
+        builder.HasMany(e => e.QueueItems)
             .WithOne(e => e.Course)
             .HasForeignKey(e => e.CourseId);
 

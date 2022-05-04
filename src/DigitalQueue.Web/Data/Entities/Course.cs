@@ -2,9 +2,9 @@ namespace DigitalQueue.Web.Data.Entities;
 
 public class Course : IBaseEntity
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string Id { get; set; }
 
-    public string? Title { get; set; }
+    public string Title { get; set; }
 
     public int Year { get; set; }
     
@@ -16,5 +16,5 @@ public class Course : IBaseEntity
     
     public ICollection<User>? Teachers { get; set; }
 
-    public ICollection<Request>? Requests { get; set; }
+    public ICollection<QueueItem>? QueueItems { get; set; }
 }

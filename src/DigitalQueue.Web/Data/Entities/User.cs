@@ -10,7 +10,7 @@ public class User : IdentityUser, IBaseEntity
 
     public DateTime UpdatedAt { get; set; }
     
-    public ICollection<Course>? TeacherOf { get; set; }
+    public ICollection<Course> Courses { get; set; }
 
     public ICollection<Session> Sessions { get; set; }
     

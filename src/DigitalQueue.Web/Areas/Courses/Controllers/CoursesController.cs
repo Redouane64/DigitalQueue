@@ -38,7 +38,7 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
         }
 
         [HttpGet("get-requests-queue", Name = nameof(GetRequestsQueue))]
-        [Produces(typeof(RequestsQueueDto))]
+        [Produces(typeof(QueueDto))]
         public async Task<IActionResult> GetRequestsQueue()
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);

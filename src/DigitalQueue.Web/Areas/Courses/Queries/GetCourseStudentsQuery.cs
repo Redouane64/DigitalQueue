@@ -34,9 +34,9 @@ public class GetCourseStudentsQuery : IRequest<IEnumerable<CourseStudentDto>>
         
         public async Task<IEnumerable<CourseStudentDto>> Handle(GetCourseStudentsQuery request, CancellationToken cancellationToken)
         {
-            var students = await _context.Requests.AsNoTracking()
+            var students = await _context.Queues.AsNoTracking()
                 .Where(r => r.CourseId == request.CourseId)
-                .Select(r => new {r.CreatorId})
+                .Select(r => new { r.CreatorId })
                 .Distinct()
                 .Join(_context.Users, 
                     e => e.CreatorId, 

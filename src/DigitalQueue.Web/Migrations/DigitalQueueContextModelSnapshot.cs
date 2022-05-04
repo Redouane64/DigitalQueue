@@ -19,7 +19,7 @@ namespace DigitalQueue.Web.Migrations
 
             modelBuilder.Entity("CourseUser", b =>
                 {
-                    b.Property<string>("TeacherOfId")
+                    b.Property<string>("CoursesId")
                         .HasColumnType("TEXT")
                         .HasColumnName("course_id");
 
@@ -27,42 +27,31 @@ namespace DigitalQueue.Web.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("teacher_id");
 
-                    b.HasKey("TeacherOfId", "TeachersId");
+                    b.HasKey("CoursesId", "TeachersId");
 
                     b.HasIndex("TeachersId");
 
                     b.ToTable("course_teacher", (string)null);
                 });
 
-            modelBuilder.Entity("DigitalQueue.Web.Areas.Courses.Dtos.CourseRequest", b =>
+            modelBuilder.Entity("DigitalQueue.Web.Areas.Courses.Dtos.CourseQueueItem", b =>
                 {
-                    b.Property<string>("CourseId")
+                    b.Property<string>("Course")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<string>("CourseTitle")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("CourseYear")
-                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("RequestId")
+                    b.Property<string>("ItemId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("StudentId")
+                    b.Property<string>("Student")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("StudentName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.ToTable("CourseRequests", (string)null);
+                    b.ToTable((string)null);
                 });
 
             modelBuilder.Entity("DigitalQueue.Web.Data.Entities.Course", b =>
@@ -82,6 +71,7 @@ namespace DigitalQueue.Web.Migrations
                         .HasColumnName("is_archived");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("TEXT")
                         .HasColumnName("title");
 
@@ -101,7 +91,7 @@ namespace DigitalQueue.Web.Migrations
                     b.ToTable("courses", (string)null);
                 });
 
-            modelBuilder.Entity("DigitalQueue.Web.Data.Entities.Request", b =>
+            modelBuilder.Entity("DigitalQueue.Web.Data.Entities.QueueItem", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT")
@@ -137,7 +127,7 @@ namespace DigitalQueue.Web.Migrations
 
                     b.HasIndex("CreatorId");
 
-                    b.ToTable("requests", (string)null);
+                    b.ToTable("queue_items", (string)null);
                 });
 
             modelBuilder.Entity("DigitalQueue.Web.Data.Entities.Session", b =>
@@ -278,13 +268,13 @@ namespace DigitalQueue.Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "0ef6b980-8578-4729-88c0-82c7b0681e6c",
+                            Id = "acd8213a-a834-4bc7-9797-37a688fb2a7b",
                             Name = "administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "21f92ab2-d0ce-4c2c-b75b-cf73c2b51bf4",
+                            Id = "3a837472-e670-4045-b4e8-3a6efe7d4a67",
                             Name = "user",
                             NormalizedName = "USER"
                         });
@@ -332,7 +322,7 @@ namespace DigitalQueue.Web.Migrations
                 {
                     b.HasOne("DigitalQueue.Web.Data.Entities.Course", null)
                         .WithMany()
-                        .HasForeignKey("TeacherOfId")
+                        .HasForeignKey("CoursesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -343,10 +333,10 @@ namespace DigitalQueue.Web.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DigitalQueue.Web.Data.Entities.Request", b =>
+            modelBuilder.Entity("DigitalQueue.Web.Data.Entities.QueueItem", b =>
                 {
                     b.HasOne("DigitalQueue.Web.Data.Entities.Course", "Course")
-                        .WithMany("Requests")
+                        .WithMany("QueueItems")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -399,7 +389,7 @@ namespace DigitalQueue.Web.Migrations
 
             modelBuilder.Entity("DigitalQueue.Web.Data.Entities.Course", b =>
                 {
-                    b.Navigation("Requests");
+                    b.Navigation("QueueItems");
                 });
 
             modelBuilder.Entity("DigitalQueue.Web.Data.Entities.User", b =>
