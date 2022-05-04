@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 
@@ -9,12 +11,10 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
 public class UpdateNameCommand : IRequest<bool>
 {
-    public string UserId { get; }
     public string? Name { get; }
 
-    public UpdateNameCommand(string userId, string name)
+    public UpdateNameCommand(string name)
     {
-        UserId = userId;
         Name = name;
     }
     
@@ -22,53 +22,51 @@ public class UpdateNameCommand : IRequest<bool>
     {
         private readonly UserManager<User> _userManager;
         private readonly DigitalQueueContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<UpdateNameCommandHandler> _logger;
 
-        public UpdateNameCommandHandler(UserManager<User> userManager, DigitalQueueContext context, ILogger<UpdateNameCommandHandler> logger)
+        public UpdateNameCommandHandler(UserManager<User> userManager, DigitalQueueContext context,
+            IHttpContextAccessor httpContextAccessor, ILogger<UpdateNameCommandHandler> logger)
         {
             _userManager = userManager;
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
         
         public async Task<bool> Handle(UpdateNameCommand request, CancellationToken cancellationToken)
         {
-            await using (var transaction = await _context.Database.BeginTransactionAsync(cancellationToken))
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            try
             {
+                var userId = _httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier);   
+                var user = await _userManager.FindByIdAsync(userId);
 
-                try
+                if (user is null)
                 {
-
-                    var user = await _userManager.FindByIdAsync(request.UserId);
-
-                    if (user is null)
-                    {
-                        return false;
-                    }
-
-                    if (request.Name is not null && user.Name != request.Name)
-                    {
-                        user.Name = request.Name;
-                        _context.Entry(user).Property(u => u.Name).IsModified = true;
-                        var updateResult = await _userManager.UpdateAsync(user);
-
-                        if (!updateResult.Succeeded)
-                        {
-                            await transaction.RollbackAsync(cancellationToken);
-                        }
-                    }
-
-                    await transaction.CommitAsync(cancellationToken);
-
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync(cancellationToken);
-                    _logger.LogError(e, "Unable to update account data");
-
                     return false;
                 }
 
+                if (request.Name is not null && user.Name != request.Name)
+                {
+                    user.Name = request.Name;
+                    _context.Entry(user).Property(u => u.Name).IsModified = true;
+                    var updateResult = await _userManager.UpdateAsync(user);
+
+                    if (!updateResult.Succeeded)
+                    {
+                        await transaction.RollbackAsync(cancellationToken);
+                    }
+                        
+                    await transaction.CommitAsync(cancellationToken);
+                }
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                _logger.LogError(e, "Unable to update account data");
+
+                return false;
             }
 
             return true;

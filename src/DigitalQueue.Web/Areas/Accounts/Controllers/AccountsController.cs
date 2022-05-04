@@ -66,6 +66,16 @@ public class AccountsController : ControllerBase
         return Ok(user);
     }
 
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPatch("set-name", Name = nameof(SetName))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> SetName([FromBody]UpdateNameDto body)
+    {
+        var result = await _mediator.Send(new UpdateNameCommand(body.Name));
+        return result ? NoContent() : StatusCode((int)HttpStatusCode.InternalServerError);
+    }
+
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("request-password-reset", Name = nameof(CreatePasswordResetRequest))]
