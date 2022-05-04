@@ -42,14 +42,18 @@ public class Details : PageModel
     public async Task<IActionResult> OnPost([FromRoute]string courseId, [FromForm]string title, [FromForm]int year)
     {
         PostResultMessage = await this._mediator.Send(new UpdateCourseCommand(courseId, title, year));
-
         return RedirectToPagePermanent("Details", new {courseId});
     }
 
     public async Task<IActionResult> OnPostArchiveCourse([FromRoute] string courseId)
     {
         await _mediator.Send(new ArchiveCourseCommand(courseId));
-        
         return RedirectToPagePermanent("Index");
+    }
+
+    public async Task<IActionResult> OnPostAddTeacher([FromRoute] string courseId, [FromForm] string[] teachers)
+    {
+        await _mediator.Send(new SetTeacherCommand(courseId, teachers));
+        return RedirectToPagePermanent("Details", new { courseId });
     }
 }

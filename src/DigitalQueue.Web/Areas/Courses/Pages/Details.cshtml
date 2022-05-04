@@ -26,13 +26,13 @@
                 <div class="row">
                     <div class="col-6 form-group mt-4">
                         <label class="form-label" for="title">Title</label>
-                        <input class="form-control" id="title" name="title" value="@Model.Course.Title">
+                        <input class="form-control" id="title" name="title" asp-for="Course.Title">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-6 form-group mt-4">
                         <label class="form-label" for="year">Year</label>
-                        <input class="form-control" type="number" id="year" name="year" value="@Model.Course.Year">
+                        <input class="form-control" type="number" id="year" name="year" asp-for="Course.Year">
                     </div>
                 </div>
                 <div class="row">
@@ -49,7 +49,8 @@
             <div class="row mt-4">
                 <div class="col-6 form-group mt-4">
                     <label class="form-label" for="creationDate">Creation Date</label>
-                    <input class="form-control" id="creationDate" asp-for="Course.CreatedAt" readonly>
+                    <input class="form-control" id="creationDate" value="@Model.Course.CreatedAt.ToString("g")"
+                           readonly="readonly">
                 </div>
             </div>
         </div>
@@ -70,14 +71,25 @@
         </div>
     </div>
     <div class="row mt-5">
-        <div class="col">
+        <div class="col-6">
             <p class="h3">
                 <i class="fa fa-user m-2"></i>
                 Teachers
             </p>
+            <form method="post" asp-page-handler="AddTeacher">
+                <div class="row">
+                    <div class="col-6">
+                        <select type="text" name="teachers" class="form-control course-teacher" multiple="multiple">
+                        </select>
+                    </div>
+                    <button type="submit" class="col-sm-auto btn btn-outline-success">Add Teacher</button>
+                </div>
+            </form>
             @await Component.InvokeAsync("CourseTeachersList", new { courseId = Model.Course.Id })
         </div>
-        <div class="col">
+    </div>
+    <div class="row mt-5">
+        <div class="col-6">
             <p class="h3">
                 <i class="fa fa-user-graduate m-2"></i>
                 Students
