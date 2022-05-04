@@ -1,5 +1,3 @@
-using DigitalQueue.Web.Areas.Accounts.Dtos;
-
 namespace DigitalQueue.Web.Areas.Courses.Dtos;
 
 public class CourseDto

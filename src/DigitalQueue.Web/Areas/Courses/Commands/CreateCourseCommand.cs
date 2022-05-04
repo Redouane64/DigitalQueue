@@ -58,6 +58,7 @@ public class CreateCourseCommand : IRequest<Course?>
             
                     var course = new Course
                     {
+                        Id = Guid.NewGuid().ToString(),
                         Title = request.Title, 
                         Teachers = teachers,
                         Year = request.Year
