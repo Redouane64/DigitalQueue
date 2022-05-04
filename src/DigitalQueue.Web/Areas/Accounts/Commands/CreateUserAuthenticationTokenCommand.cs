@@ -1,5 +1,6 @@
 using System.Security.Claims;
 
+using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Infrastructure;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
-public class CreateUserAuthenticationTokenCommand : IRequest
+public class CreateUserAuthenticationTokenCommand : IRequest<AuthenticationStatusDto?>
 {
     public string Email { get; }
 
@@ -20,7 +21,7 @@ public class CreateUserAuthenticationTokenCommand : IRequest
         Email = email;
     }
     
-    public class CreateUserAuthenticationTokenCommandHandler : IRequestHandler<CreateUserAuthenticationTokenCommand>
+    public class CreateUserAuthenticationTokenCommandHandler : IRequestHandler<CreateUserAuthenticationTokenCommand, AuthenticationStatusDto?>
     {
         private readonly UserManager<User> _userManager;
         private readonly DigitalQueueContext _context;
@@ -35,11 +36,12 @@ public class CreateUserAuthenticationTokenCommand : IRequest
             _logger = logger;
         }
         
-        public async Task<Unit> Handle(CreateUserAuthenticationTokenCommand request, CancellationToken cancellationToken)
+        public async Task<AuthenticationStatusDto?> Handle(CreateUserAuthenticationTokenCommand request, CancellationToken cancellationToken)
         {
             await using var transaction = await this._context.Database.BeginTransactionAsync(cancellationToken);
             
             var user = await _userManager.FindByEmailAsync(request.Email);
+            var result = new AuthenticationStatusDto();
             if (user is null)
             {
                 // create user.
@@ -53,8 +55,8 @@ public class CreateUserAuthenticationTokenCommand : IRequest
                     
                     // TODO: role back transaction
                     await transaction.RollbackAsync(cancellationToken);
-                    
-                    return Unit.Value;
+
+                    return null;
                 }
 
                 // assign user to default role
@@ -67,7 +69,7 @@ public class CreateUserAuthenticationTokenCommand : IRequest
                     // TODO: role back transaction
                     await transaction.RollbackAsync(cancellationToken);
                     
-                    return Unit.Value;
+                    return null;
                 }
                 
                 // create default claims for user
@@ -85,8 +87,10 @@ public class CreateUserAuthenticationTokenCommand : IRequest
                     // TODO: role back transaction
                     await transaction.RollbackAsync(cancellationToken);
                     
-                    return Unit.Value;
+                    return null;
                 }
+
+                result.Created = true;
             }
             
             var token = await _userManager.GenerateUserTokenAsync(user, AuthenticationTokenProvider.ProviderName
@@ -101,13 +105,13 @@ public class CreateUserAuthenticationTokenCommand : IRequest
                 _logger.LogWarning(e, "Unable to send authentication code");
                 
                 await transaction.RollbackAsync(cancellationToken);
-                return Unit.Value;
+                return null;
             }
             
             await transaction.CommitAsync(cancellationToken);
             
             _logger.LogInformation("User '{Email}' authenticated successfully", user.Email);
-            return Unit.Value;
+            return result;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Net;
 using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Commands;
@@ -28,11 +29,24 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost("authenticate", Name = nameof(SignIn))]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SignIn([FromBody]CreateAuthenticationCodeDto body)
     {
-        await _mediator.Send(new CreateUserAuthenticationTokenCommand(body.Email!));
-        return NoContent();
+        var result = await _mediator.Send(new CreateUserAuthenticationTokenCommand(body.Email!));
+        
+        if (result is null)
+        {
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
+        
+        if (result.Created)
+        {
+            return StatusCode((int)HttpStatusCode.Created);
+        }
+        
+        return Ok();
     }
 
     [HttpPost("verify-authentication", Name = nameof(SignUp))]

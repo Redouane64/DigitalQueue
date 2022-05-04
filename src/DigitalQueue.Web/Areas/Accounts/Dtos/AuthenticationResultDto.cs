@@ -13,3 +13,8 @@ public class AuthenticationResultDto : TokenResult
         Session = session;
     }
 }
+
+public class AuthenticationStatusDto
+{
+    public bool Created { get; set; }
+}
