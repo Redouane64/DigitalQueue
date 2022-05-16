@@ -2,10 +2,12 @@ using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Data;
+using DigitalQueue.Web.Data.Entities;
 using DigitalQueue.Web.Infrastructure;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Sessions.Commands;
@@ -22,17 +24,20 @@ public class RefreshSessionCommand : IRequest<TokenResult?>
     class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionCommand, TokenResult?>
     {
         private readonly JwtTokenService _jwtTokenService;
+        private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DigitalQueueContext _context;
         private readonly ILogger<RefreshSessionCommandHandler> _logger;
 
         public RefreshSessionCommandHandler(
             JwtTokenService jwtTokenService,
+            UserManager<User> userManager,
             IHttpContextAccessor httpContextAccessor,
             DigitalQueueContext context,
             ILogger<RefreshSessionCommandHandler> logger)
         {
             _jwtTokenService = jwtTokenService;
+            _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _context = context;
             _logger = logger;
@@ -52,12 +57,12 @@ public class RefreshSessionCommand : IRequest<TokenResult?>
                 return null;
             }
             
-            var tokens = await _jwtTokenService.RefreshToken(request.RefreshToken, session.User,
-                new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, session.User.Id),
-                    new Claim(ClaimTypesDefaults.Session, session.Id)
-                });
+            var userClaims = await _userManager.GetClaimsAsync(session.User);
+            var claims = userClaims.Union(new[]
+            {
+                new Claim(ClaimTypesDefaults.Session, session.Id)
+            });
+            var tokens = await _jwtTokenService.RefreshToken(request.RefreshToken, session.User, claims);
 
             if (tokens is null)
             {
