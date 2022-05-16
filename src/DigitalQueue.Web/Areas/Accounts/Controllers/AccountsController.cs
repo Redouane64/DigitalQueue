@@ -83,7 +83,7 @@ public class AccountsController : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPatch("set-name", Name = nameof(SetName))]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorDto), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SetName([FromBody]UpdateNameDto body)
     {
         var result = await _mediator.Send(new UpdateNameCommand(body.Name));
@@ -109,6 +109,7 @@ public class AccountsController : ControllerBase
     
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("request-email-change", Name= nameof(ConfirmEmail))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> ConfirmEmail([FromBody] ChangeEmailDto payload)
     {
         await _mediator.Send(new SendChangeEmailCodeCommand(payload.Email));
@@ -117,6 +118,8 @@ public class AccountsController : ControllerBase
     
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPatch("change-email", Name= nameof(ChangeEmail))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ChangeEmail([FromBody] UpdateEmailDto payload)
     {
         var emailUpdated = await _mediator.Send(new UpdateEmailCommand(payload.Token, payload.Email));
