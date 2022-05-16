@@ -60,7 +60,7 @@ public class GetCourseRequestsQuery : IRequest<QueueDto>
                                a.name as Student
                         from users as u
                         join course_teacher ct on u.id = ct.teacher_id
-                        join queue q on ct.course_id = q.course_id
+                        join queue_items q on ct.course_id = q.course_id
                         join courses c on ct.course_id = c.id
                         join users a on q.creator_id = a.id
                         where u.id = {requestQuery.UserId}
