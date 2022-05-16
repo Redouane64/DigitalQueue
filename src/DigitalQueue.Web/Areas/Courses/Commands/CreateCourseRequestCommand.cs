@@ -58,7 +58,7 @@ public class CreateCourseRequestCommand : IRequest
                 _context.Add(courseRequest);
 
                 await _context.SaveChangesAsync(cancellationToken);
-                await _userManager.AddClaimAsync(user, new Claim(ClaimTypesDefaults.Student, courseRequest.Id));
+                await _userManager.AddClaimAsync(user, new Claim(ClaimTypesDefaults.Student, course.Id));
                 
                 await transaction.CommitAsync(cancellationToken);
             }
