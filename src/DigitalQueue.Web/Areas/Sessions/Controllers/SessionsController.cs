@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DigitalQueue.Web.Areas.Sessions.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     public class SessionsController : ControllerBase
     {
@@ -40,7 +41,6 @@ namespace DigitalQueue.Web.Areas.Sessions.Controllers
             return Ok(tokens);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpPost("terminate-session", Name = nameof(TerminateSession))]
         public async Task<IActionResult> TerminateSession()

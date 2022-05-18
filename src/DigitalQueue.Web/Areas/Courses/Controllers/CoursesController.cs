@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 using DigitalQueue.Web.Areas.Courses.Commands;
 using DigitalQueue.Web.Areas.Courses.Dtos;
@@ -12,7 +8,6 @@ using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalQueue.Web.Areas.Courses.Controllers
@@ -47,19 +42,21 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
         }
         
         [HttpPost("create-request", Name = nameof(CreateRequest))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> CreateRequest([FromQuery] string courseId)
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await this._mediator.Send(new CreateCourseRequestCommand(courseId, currentUserId));
-            return Ok();
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         [HttpPost("complete-request", Name= nameof(CompleteRequest))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> CompleteRequest([FromQuery] string courseId, [FromQuery] string requestId)
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await this._mediator.Send(new CompleteCourseRequestCommand(requestId, courseId));
-            return Ok();
+            return NoContent();
         }
     }
 }
