@@ -51,38 +51,21 @@ public class GetCourseRequestsQuery : IRequest<QueueDto>
                         })))
                     .ToArrayAsync(cancellationToken);
 
-                var items = await _context.Set<CourseQueueItem>()
-                    .FromSqlInterpolated(@$"
-                        select
-                               q.id as ItemId,
-                               q.create_at as CreatedAt, 
-                               c.title as Course,
-                               a.name as Student
-                        from users as u
-                        join course_teacher ct on u.id = ct.teacher_id
-                        join queue_items q on ct.course_id = q.course_id
-                        join courses c on ct.course_id = c.id
-                        join users a on q.creator_id = a.id
-                        where u.id = {requestQuery.UserId}
-                    ")
-                    .ToArrayAsync(cancellationToken);
-                
-                var received = items
-                    .GroupBy(r => r.Course)
-                    .Select(r => 
-                        new CourseQueueDto(
-                            r.Key, 
-                            r.Count(), 
-                            r.Select(e => new QueueItemDto
-                            {
-                                Id = e.ItemId,
-                                CreatedAt = e.CreatedAt,
-                                Student = e.Student,
-                            })
-                            .OrderBy(e => e.CreatedAt)
-                        )
+                var received = await _context.Queues
+                    .Include(q => q.Course)
+                    .ThenInclude(
+                        q => q.Teachers
+                            .Where(t => t.Id == requestQuery.UserId)
                     )
-                    .ToArray();
+                    .Include(q => q.Creator)
+                    .GroupBy(q => q.Course.Title)
+                    .Select(q => new CourseQueueDto(q.Key, q.Count(), q.Select(e => new QueueItemDto
+                    {
+                        Id = e.Id,
+                        CreatedAt = e.CreateAt,
+                        Student = e.Creator.Name,
+                    })))
+                    .ToArrayAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
 
