@@ -35,7 +35,7 @@ public class GetCoursesQuery : IRequest<IEnumerable<CourseDto>>
 
             if (request.SearchQuery is not null)
             {
-                query.Where(c => EF.Functions.Like(c.Title,$"%{request.SearchQuery}%"));
+                query = query.Where(c => EF.Functions.Like(c.Title,$"%{request.SearchQuery}%"));
             }
 
             return await query.Select(
