@@ -40,7 +40,7 @@ public class GetCourseRequestsQuery : IRequest<QueueDto>
             {
                 var sent = await _context.Queues.Include(e => e.Course)
                     .Include(e => e.Creator)
-                    .Where(r => r.CreatorId == requestQuery.UserId)
+                    .Where(r => r.CreatorId == requestQuery.UserId && r.Completed == false)
                     .GroupBy(r => r.Course.Title)
                     .Select(r => new
                         UserQueueDto(r.Key, r.Count(), r.Select(e => new QueueItemDto
@@ -54,10 +54,11 @@ public class GetCourseRequestsQuery : IRequest<QueueDto>
                     .Include(q => q.Course)
                     .ThenInclude(
                         q => q.Teachers
-                            .Where(t => t.Id == requestQuery.UserId)
                     )
                     .Include(q => q.Creator)
+                    .Where(c => c.Course.Teachers.Any(t => t.Id == requestQuery.UserId))
                     .Where(q => q.Creator.Id != requestQuery.UserId)
+                    .Where(q => q.Completed == false)
                     .GroupBy(q => q.Course.Title)
                     .Select(q => new CourseQueueDto(q.Key, q.Count(), q.Select(e => new QueueItemDto
                     {
