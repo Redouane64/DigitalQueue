@@ -4,7 +4,6 @@ using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Areas.Sessions.Commands;
 using DigitalQueue.Web.Areas.Sessions.Dtos;
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Filters;
 
 using MediatR;
 
@@ -28,17 +27,16 @@ namespace DigitalQueue.Web.Areas.Sessions.Controllers
         
         [AllowAnonymous]
         [ProducesResponseType(typeof(TokenResult), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorDto), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPatch("refresh-session", Name = nameof(RefreshSession))]
         public async Task<IActionResult> RefreshSession([FromBody] SessionTokenDto body)
         {
             var tokens = await _mediator.Send(new RefreshSessionCommand(body.Token));
-            if (tokens is null)
+            return tokens switch
             {
-                return BadRequest();
-            }
-        
-            return Ok(tokens);
+                null => StatusCode(StatusCodes.Status400BadRequest),
+                _ => Ok(tokens)
+            };
         }
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -46,8 +44,8 @@ namespace DigitalQueue.Web.Areas.Sessions.Controllers
         public async Task<IActionResult> TerminateSession()
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var sessionId = User.FindFirstValue(ClaimTypesDefaults.Session);
-            await _mediator.Send(new DeleteSessionCommand(currentUserId, sessionId));
+            var sessionSecurityStamp = User.FindFirstValue(ClaimTypesDefaults.Session);
+            await _mediator.Send(new DeleteSessionCommand(currentUserId, sessionSecurityStamp));
             
             return NoContent();
         }

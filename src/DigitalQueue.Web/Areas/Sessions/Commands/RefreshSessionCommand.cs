@@ -46,44 +46,52 @@ public class RefreshSessionCommand : IRequest<TokenResult?>
         public async Task<TokenResult?> Handle(RefreshSessionCommand request, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-
-            var session = await _context.Sessions
-                .Include(s => s.User)
-                .FirstOrDefaultAsync(s => s.RefreshToken.Equals(request.RefreshToken), cancellationToken);
-
-            if (session is null)
+            try
             {
-                _logger.LogWarning("Session does not exist");
-                return null;
+                var session = await _context.Sessions
+                    .Include(s => s.User)
+                    .FirstOrDefaultAsync(s => s.RefreshToken.Equals(request.RefreshToken), cancellationToken);
+
+                if (session is null)
+                {
+                    _logger.LogWarning("Session does not exist");
+                    await transaction.RollbackAsync(cancellationToken);
+                
+                    return null;
+                }
+                
+                var userClaims = await _userManager.GetClaimsAsync(session.User);
+                var sessionSecurityStamp = new Claim(ClaimTypesDefaults.Session, Guid.NewGuid().ToString());
+                var claims = userClaims.Union(new[] { sessionSecurityStamp });
+            
+                var tokens = await _jwtTokenService.RefreshToken(request.RefreshToken, session.User, claims);
+                if (tokens is null)
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    return null;
+                }
+            
+                var deviceToken = _httpContextAccessor.HttpContext!.Request.Headers["X-Device-Token"].ToString();
+
+                session.AccessToken = tokens.AccessToken;
+                session.RefreshToken = tokens.RefreshToken;
+                session.DeviceToken = deviceToken;
+                session.SecurityStamp = sessionSecurityStamp.Value;
+
+                _context.Update(session);
+                await _context.SaveChangesAsync(cancellationToken);
+                
+                await transaction.CommitAsync(cancellationToken);
+            
+                return tokens;
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Unable to refresh user session");
+                await transaction.RollbackAsync(cancellationToken);
             }
             
-            var userClaims = await _userManager.GetClaimsAsync(session.User);
-            var claims = userClaims.Union(new[]
-            {
-                new Claim(ClaimTypesDefaults.Session, session.Id)
-            });
-            var tokens = await _jwtTokenService.RefreshToken(request.RefreshToken, session.User, claims);
-
-            if (tokens is null)
-            {
-                return null;
-            }
-            
-            var deviceToken = _httpContextAccessor.HttpContext!.Request.Headers["X-Device-Token"].ToString();
-            var deviceIp = _httpContextAccessor.HttpContext.Request.Headers["X-Forwarded-For"].ToString() 
-                           ?? _httpContextAccessor.HttpContext!.Connection.RemoteIpAddress!.ToString();
-
-            session.AccessToken = tokens.AccessToken;
-            session.RefreshToken = tokens.RefreshToken;
-            session.DeviceToken = deviceToken;
-            session.DeviceIP = deviceIp;
-
-            _context.Update(session);
-
-            await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
-
-            return tokens;
+            return null;
         }
     }
 }

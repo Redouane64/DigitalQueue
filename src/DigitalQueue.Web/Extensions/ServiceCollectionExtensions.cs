@@ -139,7 +139,7 @@ public static class ServiceCollectionExtensions
             options.Password.RequiredUniqueChars = 0;
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequiredLength = 4;
-
+            
             options.User.RequireUniqueEmail = true;
             options.Tokens.ChangeEmailTokenProvider = AuthenticationTokenProvider.ProviderName; // Not needed
             options.Tokens.PasswordResetTokenProvider = AuthenticationTokenProvider.ProviderName;
@@ -147,7 +147,8 @@ public static class ServiceCollectionExtensions
             options.SignIn.RequireConfirmedAccount = false;
             options.SignIn.RequireConfirmedEmail = false;
             options.SignIn.RequireConfirmedPhoneNumber = false;
-        }).AddRoles<IdentityRole>()
+        }).AddUserManager<DigitalQueueUserManager>()
+          .AddRoles<IdentityRole>()
           .AddEntityFrameworkStores<DigitalQueueContext>()
           .AddTokenProvider<JwtRefreshTokenProvider>(JwtRefreshTokenProvider.ProviderName)
           .AddTokenProvider<AuthenticationTokenProvider>(AuthenticationTokenProvider.ProviderName);

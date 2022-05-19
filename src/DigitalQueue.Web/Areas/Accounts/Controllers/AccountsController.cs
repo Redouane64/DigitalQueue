@@ -67,14 +67,14 @@ public class AccountsController : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("get-profile", Name = nameof(GetProfile))]
     [ProducesResponseType(typeof(UserDto),StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorDto),StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetProfile()
     {
         var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await _mediator.Send(new GetUserQuery(userId));
         if (user is null)
         {
-            return BadRequest();
+            return StatusCode(StatusCodes.Status400BadRequest);
         }
         
         return Ok(user);
@@ -83,7 +83,7 @@ public class AccountsController : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPatch("set-name", Name = nameof(SetName))]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorDto), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorDto), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SetName([FromBody]UpdateNameDto body)
     {
         var result = await _mediator.Send(new UpdateNameCommand(body.Name));
@@ -123,6 +123,6 @@ public class AccountsController : ControllerBase
     public async Task<IActionResult> ChangeEmail([FromBody] UpdateEmailDto payload)
     {
         var emailUpdated = await _mediator.Send(new UpdateEmailCommand(payload.Token, payload.Email));
-        return emailUpdated ? Ok() : BadRequest();
+        return emailUpdated ? Ok() : StatusCode(StatusCodes.Status400BadRequest);
     }
 }

@@ -3,6 +3,7 @@ using System;
 using DigitalQueue.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalQueue.Web.Migrations
 {
     [DbContext(typeof(DigitalQueueContext))]
-    partial class DigitalQueueContextModelSnapshot : ModelSnapshot
+    [Migration("20220519131604_AddUserSecurityStamp")]
+    partial class AddUserSecurityStamp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
@@ -166,14 +168,15 @@ namespace DigitalQueue.Web.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("user_id");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RefreshToken");
 
-                    b.HasIndex("UserId", "SecurityStamp");
+                    b.HasIndex("SecurityStamp");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("sessions", (string)null);
                 });
@@ -264,13 +267,13 @@ namespace DigitalQueue.Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "dcbd58fd-859b-4c01-b3bb-3cbc63a6a80c",
+                            Id = "f121199c-4a93-4cd8-903b-3752e7874b7f",
                             Name = "administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "ca2467f4-0a69-4cc0-b29f-6dc60075dd57",
+                            Id = "5cad938a-df0b-427c-85f0-a0c3527340f9",
                             Name = "user",
                             NormalizedName = "USER"
                         });

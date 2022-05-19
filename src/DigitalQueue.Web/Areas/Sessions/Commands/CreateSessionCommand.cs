@@ -8,14 +8,14 @@ namespace DigitalQueue.Web.Areas.Sessions.Commands;
 public class CreateSessionCommand : IRequest
 {
     public string UserId { get; }
-    public string SessionId { get; }
+    public string SecurityStamp { get; }
     public string AccessToken { get; }
     public string RefreshToken { get; }
 
-    public CreateSessionCommand(string userId, string sessionId, string accessToken, string refreshToken)
+    public CreateSessionCommand(string userId, string securityStamp, string accessToken, string refreshToken)
     {
         UserId = userId;
-        SessionId = sessionId;
+        SecurityStamp = securityStamp;
         AccessToken = accessToken;
         RefreshToken = refreshToken;
     }
@@ -34,17 +34,14 @@ public class CreateSessionCommand : IRequest
         public async Task<Unit> Handle(CreateSessionCommand request, CancellationToken cancellationToken)
         {
             var deviceToken = _httpContextAccessor.HttpContext!.Request.Headers["X-Device-Token"].ToString();
-            var deviceIp = _httpContextAccessor.HttpContext.Request.Headers["X-Forwarded-For"].ToString() 
-                           ?? _httpContextAccessor.HttpContext!.Connection.RemoteIpAddress!.ToString();
         
             var session = new Session
             {
-                Id = request.SessionId,
                 AccessToken = request.AccessToken,
                 RefreshToken = request.RefreshToken, 
+                SecurityStamp = request.SecurityStamp,
+                UserId = request.UserId,
                 DeviceToken = deviceToken,
-                DeviceIP = deviceIp,
-                UserId = request.UserId
             };
 
             _context.Add(session);

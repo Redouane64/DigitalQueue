@@ -32,16 +32,6 @@ public sealed class JwtTokenService
 
     public async Task<TokenResult> GenerateToken(IEnumerable<Claim> claims, User user)
     {
-        if (claims == null)
-        {
-            throw new ArgumentNullException(nameof(claims));
-        }
-
-        if (user == null)
-        {
-            throw new ArgumentNullException(nameof(user));
-        }
-
         SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this._jwtTokenOptions.Secret!));
         SigningCredentials signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

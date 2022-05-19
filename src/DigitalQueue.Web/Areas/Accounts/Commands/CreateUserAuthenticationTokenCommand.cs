@@ -23,12 +23,12 @@ public class CreateUserAuthenticationTokenCommand : IRequest<AuthenticationStatu
     
     public class CreateUserAuthenticationTokenCommandHandler : IRequestHandler<CreateUserAuthenticationTokenCommand, AuthenticationStatusDto?>
     {
-        private readonly UserManager<User> _userManager;
+        private readonly DigitalQueueUserManager _userManager;
         private readonly DigitalQueueContext _context;
         private readonly NotificationService _notificationService;
         private readonly ILogger<CreateUserAuthenticationTokenCommandHandler> _logger;
 
-        public CreateUserAuthenticationTokenCommandHandler(UserManager<User> userManager, DigitalQueueContext context, NotificationService notificationService, ILogger<CreateUserAuthenticationTokenCommandHandler> logger)
+        public CreateUserAuthenticationTokenCommandHandler(DigitalQueueUserManager userManager, DigitalQueueContext context, NotificationService notificationService, ILogger<CreateUserAuthenticationTokenCommandHandler> logger)
         {
             _userManager = userManager;
             _context = context;
@@ -83,10 +83,7 @@ public class CreateUserAuthenticationTokenCommand : IRequest<AuthenticationStatu
                 {
                     var error = setClaimsResult.Errors.Select(e => e.Description).FirstOrDefault() ?? "(null)";
                     _logger.LogWarning("Unable to assign default claims to user '{Email}': {error}", request.Email, error);
-                    
-                    // TODO: role back transaction
                     await transaction.RollbackAsync(cancellationToken);
-                    
                     return null;
                 }
 

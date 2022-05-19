@@ -25,14 +25,14 @@ public class VerifyUserAuthenticationTokenCommand : IRequest<AuthenticationResul
     
     public class VerifyUserAuthenticationTokenCommandHandler : IRequestHandler<VerifyUserAuthenticationTokenCommand, AuthenticationResultDto?>
     {
-        private readonly UserManager<User> _userManager;
+        private readonly DigitalQueueUserManager _userManager;
         private readonly DigitalQueueContext _context;
         private readonly JwtTokenService _jwtTokenService;
         private readonly IMediator _mediator;
         private readonly ILogger<VerifyUserAuthenticationTokenCommandHandler> _logger;
 
         public VerifyUserAuthenticationTokenCommandHandler(
-            UserManager<User> userManager, 
+            DigitalQueueUserManager userManager, 
             DigitalQueueContext context, 
             JwtTokenService jwtTokenService, 
             IMediator mediator,
@@ -70,18 +70,18 @@ public class VerifyUserAuthenticationTokenCommand : IRequest<AuthenticationResul
                 return null;
             }
             
-            var sessionClaim = new Claim(ClaimTypesDefaults.Session, Guid.NewGuid().ToString());
+            var sessionSecurityStamp = new Claim(ClaimTypesDefaults.Session, Guid.NewGuid().ToString());
             var userClaims = await _userManager.GetClaimsAsync(user);
-            var claims = userClaims.Union(new [] { sessionClaim });
+            var claims = userClaims.Union(new [] { sessionSecurityStamp });
             var tokenResult = await _jwtTokenService.GenerateToken(claims, user);
             
-            await _mediator.Send(new CreateSessionCommand(user.Id, sessionClaim.Value,
+            await _mediator.Send(new CreateSessionCommand(user.Id, sessionSecurityStamp.Value,
                 tokenResult.AccessToken, tokenResult.RefreshToken), cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
 
             return new AuthenticationResultDto(
-                sessionClaim.Value, // <- FYI: field is ignored
+                sessionSecurityStamp.Value, // <- FYI: field is ignored
                 tokenResult.AccessToken, 
                 tokenResult.RefreshToken);
         }

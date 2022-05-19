@@ -13,5 +13,4 @@ public class User : IdentityUser, IBaseEntity
     public ICollection<Course> Courses { get; set; }
 
     public ICollection<Session> Sessions { get; set; }
-    
 }

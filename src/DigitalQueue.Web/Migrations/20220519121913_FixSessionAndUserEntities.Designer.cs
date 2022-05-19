@@ -3,6 +3,7 @@ using System;
 using DigitalQueue.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalQueue.Web.Migrations
 {
     [DbContext(typeof(DigitalQueueContext))]
-    partial class DigitalQueueContextModelSnapshot : ModelSnapshot
+    [Migration("20220519121913_FixSessionAndUserEntities")]
+    partial class FixSessionAndUserEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
@@ -166,14 +168,15 @@ namespace DigitalQueue.Web.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("user_id");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RefreshToken");
 
-                    b.HasIndex("UserId", "SecurityStamp");
+                    b.HasIndex("SecurityStamp");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("sessions", (string)null);
                 });
@@ -211,10 +214,6 @@ namespace DigitalQueue.Web.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("TEXT")
                         .HasColumnName("password_hash");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("security_stamp");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT")
@@ -264,13 +263,13 @@ namespace DigitalQueue.Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "dcbd58fd-859b-4c01-b3bb-3cbc63a6a80c",
+                            Id = "560cf956-b220-4014-8213-3b4b136baaaf",
                             Name = "administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "ca2467f4-0a69-4cc0-b29f-6dc60075dd57",
+                            Id = "0b171b48-535a-4f21-b566-b53b5b08b0c9",
                             Name = "user",
                             NormalizedName = "USER"
                         });

@@ -3,6 +3,7 @@ using System;
 using DigitalQueue.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalQueue.Web.Migrations
 {
     [DbContext(typeof(DigitalQueueContext))]
-    partial class DigitalQueueContextModelSnapshot : ModelSnapshot
+    [Migration("20220519132934_AddSessionIndexOnUserSecurityStamp")]
+    partial class AddSessionIndexOnUserSecurityStamp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
@@ -166,8 +168,7 @@ namespace DigitalQueue.Web.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("user_id");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -264,13 +265,13 @@ namespace DigitalQueue.Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "dcbd58fd-859b-4c01-b3bb-3cbc63a6a80c",
+                            Id = "6b5ec374-0c89-4497-ac16-4aace6de611a",
                             Name = "administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "ca2467f4-0a69-4cc0-b29f-6dc60075dd57",
+                            Id = "77e704ea-9382-4f0b-9622-2d2a9cd1f445",
                             Name = "user",
                             NormalizedName = "USER"
                         });

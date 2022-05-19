@@ -23,8 +23,11 @@ public class SessionEntityConfiguration : IEntityTypeConfiguration<Session>
             .HasColumnName("refresh_token");
 
         builder.Property(e => e.DeviceToken).HasColumnName("device_token");
-        builder.Property(e => e.DeviceIP).HasColumnName("device_ip");
+        builder.Property(e => e.SecurityStamp).HasColumnName("security_stamp");
+
+        builder.Property(e => e.UserId).HasColumnName("user_id");
 
         builder.HasIndex(e => e.RefreshToken);
+        builder.HasIndex(e => new { e.UserId, e.SecurityStamp });
     }
 }
