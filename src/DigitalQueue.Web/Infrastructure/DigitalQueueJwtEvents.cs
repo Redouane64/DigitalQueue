@@ -25,6 +25,7 @@ public class DigitalQueueJwtEvents : JwtBearerEvents
         if (!isValidSession)
         {
             context.Fail("Invalid access token");
+            return;
         }
         
         context.Success();
