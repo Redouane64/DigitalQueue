@@ -52,10 +52,9 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
 
         [HttpPost("complete-request", Name= nameof(CompleteRequest))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> CompleteRequest([FromQuery] string courseId, [FromQuery] string requestId)
+        public async Task<IActionResult> CompleteRequest([FromQuery] string itemId)
         {
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await this._mediator.Send(new CompleteCourseRequestCommand(requestId, courseId));
+            await this._mediator.Send(new CompleteCourseRequestCommand(itemId));
             return NoContent();
         }
     }

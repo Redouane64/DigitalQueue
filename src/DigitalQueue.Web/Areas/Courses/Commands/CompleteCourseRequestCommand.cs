@@ -9,22 +9,25 @@ namespace DigitalQueue.Web.Areas.Courses.Commands;
 public class CompleteCourseRequestCommand : IRequest
 {
     public string RequestId { get; }
-    public string UserId { get; }
 
-    public CompleteCourseRequestCommand(string requestId, string userId)
+    public CompleteCourseRequestCommand(string requestId)
     {
         RequestId = requestId;
-        UserId = userId;
     }
     
     public class CompleteCourseRequestCommandHandler : IRequestHandler<CompleteCourseRequestCommand>
     {
         private readonly DigitalQueueContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<CompleteCourseRequestCommandHandler> _logger;
 
-        public CompleteCourseRequestCommandHandler(DigitalQueueContext context, ILogger<CompleteCourseRequestCommandHandler> logger)
+        public CompleteCourseRequestCommandHandler(
+            DigitalQueueContext context, 
+            IHttpContextAccessor httpContextAccessor,
+            ILogger<CompleteCourseRequestCommandHandler> logger)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
         
@@ -33,12 +36,20 @@ public class CompleteCourseRequestCommand : IRequest
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
             try
             {
-                var courseRequest =
-                    await _context.Queues.FirstOrDefaultAsync(r =>
-                        r.Id == request.RequestId && r.CreatorId == request.UserId, cancellationToken: cancellationToken);
+                var courseRequest = await _context.Queues.FirstOrDefaultAsync(
+                    r => r.Id == request.RequestId,
+                    cancellationToken: cancellationToken
+                );
 
                 if (courseRequest is null)
                 {
+                    return Unit.Value;
+                }
+
+                var teacherOf = _httpContextAccessor.HttpContext.User.FindAll(ClaimTypesDefaults.Teacher);
+                if (!teacherOf.Any(c => c.Value == courseRequest.CourseId))
+                {
+                    _logger.LogWarning("Completion of queue item only allowed from course teacher");
                     return Unit.Value;
                 }
                 
@@ -50,7 +61,7 @@ public class CompleteCourseRequestCommand : IRequest
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(
-                    e, "Unable to modify request {}", 
+                    e, "Unable to update queue item {RequestId}", 
                     request.RequestId);
             }
             
