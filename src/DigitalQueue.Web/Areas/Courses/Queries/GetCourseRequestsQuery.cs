@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 using DigitalQueue.Web.Areas.Courses.Dtos;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
@@ -21,16 +23,13 @@ public class GetCourseRequestsQuery : IRequest<QueueDto>
     public class GetCourseRequestsQueryHandler : IRequestHandler<GetCourseRequestsQuery, QueueDto>
     {
         private readonly DigitalQueueContext _context;
-        private readonly UserManager<User> _userManager;
         private readonly ILogger<GetCourseRequestsQueryHandler> _logger;
 
         public GetCourseRequestsQueryHandler(
             DigitalQueueContext context,
-            UserManager<User> userManager,
             ILogger<GetCourseRequestsQueryHandler> logger)
         {
             _context = context;
-            _userManager = userManager;
             _logger = logger;
         }
         
@@ -58,6 +57,7 @@ public class GetCourseRequestsQuery : IRequest<QueueDto>
                             .Where(t => t.Id == requestQuery.UserId)
                     )
                     .Include(q => q.Creator)
+                    .Where(q => q.Creator.Id != requestQuery.UserId)
                     .GroupBy(q => q.Course.Title)
                     .Select(q => new CourseQueueDto(q.Key, q.Count(), q.Select(e => new QueueItemDto
                     {
