@@ -4,6 +4,8 @@ using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
 
 using MediatR;
+using MediatR.Pipeline;
+
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
