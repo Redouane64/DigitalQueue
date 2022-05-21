@@ -33,18 +33,18 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
             return Ok(courses);
         }
 
-        [HttpGet("get-requests-queue", Name = nameof(GetRequestsQueue))]
+        [HttpGet("get-queues", Name = nameof(GetQueues))]
         [Produces(typeof(QueueDto))]
-        public async Task<IActionResult> GetRequestsQueue()
+        public async Task<IActionResult> GetQueues()
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var requests = await this._mediator.Send(new GetCourseRequestsQuery(currentUserId));
+            var requests = await this._mediator.Send(new GetCoursesQueuesQuery(currentUserId));
             return Ok(requests);
         }
         
-        [HttpPost("create-request", Name = nameof(CreateRequest))]
+        [HttpPost("create-queue-item", Name = nameof(CreateQueueItem))]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> CreateRequest([FromQuery] string courseId)
+        public async Task<IActionResult> CreateQueueItem([FromQuery] string courseId)
         {
             var canCreate = await this._mediator.Send(new CanCreateCourseRequestCommand(courseId));
             if (!canCreate) 
@@ -57,9 +57,9 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
             return StatusCode(StatusCodes.Status201Created);
         }
 
-        [HttpPost("complete-request", Name= nameof(CompleteRequest))]
+        [HttpPost("complete-queue-item", Name= nameof(CompleteQueueItem))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> CompleteRequest([FromQuery] string itemId)
+        public async Task<IActionResult> CompleteQueueItem([FromQuery] string itemId)
         {
             await this._mediator.Send(new CompleteCourseRequestCommand(itemId));
             return NoContent();

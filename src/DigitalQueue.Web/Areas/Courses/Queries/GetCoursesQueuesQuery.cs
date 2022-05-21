@@ -8,29 +8,29 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Courses.Queries;
 
-public class GetCourseRequestsQuery : IRequest<QueueDto>
+public class GetCoursesQueuesQuery : IRequest<QueueDto>
 {
     public string UserId { get; }
 
-    public GetCourseRequestsQuery(string userId)
+    public GetCoursesQueuesQuery(string userId)
     {
         UserId = userId;
     }
     
-    public class GetCourseRequestsQueryHandler : IRequestHandler<GetCourseRequestsQuery, QueueDto>
+    public class GetCoursesQueuesQueryHandler : IRequestHandler<GetCoursesQueuesQuery, QueueDto>
     {
         private readonly DigitalQueueContext _context;
-        private readonly ILogger<GetCourseRequestsQueryHandler> _logger;
+        private readonly ILogger<GetCoursesQueuesQueryHandler> _logger;
 
-        public GetCourseRequestsQueryHandler(
+        public GetCoursesQueuesQueryHandler(
             DigitalQueueContext context,
-            ILogger<GetCourseRequestsQueryHandler> logger)
+            ILogger<GetCoursesQueuesQueryHandler> logger)
         {
             _context = context;
             _logger = logger;
         }
         
-        public async Task<QueueDto> Handle(GetCourseRequestsQuery requestQuery, CancellationToken cancellationToken)
+        public async Task<QueueDto> Handle(GetCoursesQueuesQuery requestQuery, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
             try
