@@ -1,12 +1,9 @@
-using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Courses.Dtos;
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Courses.Queries;
@@ -38,34 +35,50 @@ public class GetCourseRequestsQuery : IRequest<QueueDto>
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
             try
             {
-                var sent = await _context.Queues.Include(e => e.Course)
+                var sent = await _context.Queues
+                    .AsNoTracking()
+                    .Include(e => e.Course)
                     .Include(e => e.Creator)
                     .Where(r => r.CreatorId == requestQuery.UserId && r.Completed == false)
                     .GroupBy(r => r.Course.Title)
                     .Select(r => new
-                        UserQueueDto(r.Key, r.Count(), r.Select(e => new QueueItemDto
-                        {
-                            Id = e.Id,
-                            CreatedAt = e.CreateAt
-                        })))
+                        UserQueueDto(
+                            r.Key, 
+                            r.Count(), 
+                            r.OrderBy(e => e.CreateAt)
+                             .Select(e => new QueueItemDto
+                                {
+                                    Id = e.Id,
+                                    CreatedAt = e.CreateAt
+                                }
+                             )
+                        )
+                    )
                     .ToArrayAsync(cancellationToken);
 
                 var received = await _context.Queues
+                    .AsNoTracking()
+                    .OrderByDescending(e => e.CreateAt)
                     .Include(q => q.Course)
-                    .ThenInclude(
-                        q => q.Teachers
-                    )
+                    .ThenInclude(q => q.Teachers)
                     .Include(q => q.Creator)
                     .Where(c => c.Course.Teachers.Any(t => t.Id == requestQuery.UserId))
                     .Where(q => q.Creator.Id != requestQuery.UserId)
                     .Where(q => q.Completed == false)
                     .GroupBy(q => q.Course.Title)
-                    .Select(q => new CourseQueueDto(q.Key, q.Count(), q.Select(e => new QueueItemDto
-                    {
-                        Id = e.Id,
-                        CreatedAt = e.CreateAt,
-                        Student = e.Creator.Name,
-                    })))
+                    .Select(q => new CourseQueueDto(
+                        q.Key, 
+                        q.Count(), 
+                        q.OrderBy(e => e.CreateAt)
+                         .Select(e => new QueueItemDto
+                                {
+                                    Id = e.Id,
+                                    CreatedAt = e.CreateAt,
+                                    Student = e.Creator.Name,
+                                }
+                            )
+                        )
+                    )
                     .ToArrayAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
