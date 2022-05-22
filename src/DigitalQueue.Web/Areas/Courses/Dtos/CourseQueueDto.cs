@@ -2,14 +2,14 @@ namespace DigitalQueue.Web.Areas.Courses.Dtos;
 
 public class CourseQueueDto
 {
-    public CourseQueueDto(string course, int total, IEnumerable<QueueItemDto> requests)
+    public CourseQueueDto(string course, string courseId, int total)
     {
         Course = course;
+        CourseId = courseId;
         Total = total;
-        Requests = requests;
     }
 
     public string Course { get; }
+    public string CourseId { get; }
     public int Total { get; }
-    public IEnumerable<QueueItemDto> Requests { get; }
 }

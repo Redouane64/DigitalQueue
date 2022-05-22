@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Courses.Queries;
 
-public class GetCoursesQueuesQuery : IRequest<QueueDto>
+public class GetCoursesQueuesQuery : IRequest<QueuesDto>
 {
     public string UserId { get; }
 
@@ -17,7 +17,7 @@ public class GetCoursesQueuesQuery : IRequest<QueueDto>
         UserId = userId;
     }
     
-    public class GetCoursesQueuesQueryHandler : IRequestHandler<GetCoursesQueuesQuery, QueueDto>
+    public class GetCoursesQueuesQueryHandler : IRequestHandler<GetCoursesQueuesQuery, QueuesDto>
     {
         private readonly DigitalQueueContext _context;
         private readonly ILogger<GetCoursesQueuesQueryHandler> _logger;
@@ -30,67 +30,38 @@ public class GetCoursesQueuesQuery : IRequest<QueueDto>
             _logger = logger;
         }
         
-        public async Task<QueueDto> Handle(GetCoursesQueuesQuery requestQuery, CancellationToken cancellationToken)
+        public async Task<QueuesDto> Handle(GetCoursesQueuesQuery requestQuery, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
             try
             {
                 var sent = await _context.Queues
-                    .AsNoTracking()
-                    .Include(e => e.Course)
-                    .Include(e => e.Creator)
-                    .Where(r => r.CreatorId == requestQuery.UserId && r.Completed == false)
-                    .GroupBy(r => r.Course.Title)
-                    .Select(r => new
-                        UserQueueDto(
-                            r.Key, 
-                            r.Count(), 
-                            r.OrderBy(e => e.CreateAt)
-                             .Select(e => new QueueItemDto
-                                {
-                                    Id = e.Id,
-                                    CreatedAt = e.CreateAt
-                                }
-                             )
-                        )
-                    )
+                    .Where(r => r.CreatorId == requestQuery.UserId)
+                    .Where(r => r.Completed == false)
+                    .GroupBy(r => new { r.Course.Title, r.CourseId })
+                    .Select(r => new CourseQueueDto(r.Key.Title, r.Key.CourseId, r.Count()))
                     .ToArrayAsync(cancellationToken);
 
                 var received = await _context.Queues
-                    .AsNoTracking()
                     .OrderByDescending(e => e.CreateAt)
-                    .Include(q => q.Course)
-                    .ThenInclude(q => q.Teachers)
-                    .Include(q => q.Creator)
+                    .Where(q => q.Course.IsArchived == false)
                     .Where(c => c.Course.Teachers.Any(t => t.Id == requestQuery.UserId))
                     .Where(q => q.Creator.Id != requestQuery.UserId)
                     .Where(q => q.Completed == false)
-                    .GroupBy(q => q.Course.Title)
-                    .Select(q => new CourseQueueDto(
-                        q.Key, 
-                        q.Count(), 
-                        q.OrderBy(e => e.CreateAt)
-                         .Select(e => new QueueItemDto
-                                {
-                                    Id = e.Id,
-                                    CreatedAt = e.CreateAt,
-                                    Student = e.Creator.Name,
-                                }
-                            )
-                        )
-                    )
+                    .GroupBy(q => new { q.Course.Title, q.CourseId })
+                    .Select(r => new CourseQueueDto(r.Key.Title, r.Key.CourseId, r.Count()))
                     .ToArrayAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
 
-                return new QueueDto(sent, received);
+                return new QueuesDto(sent, received);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Unable to fetch course requests");
             }
 
-            return new QueueDto(Array.Empty<UserQueueDto>(), Array.Empty<CourseQueueDto>());
+            return new QueuesDto(Enumerable.Empty<CourseQueueDto>(), Enumerable.Empty<CourseQueueDto>());
         }
     }
 }
