@@ -12,7 +12,7 @@ public class ArchiveCourseCommand : IRequest
     {
         CourseId = courseId;
     }
-    
+
     public class ArchiveCourseCommandHandler : IRequestHandler<ArchiveCourseCommand>
     {
         private readonly DigitalQueueContext _context;
@@ -23,7 +23,7 @@ public class ArchiveCourseCommand : IRequest
             _context = context;
             _logger = logger;
         }
-        
+
         public async Task<Unit> Handle(ArchiveCourseCommand request, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
@@ -41,12 +41,12 @@ public class ArchiveCourseCommand : IRequest
 
                 await transaction.CommitAsync(cancellationToken);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e, "Unable to archive course {CourseId}", request.CourseId);
                 await transaction.RollbackAsync(cancellationToken);
             }
-            
+
             return Unit.Value;
         }
     }

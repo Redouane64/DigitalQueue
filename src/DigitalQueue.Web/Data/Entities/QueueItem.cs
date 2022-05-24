@@ -11,7 +11,7 @@ public class QueueItem : IBaseEntity
     public User Creator { get; set; }
 
     public bool Completed { get; set; }
-    
+
     public DateTime CreateAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

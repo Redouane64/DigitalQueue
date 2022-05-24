@@ -15,7 +15,7 @@ public class DigitalQueueJwtEvents : JwtBearerEvents
     {
         _context = context;
     }
-    
+
     public override async Task TokenValidated(TokenValidatedContext context)
     {
         var session = context.Principal.FindFirstValue(ClaimTypesDefaults.Session);
@@ -27,7 +27,7 @@ public class DigitalQueueJwtEvents : JwtBearerEvents
             context.Fail("Invalid access token");
             return;
         }
-        
+
         context.Success();
     }
 }

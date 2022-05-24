@@ -15,7 +15,7 @@ public class GetTeachersByCourseIdQuery : IRequest<IEnumerable<TeacherDto>>
     {
         CourseId = courseId;
     }
-    
+
     public class GetTeachersByCourseIdQueryHandler : IRequestHandler<GetTeachersByCourseIdQuery, IEnumerable<TeacherDto>>
     {
         private readonly DigitalQueueContext _context;
@@ -24,7 +24,7 @@ public class GetTeachersByCourseIdQuery : IRequest<IEnumerable<TeacherDto>>
         {
             _context = context;
         }
-        
+
         public async Task<IEnumerable<TeacherDto>> Handle(GetTeachersByCourseIdQuery request, CancellationToken cancellationToken)
         {
 

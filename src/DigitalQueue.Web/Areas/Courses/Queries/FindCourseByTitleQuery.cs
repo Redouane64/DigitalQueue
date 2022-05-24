@@ -12,7 +12,7 @@ public class FindCourseByTitleQuery : IRequest<CourseDto?>
     public string? Name { get; }
 
     public int? Year { get; set; }
-    
+
 
     public FindCourseByTitleQuery(string name)
     {
@@ -27,7 +27,7 @@ public class FindCourseByTitleQuery : IRequest<CourseDto?>
         {
             _context = context;
         }
-        
+
         public async Task<CourseDto?> Handle(FindCourseByTitleQuery request, CancellationToken cancellationToken)
         {
             var query = _context.Courses
@@ -44,7 +44,7 @@ public class FindCourseByTitleQuery : IRequest<CourseDto?>
                 query = query.Where(c => c.Year == request.Year);
             }
 
-            var course = await query.FirstOrDefaultAsync(cancellationToken); 
+            var course = await query.FirstOrDefaultAsync(cancellationToken);
 
             if (course is null)
             {
@@ -53,7 +53,10 @@ public class FindCourseByTitleQuery : IRequest<CourseDto?>
 
             return new CourseDto
             {
-                Id = course.Id, Title = course.Title, Year = course.Year, CreatedAt = course.CreateAt
+                Id = course.Id,
+                Title = course.Title,
+                Year = course.Year,
+                CreatedAt = course.CreateAt
             };
         }
     }

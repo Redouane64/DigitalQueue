@@ -14,7 +14,7 @@ public class UpdatePasswordCommand : IRequest<bool>
         Password = password;
         Token = token;
     }
-    
+
     public string Password { get; }
     public string Token { get; }
 
@@ -28,19 +28,19 @@ public class UpdatePasswordCommand : IRequest<bool>
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
         }
-        
+
         public async Task<bool> Handle(UpdatePasswordCommand request, CancellationToken cancellationToken)
         {
             var user = await this._userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
-            
+
             if (user is null)
             {
                 return false;
             }
-            
+
             var changePasswordResult = await this._userManager.ResetPasswordAsync(
-                user, 
-                request.Token, 
+                user,
+                request.Token,
                 request.Password);
 
             return changePasswordResult.Succeeded;

@@ -15,7 +15,7 @@ public class CompleteQueueItemCommand : IRequest
     {
         RequestId = requestId;
     }
-    
+
     public class CompleteQueueItemCommandHandler : IRequestHandler<CompleteQueueItemCommand>
     {
         private readonly DigitalQueueContext _context;
@@ -24,7 +24,7 @@ public class CompleteQueueItemCommand : IRequest
         private readonly ILogger<CompleteQueueItemCommandHandler> _logger;
 
         public CompleteQueueItemCommandHandler(
-            DigitalQueueContext context, 
+            DigitalQueueContext context,
             IHttpContextAccessor httpContextAccessor,
             FirebaseNotificationService firebaseNotificationService,
             ILogger<CompleteQueueItemCommandHandler> logger)
@@ -34,7 +34,7 @@ public class CompleteQueueItemCommand : IRequest
             _firebaseNotificationService = firebaseNotificationService;
             _logger = logger;
         }
-        
+
         public async Task<Unit> Handle(CompleteQueueItemCommand request, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
@@ -58,10 +58,10 @@ public class CompleteQueueItemCommand : IRequest
                     _logger.LogWarning("Completion of queue item only allowed from course teacher");
                     return Unit.Value;
                 }
-                
+
                 queueItem.Completed = true;
                 await _context.SaveChangesAsync(cancellationToken);
-                
+
                 // send firebase push notification
                 try
                 {
@@ -70,10 +70,10 @@ public class CompleteQueueItemCommand : IRequest
                         .Where(s => s.UserId == queueItem.CreatorId)
                         .Select(s => s.DeviceToken)
                         .ToArrayAsync(cancellationToken);
-                
+
                     await _firebaseNotificationService.Send(
-                        new FirebaseNotification(userDevicesTokens, 
-                            "Queue item completed", 
+                        new FirebaseNotification(userDevicesTokens,
+                            "Queue item completed",
                             $"{queueItem.Course.Title} queue item has been marked complete by course teacher"
                         )
                     );
@@ -82,17 +82,17 @@ public class CompleteQueueItemCommand : IRequest
                 {
                     _logger.LogError(e, "Unable to send Firebase notification");
                 }
-                
+
                 await transaction.CommitAsync(cancellationToken);
             }
             catch (Exception e)
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(
-                    e, "Unable to update queue item {RequestId}", 
+                    e, "Unable to update queue item {RequestId}",
                     request.RequestId);
             }
-            
+
             return Unit.Value;
         }
     }

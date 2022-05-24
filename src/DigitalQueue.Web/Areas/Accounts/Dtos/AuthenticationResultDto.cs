@@ -7,7 +7,7 @@ public class AuthenticationResultDto : TokenResult
     [JsonIgnore]
     public string Session { get; }
 
-    public AuthenticationResultDto(string session, string accessToken, string refreshToken) 
+    public AuthenticationResultDto(string session, string accessToken, string refreshToken)
         : base(accessToken, refreshToken)
     {
         Session = session;

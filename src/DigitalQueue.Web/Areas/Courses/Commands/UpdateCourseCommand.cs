@@ -18,7 +18,7 @@ public class UpdateCourseCommand : IRequest<bool>
         Title = title;
         Year = year;
     }
-    
+
     public class UpdateCourseCommandHandler : IRequestHandler<UpdateCourseCommand, bool>
     {
         private readonly DigitalQueueContext _context;
@@ -29,7 +29,7 @@ public class UpdateCourseCommand : IRequest<bool>
             _context = context;
             _logger = logger;
         }
-        
+
         public async Task<bool> Handle(UpdateCourseCommand request, CancellationToken cancellationToken)
         {
             var course = await this._context.Courses

@@ -4,7 +4,7 @@ using Google.Apis.Auth.OAuth2;
 
 namespace DigitalQueue.Web.Services.Notifications;
 
-public static class ServiceCollectionExtensions 
+public static class ServiceCollectionExtensions
 {
     public static void AddNotificationService(this IServiceCollection service, IConfiguration configuration)
     {
@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
         service.Configure<SmtpConfig>(configuration.GetSection("SmtpConfig"));
         service.AddSingleton<MailService>();
         service.AddSingleton<FirebaseNotificationService>();
-        
+
         service.AddSingleton<NotificationService>();
     }
 }

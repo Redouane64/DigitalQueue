@@ -14,7 +14,7 @@ public class PermissionsListViewComponent : ViewComponent
     {
         _mediator = mediator;
     }
-    
+
     public async Task<IViewComponentResult> InvokeAsync(string userId)
     {
         return View(new UserPermissionsDto(await _mediator.Send(new GetUserPermissionsQuery(userId))));

@@ -8,5 +8,5 @@ public class CourseDto
     public DateTime CreatedAt { get; set; }
     public int Teachers { get; set; }
     public int Students { get; set; }
-    
+
 }

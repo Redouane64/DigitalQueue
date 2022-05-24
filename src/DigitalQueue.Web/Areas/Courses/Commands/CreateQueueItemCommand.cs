@@ -23,7 +23,7 @@ public class CreateQueueItemCommand : IRequest
         CourseId = courseId;
         UserId = userId;
     }
-    
+
     public class CreateQueueItemCommandHandler : IRequestHandler<CreateQueueItemCommand>
     {
         private readonly DigitalQueueContext _context;
@@ -32,7 +32,7 @@ public class CreateQueueItemCommand : IRequest
         private readonly ILogger<CreateQueueItemCommandHandler> _logger;
 
         public CreateQueueItemCommandHandler(
-            DigitalQueueContext context, 
+            DigitalQueueContext context,
             UserManager<User> userManager,
             FirebaseNotificationService firebaseNotificationService,
             ILogger<CreateQueueItemCommandHandler> logger)
@@ -42,7 +42,7 @@ public class CreateQueueItemCommand : IRequest
             _firebaseNotificationService = firebaseNotificationService;
             _logger = logger;
         }
-        
+
         public async Task<Unit> Handle(CreateQueueItemCommand request, CancellationToken cancellationToken)
         {
             await using var transaction = await this._context.Database.BeginTransactionAsync(cancellationToken);
@@ -69,7 +69,7 @@ public class CreateQueueItemCommand : IRequest
                 _context.Add(courseRequest);
 
                 await _userManager.AddClaimAsync(user, new Claim(ClaimTypesDefaults.Student, course.Id));
-                
+
                 // send firebase notification
                 try
                 {
@@ -88,7 +88,7 @@ public class CreateQueueItemCommand : IRequest
                 {
                     _logger.LogError(e, "Unable to send Firebase notification");
                 }
-                
+
                 await _context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
             }
@@ -96,7 +96,7 @@ public class CreateQueueItemCommand : IRequest
             {
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogError(
-                    e, "Unable to create request for course {} with user {}", 
+                    e, "Unable to create request for course {} with user {}",
                     request.CourseId, request.UserId);
             }
 

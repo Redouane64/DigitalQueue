@@ -12,7 +12,7 @@ namespace DigitalQueue.Web.Areas.Accounts.Queries;
 
 public class GetAllUsersQuery : IRequest<IEnumerable<UserDto>>
 {
-    
+
     public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumerable<UserDto>>
     {
         private readonly UserManager<User> _userManager;
@@ -21,8 +21,8 @@ public class GetAllUsersQuery : IRequest<IEnumerable<UserDto>>
         private readonly ILogger<GetAllUsersQueryHandler> _logger;
 
         public GetAllUsersQueryHandler(
-            UserManager<User> userManager, 
-            RoleManager<IdentityRole> roleManager, 
+            UserManager<User> userManager,
+            RoleManager<IdentityRole> roleManager,
             IHttpContextAccessor httpContextAccessor,
             ILogger<GetAllUsersQueryHandler> logger)
         {
@@ -31,18 +31,18 @@ public class GetAllUsersQuery : IRequest<IEnumerable<UserDto>>
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
-        
+
         public async Task<IEnumerable<UserDto>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
             // TODO: add pagination
 
             var currentUser = await this._userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-        
+
             var users = this._userManager.Users
                 .Where(user => user.Id != currentUser.Id)
                 .OrderByDescending(u => u.CreateAt)
                 .ToArray();
-            
+
             var allUsers = new List<UserDto>();
 
             foreach (var user in users)
@@ -55,7 +55,7 @@ public class GetAllUsersQuery : IRequest<IEnumerable<UserDto>>
 
             return allUsers;
         }
-        
+
         private async Task<AccountRoleDto[]> ToRolesDtos(IEnumerable<string> roles) =>
             await this._roleManager.Roles
                 .Where(role => roles.Contains(role.Name))
@@ -63,8 +63,8 @@ public class GetAllUsersQuery : IRequest<IEnumerable<UserDto>>
                 .ToArrayAsync();
 
         private IEnumerable<UserCourseRolesDto> ToClaimsDtos(IEnumerable<Claim> claims) => claims
-            .Where(claim => 
-                claim.Type is not ClaimTypes.Email && 
+            .Where(claim =>
+                claim.Type is not ClaimTypes.Email &&
                 claim.Type is not ClaimTypes.Role &&
                 claim.Type is not ClaimTypes.NameIdentifier)
             .GroupBy(claim => claim.Type)

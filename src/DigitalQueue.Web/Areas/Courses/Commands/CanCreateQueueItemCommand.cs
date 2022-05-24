@@ -32,7 +32,7 @@ public class CanCreateQueueItemCommand : IRequest<bool>
             _context = context;
             _logger = logger;
         }
-        
+
         public async Task<bool> Handle(CanCreateQueueItemCommand request, CancellationToken cancellationToken)
         {
             var currentUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);

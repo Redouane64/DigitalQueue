@@ -32,8 +32,8 @@ public class UpdateUserRolesCommand : IRequest<bool>
         private readonly ILogger<UpdateUserRolesCommandHandler> _logger;
 
         public UpdateUserRolesCommandHandler(
-            UserManager<User> userManager, 
-            DigitalQueueContext context, 
+            UserManager<User> userManager,
+            DigitalQueueContext context,
             IHttpContextAccessor httpContextAccessor,
             NotificationService notificationService,
             ILogger<UpdateUserRolesCommandHandler> logger)
@@ -44,7 +44,7 @@ public class UpdateUserRolesCommand : IRequest<bool>
             _notificationService = notificationService;
             _logger = logger;
         }
-        
+
         public async Task<bool> Handle(UpdateUserRolesCommand request, CancellationToken cancellationToken)
         {
             var currentUserId = _httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -53,7 +53,7 @@ public class UpdateUserRolesCommand : IRequest<bool>
                 _logger.LogWarning("Current user is not allowed to change their own roles");
                 return false;
             }
-            
+
             using (var transaction = await _context.Database.BeginTransactionAsync(cancellationToken))
             {
                 try
@@ -64,7 +64,7 @@ public class UpdateUserRolesCommand : IRequest<bool>
                     {
                         return false;
                     }
-                    
+
                     foreach (var role in request.Roles)
                     {
                         if (request.Remove)
@@ -93,24 +93,24 @@ public class UpdateUserRolesCommand : IRequest<bool>
                             await transaction.RollbackAsync(cancellationToken);
                             return false;
                         }
-                        
+
                         await _notificationService.Send(
                             new Notification<AdminDashboardPassword>(new AdminDashboardPassword(user.Email, password)));
                     }
-                    
+
                     await transaction.CommitAsync(cancellationToken);
 
                     return true;
                 }
-                catch(Exception exception)
+                catch (Exception exception)
                 {
                     _logger.LogError(exception, null);
-                    
+
                     await transaction.RollbackAsync(cancellationToken);
-                    
+
                     return false;
                 }
-                
+
             }
         }
 

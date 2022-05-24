@@ -16,7 +16,7 @@ public class GetUserPermissionsQuery : IRequest<IEnumerable<UserCourseRolesDto>>
     {
         UserId = userId;
     }
-    
+
     public class GetUserPermissionQueryHandler : IRequestHandler<GetUserPermissionsQuery, IEnumerable<UserCourseRolesDto>>
     {
         private readonly DigitalQueueContext _context;
@@ -25,7 +25,7 @@ public class GetUserPermissionsQuery : IRequest<IEnumerable<UserCourseRolesDto>>
         {
             _context = context;
         }
-        
+
         public async Task<IEnumerable<UserCourseRolesDto>> Handle(GetUserPermissionsQuery request, CancellationToken cancellationToken)
         {
             var userCoursesPermissions = await _context.Set<IdentityUserClaim<string>>()
@@ -33,18 +33,18 @@ public class GetUserPermissionsQuery : IRequest<IEnumerable<UserCourseRolesDto>>
                                                    e.ClaimType == ClaimTypesDefaults.Teacher))
                 .Join(_context.Courses.Where(c => !c.IsArchived),
                     e => e.ClaimValue,
-                    c => c.Id, 
+                    c => c.Id,
                     (e, c) => new
                     {
                         e.ClaimType,
                         c.Title,
                         c.Id
                     })
-                .GroupBy(c => new {c.Id, c.Title})
+                .GroupBy(c => new { c.Id, c.Title })
                 .Select(e =>
                     new UserCourseRolesDto(e.Key.Id, e.Key.Title, e.Select(c => c.ClaimType).ToArray()))
                 .ToArrayAsync(cancellationToken: cancellationToken);
-        
+
             return userCoursesPermissions;
         }
     }

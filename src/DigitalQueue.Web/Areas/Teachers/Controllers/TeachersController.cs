@@ -22,7 +22,7 @@ public class TeachersController : ControllerBase
     {
         _mediator = mediator;
     }
-    
+
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     [HttpPost("search", Name = nameof(Search))]
     [Consumes("application/x-www-form-urlencoded")]

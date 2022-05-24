@@ -16,7 +16,7 @@ public class SendChangeEmailCodeCommand : IRequest
     {
         Email = email;
     }
-    
+
     public class SendChangeEmailCodeCommandHandler : IRequestHandler<SendChangeEmailCodeCommand>
     {
         private readonly UserManager<User> _userManager;
@@ -25,7 +25,7 @@ public class SendChangeEmailCodeCommand : IRequest
         private readonly ILogger<SendChangeEmailCodeCommandHandler> _logger;
 
         public SendChangeEmailCodeCommandHandler(
-            UserManager<User> userManager, 
+            UserManager<User> userManager,
             IHttpContextAccessor httpContextAccessor,
             NotificationService notificationService,
             ILogger<SendChangeEmailCodeCommandHandler> logger)
@@ -35,7 +35,7 @@ public class SendChangeEmailCodeCommand : IRequest
             _notificationService = notificationService;
             _logger = logger;
         }
-        
+
         public async Task<Unit> Handle(SendChangeEmailCodeCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
@@ -47,7 +47,7 @@ public class SendChangeEmailCodeCommand : IRequest
 
             var token = await _userManager.GenerateUserTokenAsync(user, AuthenticationTokenProvider.ProviderName,
                 AuthenticationTokenProvider.AuthenticationPurposeName);
-            
+
             try
             {
                 await _notificationService.Send(new Notification<VerificationToken>(
@@ -57,7 +57,7 @@ public class SendChangeEmailCodeCommand : IRequest
             {
                 _logger.LogWarning(e, "Unable to send token");
             }
-            
+
             return Unit.Value;
         }
     }

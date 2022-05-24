@@ -17,7 +17,7 @@ public class UpdateNameCommand : IRequest<bool>
     {
         Name = name;
     }
-    
+
     public class UpdateNameCommandHandler : IRequestHandler<UpdateNameCommand, bool>
     {
         private readonly UserManager<User> _userManager;
@@ -33,13 +33,13 @@ public class UpdateNameCommand : IRequest<bool>
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
-        
+
         public async Task<bool> Handle(UpdateNameCommand request, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
             try
             {
-                var userId = _httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier);   
+                var userId = _httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var user = await _userManager.FindByIdAsync(userId);
 
                 if (user is null)
@@ -57,7 +57,7 @@ public class UpdateNameCommand : IRequest<bool>
                     {
                         await transaction.RollbackAsync(cancellationToken);
                     }
-                        
+
                     await transaction.CommitAsync(cancellationToken);
                 }
             }

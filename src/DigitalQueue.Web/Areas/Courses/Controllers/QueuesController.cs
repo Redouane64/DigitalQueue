@@ -24,21 +24,21 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
         {
             _mediator = mediator;
         }
-        
+
         [HttpGet(Name = nameof(GetQueue))]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetQueue([FromRoute]string courseId)
+        public async Task<IActionResult> GetQueue([FromRoute] string courseId)
         {
             return Ok(await _mediator.Send(new GetQueueByCourseIdQuery(courseId)));
         }
-        
+
         [HttpPost("create", Name = nameof(CreateQueueItem))]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorDto), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateQueueItem([FromRoute] string courseId)
         {
             var canCreate = await this._mediator.Send(new CanCreateQueueItemCommand(courseId));
-            if (!canCreate) 
+            if (!canCreate)
             {
                 return BadRequest(new ErrorDto("You're already the last in the queue."));
             }
@@ -48,7 +48,7 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
             return StatusCode(StatusCodes.Status201Created);
         }
 
-        [HttpPatch("{itemId}/complete", Name= nameof(CompleteQueueItem))]
+        [HttpPatch("{itemId}/complete", Name = nameof(CompleteQueueItem))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> CompleteQueueItem([FromRoute] string itemId)
         {

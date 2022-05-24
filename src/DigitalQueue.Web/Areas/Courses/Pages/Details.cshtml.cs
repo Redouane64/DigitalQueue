@@ -26,9 +26,9 @@ public class Details : PageModel
     [TempData]
     public bool? PostResultMessage { get; set; }
 
-    public async Task<IActionResult> OnGet([FromRoute]string courseId)
+    public async Task<IActionResult> OnGet([FromRoute] string courseId)
     {
-        var course = await this._mediator.Send(new GetCoursesByIdsQuery(new[] {courseId}));
+        var course = await this._mediator.Send(new GetCoursesByIdsQuery(new[] { courseId }));
         if (!course.Any())
         {
             return NotFound();
@@ -39,10 +39,10 @@ public class Details : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPost([FromRoute]string courseId, [FromForm]string title, [FromForm]int year)
+    public async Task<IActionResult> OnPost([FromRoute] string courseId, [FromForm] string title, [FromForm] int year)
     {
         PostResultMessage = await this._mediator.Send(new UpdateCourseCommand(courseId, title, year));
-        return RedirectToPagePermanent("Details", new {courseId});
+        return RedirectToPagePermanent("Details", new { courseId });
     }
 
     public async Task<IActionResult> OnPostArchiveCourse([FromRoute] string courseId)

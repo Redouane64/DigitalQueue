@@ -9,7 +9,7 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands;
 
 public class CreatePasswordResetTokenCommand : IRequest
 {
-    
+
     public class CreatePasswordResetTokenCommandHandler : IRequestHandler<CreatePasswordResetTokenCommand>
     {
         private readonly UserManager<User> _userManager;
@@ -28,18 +28,18 @@ public class CreatePasswordResetTokenCommand : IRequest
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
-        
+
         public async Task<Unit> Handle(CreatePasswordResetTokenCommand request, CancellationToken cancellationToken)
         {
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
-                
+
                 if (user is null)
                 {
                     return Unit.Value;
                 }
-                
+
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
                 await this._notificationService.Send(
@@ -52,7 +52,7 @@ public class CreatePasswordResetTokenCommand : IRequest
             {
                 _logger.LogError(e, "Unable to send password reset code");
             }
-            
+
             return Unit.Value;
         }
     }

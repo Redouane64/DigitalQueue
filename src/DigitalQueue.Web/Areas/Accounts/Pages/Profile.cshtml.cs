@@ -23,7 +23,7 @@ public class ProfileModel : PageModel
 
     [TempData]
     public Boolean? PostResultMessage { get; set; }
-    
+
     public UserDto? Profile { get; set; }
 
     public async Task<IActionResult> OnGetAsync(string id)
@@ -38,13 +38,13 @@ public class ProfileModel : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostRemoveRoleAsync([FromRoute]string id, [FromForm] string role)
+    public async Task<IActionResult> OnPostRemoveRoleAsync([FromRoute] string id, [FromForm] string role)
     {
-        PostResultMessage = await this._mediator.Send(new UpdateUserRolesCommand(id, new [] { role }, remove: true));
+        PostResultMessage = await this._mediator.Send(new UpdateUserRolesCommand(id, new[] { role }, remove: true));
         return RedirectToPage(new { id });
     }
 
-    public async Task<IActionResult> OnPostAddRoles([FromRoute]string id, [FromForm] string[] roles)
+    public async Task<IActionResult> OnPostAddRoles([FromRoute] string id, [FromForm] string[] roles)
     {
         PostResultMessage = await this._mediator.Send(new UpdateUserRolesCommand(id, roles));
         return RedirectToPage(new { id });

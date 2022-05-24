@@ -15,7 +15,7 @@ public class GetCoursesByIdsQuery : IRequest<IEnumerable<CourseDto>>
     {
         Ids = ids;
     }
-    
+
     public class GetCoursesByIdsQueryHandler : IRequestHandler<GetCoursesByIdsQuery, IEnumerable<CourseDto>>
     {
         private readonly DigitalQueueContext _context;
@@ -24,7 +24,7 @@ public class GetCoursesByIdsQuery : IRequest<IEnumerable<CourseDto>>
         {
             _context = context;
         }
-        
+
         public async Task<IEnumerable<CourseDto>> Handle(GetCoursesByIdsQuery request, CancellationToken cancellationToken)
         {
             return await this._context.Courses
@@ -33,7 +33,10 @@ public class GetCoursesByIdsQuery : IRequest<IEnumerable<CourseDto>>
                 .Where(c => request.Ids.Contains(c.Id))
                 .Select(course => new CourseDto
                 {
-                    Id = course.Id, Title = course.Title, Year = course.Year, CreatedAt = course.CreateAt
+                    Id = course.Id,
+                    Title = course.Title,
+                    Year = course.Year,
+                    CreatedAt = course.CreateAt
                 })
                 .ToArrayAsync(cancellationToken);
         }

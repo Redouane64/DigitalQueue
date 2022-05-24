@@ -15,12 +15,12 @@ public class RolesListViewComponent : ViewComponent
     {
         _httpContextAccessor = httpContextAccessor;
     }
-    
+
     public IViewComponentResult Invoke(IEnumerable<AccountRoleDto> roles, string userId)
     {
         var editable = _httpContextAccessor.HttpContext!
             .User.FindFirstValue(ClaimTypes.NameIdentifier).Equals(userId);
-        
+
         return View(new UserRolesDto(roles.Where(r => r.Text != RoleDefaults.User), userId, editable));
     }
 }

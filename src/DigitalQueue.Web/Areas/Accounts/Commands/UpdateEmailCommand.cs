@@ -18,7 +18,7 @@ public class UpdateEmailCommand : IRequest<bool>
         Token = token;
         Email = email;
     }
-    
+
     public class UpdateEmailCommandHandler : IRequestHandler<UpdateEmailCommand, bool>
     {
         private readonly UserManager<User> _userManager;
@@ -27,7 +27,7 @@ public class UpdateEmailCommand : IRequest<bool>
         private readonly ILogger<UpdateEmailCommandHandler> _logger;
 
         public UpdateEmailCommandHandler(
-            UserManager<User> userManager, 
+            UserManager<User> userManager,
             DigitalQueueContext context,
             IHttpContextAccessor httpContextAccessor,
             ILogger<UpdateEmailCommandHandler> logger)
@@ -37,7 +37,7 @@ public class UpdateEmailCommand : IRequest<bool>
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
-        
+
         public async Task<bool> Handle(UpdateEmailCommand request, CancellationToken cancellationToken)
         {
             await using (var transaction = await _context.Database.BeginTransactionAsync(cancellationToken))

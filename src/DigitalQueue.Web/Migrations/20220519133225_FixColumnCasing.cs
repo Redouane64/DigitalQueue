@@ -21,7 +21,7 @@ namespace DigitalQueue.Web.Migrations
                 name: "IX_sessions_UserId_security_stamp",
                 table: "sessions",
                 newName: "IX_sessions_user_id_security_stamp");
-            
+
             migrationBuilder.AddForeignKey(
                 name: "FK_sessions_users_user_id",
                 table: "sessions",

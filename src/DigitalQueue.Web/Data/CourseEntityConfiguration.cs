@@ -10,7 +10,7 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
     public void Configure(EntityTypeBuilder<Course> builder)
     {
         builder.ToTable("courses");
-        
+
         builder.Property(e => e.Id).HasColumnName("id");
         builder.Property(e => e.Title).HasColumnName("title");
         builder.Property(e => e.Year).HasColumnName("year");
@@ -20,10 +20,10 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
 
         builder.Property(e => e.CreateAt)
             .HasColumnName("create_at");
-        
+
         builder.Property(e => e.UpdatedAt)
             .HasColumnName("updated_at");
-        
+
         builder.HasMany(
             e => e.Teachers
         ).WithMany(

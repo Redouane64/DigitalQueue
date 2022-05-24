@@ -24,7 +24,7 @@ namespace DigitalQueue.Web.Areas.Sessions.Controllers
         {
             _mediator = mediator;
         }
-        
+
         [AllowAnonymous]
         [ProducesResponseType(typeof(TokenResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -46,7 +46,7 @@ namespace DigitalQueue.Web.Areas.Sessions.Controllers
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var sessionSecurityStamp = User.FindFirstValue(ClaimTypesDefaults.Session);
             await _mediator.Send(new DeleteSessionCommand(currentUserId, sessionSecurityStamp));
-            
+
             return NoContent();
         }
     }

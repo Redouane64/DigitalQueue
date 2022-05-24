@@ -20,7 +20,7 @@ public class SetTeacherCommand : IRequest
         CourseId = courseId;
         Teachers = teachers;
     }
-    
+
     public class SetTeacherCommandHandler : IRequestHandler<SetTeacherCommand>
     {
         private readonly DigitalQueueContext _context;
@@ -33,7 +33,7 @@ public class SetTeacherCommand : IRequest
             _userManager = userManager;
             _logger = logger;
         }
-        
+
         public async Task<Unit> Handle(SetTeacherCommand request, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
@@ -42,7 +42,7 @@ public class SetTeacherCommand : IRequest
                 var course = await _context.Courses
                     .Include(c => c.Teachers)
                     .FirstOrDefaultAsync(c => c.Id.Equals(request.CourseId), cancellationToken: cancellationToken);
-                
+
                 if (course is null)
                 {
                     await transaction.RollbackAsync(cancellationToken);
@@ -54,13 +54,13 @@ public class SetTeacherCommand : IRequest
                     .ToArrayAsync(cancellationToken);
 
                 course.Teachers = course.Teachers.UnionBy(teachers, u => u.Id).ToArray();
-                
+
                 _context.Entry(course).Collection(e => e.Teachers).IsModified = true;
                 foreach (var teacher in teachers)
                 {
                     await _userManager.AddClaimAsync(teacher, new Claim(ClaimTypesDefaults.Teacher, course.Id));
                 }
-                
+
                 await _context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
             }
@@ -69,7 +69,7 @@ public class SetTeacherCommand : IRequest
                 _logger.LogError(e, "Unable to add teachers");
                 await transaction.RollbackAsync(cancellationToken);
             }
-            
+
             return Unit.Value;
         }
     }

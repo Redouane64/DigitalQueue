@@ -5,9 +5,9 @@ public class SearchResult<T>
     public SearchResult(IEnumerable<T> results)
         : this(results, new SearchPaginaion())
     {
-        
+
     }
-    
+
     public SearchResult(IEnumerable<T> results, SearchPaginaion pagination)
     {
         Results = results;

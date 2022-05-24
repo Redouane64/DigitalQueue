@@ -15,7 +15,7 @@ public class GetCoursesQuery : IRequest<IEnumerable<CourseDto>>
     {
         SearchQuery = searchQuery;
     }
-    
+
     public class GetCourseQueryHandler : IRequestHandler<GetCoursesQuery, IEnumerable<CourseDto>>
     {
         private readonly DigitalQueueContext _context;
@@ -24,7 +24,7 @@ public class GetCoursesQuery : IRequest<IEnumerable<CourseDto>>
         {
             _context = context;
         }
-        
+
         public async Task<IEnumerable<CourseDto>> Handle(GetCoursesQuery request, CancellationToken cancellationToken)
         {
             var query = _context.Courses
@@ -34,16 +34,16 @@ public class GetCoursesQuery : IRequest<IEnumerable<CourseDto>>
 
             if (request.SearchQuery is not null)
             {
-                query = query.Where(c => EF.Functions.Like(c.Title,$"%{request.SearchQuery}%"));
+                query = query.Where(c => EF.Functions.Like(c.Title, $"%{request.SearchQuery}%"));
             }
-            
+
             return await query.Select(
                 course => new CourseDto
                 {
-                    Id = course.Id, 
-                    Title = course.Title, 
-                    Year = course.Year, 
-                    CreatedAt = course.CreateAt, 
+                    Id = course.Id,
+                    Title = course.Title,
+                    Year = course.Year,
+                    CreatedAt = course.CreateAt,
                     Teachers = course.Teachers.Count,
                     Students = course.QueueItems.Count,
                 }

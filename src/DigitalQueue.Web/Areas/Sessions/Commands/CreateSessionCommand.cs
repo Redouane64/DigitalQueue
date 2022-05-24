@@ -30,15 +30,15 @@ public class CreateSessionCommand : IRequest
             _context = context;
             _httpContextAccessor = httpContextAccessor;
         }
-        
+
         public async Task<Unit> Handle(CreateSessionCommand request, CancellationToken cancellationToken)
         {
             var deviceToken = _httpContextAccessor.HttpContext!.Request.Headers["X-Device-Token"].ToString();
-        
+
             var session = new Session
             {
                 AccessToken = request.AccessToken,
-                RefreshToken = request.RefreshToken, 
+                RefreshToken = request.RefreshToken,
                 SecurityStamp = request.SecurityStamp,
                 UserId = request.UserId,
                 DeviceToken = deviceToken,

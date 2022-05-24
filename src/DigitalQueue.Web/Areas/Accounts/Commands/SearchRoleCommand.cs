@@ -39,7 +39,7 @@ public class SearchRoleCommand : IRequest<SearchResult<AccountRoleDto>>
             {
                 query = query.Where(role => request.Filter.Contains(role.Name));
             }
-            
+
             if (!String.IsNullOrEmpty(request.Query))
             {
                 query = query.Where(role => role.Name.Contains(request.Query));

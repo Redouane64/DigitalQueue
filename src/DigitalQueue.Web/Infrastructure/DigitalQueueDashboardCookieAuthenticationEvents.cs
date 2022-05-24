@@ -15,12 +15,12 @@ public class DigitalQueueDashboardCookieAuthenticationEvents : CookieAuthenticat
     {
         _userManager = userManager;
     }
-    
+
     public override async Task ValidatePrincipal(CookieValidatePrincipalContext context)
     {
         var user = await _userManager.GetUserAsync(context.Principal);
 
         var claims = await _userManager.GetClaimsAsync(user);
-        
+
     }
 }

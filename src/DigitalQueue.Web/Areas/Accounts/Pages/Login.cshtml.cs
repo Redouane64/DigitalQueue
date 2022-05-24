@@ -63,7 +63,7 @@ public class LoginModel : PageModel
 
         // populate user claims and create cookie
         var claims = await this._userManager.GetClaimsAsync(user);
-        
+
         // verify user role
         var roles = await this._userManager.GetRolesAsync(user);
         if (!roles.Contains(RoleDefaults.Administrator))
@@ -74,14 +74,14 @@ public class LoginModel : PageModel
             ModelState.AddModelError("access_denied", "Access denied.");
             return Page();
         }
-        
+
         var correct = await _userManager.CheckPasswordAsync(user, Password);
         if (!correct)
         {
             ModelState.AddModelError("invalid_credentials", "Invalid credentials.");
             return Page();
         }
-        
+
         await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
@@ -94,7 +94,7 @@ public class LoginModel : PageModel
         {
             return RedirectPermanent(returnUrl);
         }
-        
+
         return RedirectToPage("Index", new { area = "Dashboard" });
     }
 

@@ -18,7 +18,7 @@ public class GetCourseStudentsQuery : IRequest<IEnumerable<CourseStudentDto>>
     {
         CourseId = courseId;
     }
-    
+
     public class GetCourseStudentsQueryHandler : IRequestHandler<GetCourseStudentsQuery, IEnumerable<CourseStudentDto>>
     {
         private readonly DigitalQueueContext _context;
@@ -31,16 +31,16 @@ public class GetCourseStudentsQuery : IRequest<IEnumerable<CourseStudentDto>>
             _userManager = userManager;
             _logger = logger;
         }
-        
+
         public async Task<IEnumerable<CourseStudentDto>> Handle(GetCourseStudentsQuery request, CancellationToken cancellationToken)
         {
             var students = await _context.Queues.AsNoTracking()
                 .Where(r => r.CourseId == request.CourseId)
                 .Select(r => new { r.CreatorId })
                 .Distinct()
-                .Join(_context.Users, 
-                    e => e.CreatorId, 
-                    u => u.Id, 
+                .Join(_context.Users,
+                    e => e.CreatorId,
+                    u => u.Id,
                     (r, u) => new CourseStudentDto(u.Name, u.Id)
                 )
                 .ToArrayAsync(cancellationToken);

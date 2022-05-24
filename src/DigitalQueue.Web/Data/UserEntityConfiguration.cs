@@ -32,10 +32,10 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.PasswordHash).HasColumnName("password_hash");
 
         builder.Property(e => e.Name).HasColumnName("name");
-        
+
         builder.Property(e => e.CreateAt)
             .HasColumnName("create_at");
-        
+
         builder.Property(e => e.UpdatedAt)
             .HasColumnName("updated_at");
 

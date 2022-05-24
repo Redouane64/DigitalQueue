@@ -17,7 +17,7 @@ public class SearchTeacherQuery : IRequest<SearchResult<TeacherDto>>
     {
         Query = query;
     }
-    
+
     public class SearchTeacherQueryHandler : IRequestHandler<SearchTeacherQuery, SearchResult<TeacherDto>>
     {
         private readonly UserManager<User> _userManager;
@@ -26,7 +26,7 @@ public class SearchTeacherQuery : IRequest<SearchResult<TeacherDto>>
         {
             _userManager = userManager;
         }
-        
+
         public async Task<SearchResult<TeacherDto>> Handle(SearchTeacherQuery request, CancellationToken cancellationToken)
         {
             var teachers = await _userManager.Users

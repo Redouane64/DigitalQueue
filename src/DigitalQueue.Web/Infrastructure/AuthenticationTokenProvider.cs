@@ -9,11 +9,11 @@ public class AuthenticationTokenProvider : TotpSecurityStampBasedTokenProvider<U
     public readonly static string ProviderName = nameof(AuthenticationTokenProvider);
 
     public readonly static string AuthenticationPurposeName = "authentication";
-    
-    public override Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<User> manager, User user) 
+
+    public override Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<User> manager, User user)
         => Task.FromResult(false);
 
     // HACK: this is dummy class wrapper around TotpSecurityStampBasedTokenProvider
     //       this token provider is used to generate 6-digits tokens
-    
+
 }

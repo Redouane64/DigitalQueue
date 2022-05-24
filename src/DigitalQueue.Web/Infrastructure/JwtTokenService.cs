@@ -44,8 +44,8 @@ public sealed class JwtTokenService
         );
 
         var refreshToken = await this._jwtRefreshTokenProvider.GenerateAsync(
-            JwtRefreshTokenProvider.Purpose, 
-            _userManager, 
+            JwtRefreshTokenProvider.Purpose,
+            _userManager,
             user);
 
         var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
@@ -56,9 +56,9 @@ public sealed class JwtTokenService
     public async Task<TokenResult?> RefreshToken(string refreshToken, User user, IEnumerable<Claim> claims)
     {
         var isValid = await this._jwtRefreshTokenProvider.ValidateAsync(
-            JwtRefreshTokenProvider.Purpose, 
+            JwtRefreshTokenProvider.Purpose,
             refreshToken,
-            _userManager, 
+            _userManager,
             user);
 
         if (!isValid)

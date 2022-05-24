@@ -69,14 +69,14 @@ public static class ServiceCollectionExtensions
 
         services.AddCors(options =>
         {
-            options.AddPolicy("_AnyClient", 
+            options.AddPolicy("_AnyClient",
                 builder => builder.WithMethods("GET", "OPTIONS", "POST")
                     .AllowAnyHeader()
                     .AllowAnyOrigin()
                     .SetPreflightMaxAge(TimeSpan.FromDays(5)).Build());
         });
     }
-    
+
     public static void AddIdentity(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<CookieOptions>(configuration.GetSection(nameof(CookieOptions)));
@@ -139,11 +139,11 @@ public static class ServiceCollectionExtensions
             options.Password.RequiredUniqueChars = 0;
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequiredLength = 4;
-            
+
             options.User.RequireUniqueEmail = true;
             options.Tokens.ChangeEmailTokenProvider = AuthenticationTokenProvider.ProviderName; // Not needed
             options.Tokens.PasswordResetTokenProvider = AuthenticationTokenProvider.ProviderName;
-            
+
             options.SignIn.RequireConfirmedAccount = false;
             options.SignIn.RequireConfirmedEmail = false;
             options.SignIn.RequireConfirmedPhoneNumber = false;
@@ -158,7 +158,7 @@ public static class ServiceCollectionExtensions
             options.Name = AuthenticationTokenProvider.ProviderName;
             options.TokenLifespan = TimeSpan.FromMinutes(5);
         });
-        
+
         // Configure JWT refresh token provider
         services.Configure<JwtRefreshTokenProvider.JwtRefreshTokenProviderOptions>(options =>
         {
@@ -169,5 +169,5 @@ public static class ServiceCollectionExtensions
         services.AddScoped<JwtTokenService>();
         services.AddScoped<DigitalQueueJwtEvents>();
     }
-    
+
 }

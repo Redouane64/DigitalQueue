@@ -26,9 +26,9 @@ public class CreateCourseCommand : IRequest<Course?>
 
     [Required]
     public string[]? Teachers { get; }
-    
+
     public int Year { get; }
-    
+
     public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, Course?>
     {
         private readonly DigitalQueueContext _context;
@@ -37,8 +37,8 @@ public class CreateCourseCommand : IRequest<Course?>
         private readonly ILogger<CreateCourseCommandHandler> _logger;
 
         public CreateCourseCommandHandler(
-            DigitalQueueContext context, 
-            UserManager<User> userManager, 
+            DigitalQueueContext context,
+            UserManager<User> userManager,
             FirebaseNotificationService firebaseNotificationService,
             ILogger<CreateCourseCommandHandler> logger)
         {
@@ -47,26 +47,26 @@ public class CreateCourseCommand : IRequest<Course?>
             _firebaseNotificationService = firebaseNotificationService;
             _logger = logger;
         }
-        
+
         public async Task<Course?> Handle(CreateCourseCommand request, CancellationToken cancellationToken)
         {
             if (request.Teachers is null || request.Teachers.Length == 0)
             {
                 return null;
             }
-            
-            await using(var transaction = await _context.Database.BeginTransactionAsync(cancellationToken))
+
+            await using (var transaction = await _context.Database.BeginTransactionAsync(cancellationToken))
             {
                 try
                 {
                     var teachers = await _userManager.Users
                         .Where(u => request.Teachers.Contains(u.Id))
                         .ToArrayAsync(cancellationToken);
-            
+
                     var course = new Course
                     {
                         Id = Guid.NewGuid().ToString(),
-                        Title = request.Title, 
+                        Title = request.Title,
                         Teachers = teachers,
                         Year = request.Year
                     };
@@ -76,9 +76,9 @@ public class CreateCourseCommand : IRequest<Course?>
                     foreach (var teacher in teachers)
                     {
                         var result = await _userManager.AddClaimAsync(
-                            teacher, 
+                            teacher,
                             new Claim(
-                                ClaimTypesDefaults.Teacher, 
+                                ClaimTypesDefaults.Teacher,
                                 course.Id
                             )
                         );
@@ -89,7 +89,7 @@ public class CreateCourseCommand : IRequest<Course?>
                             return null;
                         }
                     }
-                    
+
                     // send firebase notifications to teachers
                     try
                     {
@@ -109,11 +109,11 @@ public class CreateCourseCommand : IRequest<Course?>
                     {
                         _logger.LogError(e, "Unable to send Firebase notification");
                     }
-                    
-                    
+
+
                     await _context.SaveChangesAsync(cancellationToken);
                     await transaction.CommitAsync(cancellationToken);
-                    
+
                     return course;
                 }
                 catch (Exception exception)
@@ -127,4 +127,4 @@ public class CreateCourseCommand : IRequest<Course?>
         }
     }
 }
- 
+

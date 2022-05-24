@@ -17,7 +17,7 @@ public class GetUserSessionsQuery : IRequest<IEnumerable<SessionDto>>
     {
         UserId = userId;
     }
-    
+
     public class GetUserSessionQueryHandler : IRequestHandler<GetUserSessionsQuery, IEnumerable<SessionDto>>
     {
         private readonly DigitalQueueContext _context;
@@ -28,7 +28,7 @@ public class GetUserSessionsQuery : IRequest<IEnumerable<SessionDto>>
             _context = context;
             _httpContextAccessor = httpContextAccessor;
         }
-        
+
         public async Task<IEnumerable<SessionDto>> Handle(GetUserSessionsQuery request, CancellationToken cancellationToken)
         {
             var currentSessionId = _httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypesDefaults.Session);
@@ -36,7 +36,7 @@ public class GetUserSessionsQuery : IRequest<IEnumerable<SessionDto>>
                 .Where(s => s.UserId == request.UserId)
                 .Select(s => new SessionDto
                 {
-                    Id = s.Id, 
+                    Id = s.Id,
                     Current = (s.Id == currentSessionId)
                 }).ToArrayAsync(cancellationToken);
         }

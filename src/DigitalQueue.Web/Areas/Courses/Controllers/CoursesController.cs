@@ -25,7 +25,7 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
 
         [HttpGet(Name = nameof(GetCourses))]
         [Produces(typeof(IEnumerable<CourseDto>))]
-        public async Task<IActionResult> GetCourses([FromQuery]string q)
+        public async Task<IActionResult> GetCourses([FromQuery] string q)
         {
             var courses = await this._mediator.Send(new GetCoursesQuery(q));
             return Ok(courses);

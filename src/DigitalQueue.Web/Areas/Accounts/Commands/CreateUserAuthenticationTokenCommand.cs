@@ -22,7 +22,7 @@ public class CreateUserAuthenticationTokenCommand : IRequest<AuthenticationStatu
         Email = email;
         DeviceToken = deviceToken;
     }
-    
+
     public class CreateUserAuthenticationTokenCommandHandler : IRequestHandler<CreateUserAuthenticationTokenCommand, AuthenticationStatusDto?>
     {
         private readonly DigitalQueueUserManager _userManager;
@@ -32,9 +32,9 @@ public class CreateUserAuthenticationTokenCommand : IRequest<AuthenticationStatu
         private readonly ILogger<CreateUserAuthenticationTokenCommandHandler> _logger;
 
         public CreateUserAuthenticationTokenCommandHandler(
-            DigitalQueueUserManager userManager, 
-            DigitalQueueContext context, 
-            NotificationService notificationService, 
+            DigitalQueueUserManager userManager,
+            DigitalQueueContext context,
+            NotificationService notificationService,
             FirebaseNotificationService firebaseNotificationService,
             ILogger<CreateUserAuthenticationTokenCommandHandler> logger)
         {
@@ -44,11 +44,11 @@ public class CreateUserAuthenticationTokenCommand : IRequest<AuthenticationStatu
             _firebaseNotificationService = firebaseNotificationService;
             _logger = logger;
         }
-        
+
         public async Task<AuthenticationStatusDto?> Handle(CreateUserAuthenticationTokenCommand request, CancellationToken cancellationToken)
         {
             await using var transaction = await this._context.Database.BeginTransactionAsync(cancellationToken);
-            
+
             var user = await _userManager.FindByEmailAsync(request.Email);
             var result = new AuthenticationStatusDto();
             if (user is null)
@@ -61,7 +61,7 @@ public class CreateUserAuthenticationTokenCommand : IRequest<AuthenticationStatu
                 {
                     var error = createUserResult.Errors.Select(e => e.Description).FirstOrDefault() ?? "(null)";
                     _logger.LogWarning("Unable to create user with email '{Email}': {error}", request.Email, error);
-                    
+
                     // TODO: role back transaction
                     await transaction.RollbackAsync(cancellationToken);
 
@@ -74,13 +74,13 @@ public class CreateUserAuthenticationTokenCommand : IRequest<AuthenticationStatu
                 {
                     var error = assignRoleResult.Errors.Select(e => e.Description).FirstOrDefault() ?? "(null)";
                     _logger.LogWarning("Unable to assign default role to user '{Email}': {error}", request.Email, error);
-                    
+
                     // TODO: role back transaction
                     await transaction.RollbackAsync(cancellationToken);
-                    
+
                     return null;
                 }
-                
+
                 // create default claims for user
                 var setClaimsResult = await _userManager.AddClaimsAsync(user,
                     new[]
@@ -98,7 +98,7 @@ public class CreateUserAuthenticationTokenCommand : IRequest<AuthenticationStatu
 
                 result.Created = true;
             }
-            
+
             var token = await _userManager.GenerateUserTokenAsync(user, AuthenticationTokenProvider.ProviderName
                 , AuthenticationTokenProvider.AuthenticationPurposeName);
 
@@ -113,7 +113,7 @@ public class CreateUserAuthenticationTokenCommand : IRequest<AuthenticationStatu
                         $"Your authentication code: {token}"
                     ));
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     _logger.LogError(e, "Unable to send firebase notification");
                     authCodeSent = false;
@@ -129,14 +129,14 @@ public class CreateUserAuthenticationTokenCommand : IRequest<AuthenticationStatu
                 catch (Exception e)
                 {
                     _logger.LogWarning(e, "Unable to send authentication code");
-                
+
                     await transaction.RollbackAsync(cancellationToken);
                     return null;
                 }
             }
-            
+
             await transaction.CommitAsync(cancellationToken);
-            
+
             _logger.LogInformation("User '{Email}' authenticated successfully", user.Email);
             return result;
         }

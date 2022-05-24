@@ -19,7 +19,7 @@ public class CreateDefaultAccountCommand : IRequest
         Email = email;
         Password = password;
     }
-    
+
     public class CreateDefaultAccountCommandHandler : IRequestHandler<CreateDefaultAccountCommand>
     {
         private readonly UserManager<User> _userManager;
@@ -47,7 +47,7 @@ public class CreateDefaultAccountCommand : IRequest
                     UserName = request.Email,
                     Name = request.Email
                 };
-            
+
                 var createUser = await _userManager.CreateAsync(
                     user, request.Password
                 );
@@ -57,7 +57,7 @@ public class CreateDefaultAccountCommand : IRequest
                     await transaction.RollbackAsync(cancellationToken);
                     var error = createUser.Errors.Select(e => e.Description).First();
                     _logger.LogWarning("Unable to create user: {error!}", error);
-                    
+
                     return Unit.Value;
                 }
 
@@ -68,7 +68,7 @@ public class CreateDefaultAccountCommand : IRequest
                     await transaction.RollbackAsync(cancellationToken);
                     var error = assignRole.Errors.Select(e => e.Description).FirstOrDefault() ?? "(null)";
                     _logger.LogWarning("Unable to set user role: {error!}", error);
-                    
+
                     return Unit.Value;
                 }
 
@@ -84,7 +84,7 @@ public class CreateDefaultAccountCommand : IRequest
                     await transaction.RollbackAsync(cancellationToken);
                     var error = assignClaims.Errors.Select(e => e.Description).First();
                     _logger.LogWarning("Unable to set user claims: {error!}", error);
-                    
+
                     return Unit.Value;
                 }
 
@@ -94,7 +94,7 @@ public class CreateDefaultAccountCommand : IRequest
             {
                 _logger.LogError(exception, "Unable to default create user");
             }
-            
+
             return Unit.Value;
         }
     }

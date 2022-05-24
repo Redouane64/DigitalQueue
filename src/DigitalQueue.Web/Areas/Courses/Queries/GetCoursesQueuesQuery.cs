@@ -16,7 +16,7 @@ public class GetCoursesQueuesQuery : IRequest<QueuesDto>
     {
         UserId = userId;
     }
-    
+
     public class GetCoursesQueuesQueryHandler : IRequestHandler<GetCoursesQueuesQuery, QueuesDto>
     {
         private readonly DigitalQueueContext _context;
@@ -29,7 +29,7 @@ public class GetCoursesQueuesQuery : IRequest<QueuesDto>
             _context = context;
             _logger = logger;
         }
-        
+
         public async Task<QueuesDto> Handle(GetCoursesQueuesQuery requestQuery, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);

@@ -20,7 +20,7 @@ public class RefreshSessionCommand : IRequest<TokenResult?>
     {
         RefreshToken = refreshToken;
     }
-    
+
     class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionCommand, TokenResult?>
     {
         private readonly JwtTokenService _jwtTokenService;
@@ -42,7 +42,7 @@ public class RefreshSessionCommand : IRequest<TokenResult?>
             _context = context;
             _logger = logger;
         }
-        
+
         public async Task<TokenResult?> Handle(RefreshSessionCommand request, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
@@ -56,21 +56,21 @@ public class RefreshSessionCommand : IRequest<TokenResult?>
                 {
                     _logger.LogWarning("Session does not exist");
                     await transaction.RollbackAsync(cancellationToken);
-                
+
                     return null;
                 }
-                
+
                 var userClaims = await _userManager.GetClaimsAsync(session.User);
                 var sessionSecurityStamp = new Claim(ClaimTypesDefaults.Session, Guid.NewGuid().ToString());
                 var claims = userClaims.Union(new[] { sessionSecurityStamp });
-            
+
                 var tokens = await _jwtTokenService.RefreshToken(request.RefreshToken, session.User, claims);
                 if (tokens is null)
                 {
                     await transaction.RollbackAsync(cancellationToken);
                     return null;
                 }
-            
+
                 var deviceToken = _httpContextAccessor.HttpContext!.Request.Headers["X-Device-Token"].ToString();
 
                 session.AccessToken = tokens.AccessToken;
@@ -80,9 +80,9 @@ public class RefreshSessionCommand : IRequest<TokenResult?>
 
                 _context.Update(session);
                 await _context.SaveChangesAsync(cancellationToken);
-                
+
                 await transaction.CommitAsync(cancellationToken);
-            
+
                 return tokens;
             }
             catch (Exception exception)
@@ -90,7 +90,7 @@ public class RefreshSessionCommand : IRequest<TokenResult?>
                 _logger.LogError(exception, "Unable to refresh user session");
                 await transaction.RollbackAsync(cancellationToken);
             }
-            
+
             return null;
         }
     }

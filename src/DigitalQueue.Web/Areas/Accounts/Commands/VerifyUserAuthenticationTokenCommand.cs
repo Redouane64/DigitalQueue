@@ -22,7 +22,7 @@ public class VerifyUserAuthenticationTokenCommand : IRequest<AuthenticationResul
         Email = email;
         Token = token;
     }
-    
+
     public class VerifyUserAuthenticationTokenCommandHandler : IRequestHandler<VerifyUserAuthenticationTokenCommand, AuthenticationResultDto?>
     {
         private readonly DigitalQueueUserManager _userManager;
@@ -32,9 +32,9 @@ public class VerifyUserAuthenticationTokenCommand : IRequest<AuthenticationResul
         private readonly ILogger<VerifyUserAuthenticationTokenCommandHandler> _logger;
 
         public VerifyUserAuthenticationTokenCommandHandler(
-            DigitalQueueUserManager userManager, 
-            DigitalQueueContext context, 
-            JwtTokenService jwtTokenService, 
+            DigitalQueueUserManager userManager,
+            DigitalQueueContext context,
+            JwtTokenService jwtTokenService,
             IMediator mediator,
             ILogger<VerifyUserAuthenticationTokenCommandHandler> logger)
         {
@@ -44,17 +44,17 @@ public class VerifyUserAuthenticationTokenCommand : IRequest<AuthenticationResul
             _mediator = mediator;
             _logger = logger;
         }
-        
+
         public async Task<AuthenticationResultDto?> Handle(VerifyUserAuthenticationTokenCommand request, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-            
+
             var user = await _userManager.FindByEmailAsync(request.Email);
 
             if (user is null)
             {
                 await transaction.RollbackAsync(cancellationToken);
-                
+
                 _logger.LogWarning("User {Email} does not exist", request.Email);
                 return null;
             }
@@ -69,12 +69,12 @@ public class VerifyUserAuthenticationTokenCommand : IRequest<AuthenticationResul
                 _logger.LogWarning("User token is not valid");
                 return null;
             }
-            
+
             var sessionSecurityStamp = new Claim(ClaimTypesDefaults.Session, Guid.NewGuid().ToString());
             var userClaims = await _userManager.GetClaimsAsync(user);
-            var claims = userClaims.Union(new [] { sessionSecurityStamp });
+            var claims = userClaims.Union(new[] { sessionSecurityStamp });
             var tokenResult = await _jwtTokenService.GenerateToken(claims, user);
-            
+
             await _mediator.Send(new CreateSessionCommand(user.Id, sessionSecurityStamp.Value,
                 tokenResult.AccessToken, tokenResult.RefreshToken), cancellationToken);
 
@@ -82,7 +82,7 @@ public class VerifyUserAuthenticationTokenCommand : IRequest<AuthenticationResul
 
             return new AuthenticationResultDto(
                 sessionSecurityStamp.Value, // <- FYI: field is ignored
-                tokenResult.AccessToken, 
+                tokenResult.AccessToken,
                 tokenResult.RefreshToken);
         }
     }

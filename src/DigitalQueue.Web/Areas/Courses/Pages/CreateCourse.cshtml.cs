@@ -21,7 +21,7 @@ public class CreateCourseModel : PageModel
     {
         _mediator = mediator;
     }
-    
+
     [BindProperty]
     [Required]
     public string Title { get; set; }
@@ -35,7 +35,7 @@ public class CreateCourseModel : PageModel
 
     public void OnGet()
     {
-        
+
     }
 
     public async Task<IActionResult> OnPost()
@@ -47,7 +47,7 @@ public class CreateCourseModel : PageModel
             ModelState.AddModelError(nameof(Title), "Course with same name and year already exists.");
             return Page();
         }
-        
+
         var course = await this._mediator.Send(new CreateCourseCommand(Title, Teachers));
 
         if (course is null)

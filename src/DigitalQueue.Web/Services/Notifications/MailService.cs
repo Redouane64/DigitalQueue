@@ -13,7 +13,7 @@ public class MailService
     private readonly static string AuthenticationCodeTemplate =
         "DigitalQueue.Web.Templates.AuthenticationCode_Template.html";
 
-    private readonly static string AdminDashboardAccountPasswordTemplate = 
+    private readonly static string AdminDashboardAccountPasswordTemplate =
         "DigitalQueue.Web.Templates.AdminAccountPassword_Template.html";
 
     private readonly ILogger<MailService> _logger;
@@ -115,7 +115,9 @@ public class MailService
             await client.SendMailAsync(
                 new MailMessage(new MailAddress(_config.Username, _config.Name), new MailAddress(to))
                 {
-                    IsBodyHtml = true, Subject = subject, Body = body
+                    IsBodyHtml = true,
+                    Subject = subject,
+                    Body = body
                 }
             );
         }

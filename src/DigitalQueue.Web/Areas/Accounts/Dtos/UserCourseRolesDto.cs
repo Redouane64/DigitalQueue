@@ -22,5 +22,5 @@ public class UserCourseRolesDto
     public string CourseTitle { get; }
 
     public string[] Roles { get; }
-    
+
 }

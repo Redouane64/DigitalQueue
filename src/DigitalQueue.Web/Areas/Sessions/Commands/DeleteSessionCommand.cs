@@ -33,7 +33,7 @@ public class DeleteSessionCommand : IRequest
             _userManager = userManager;
             _logger = logger;
         }
-        
+
         public async Task<Unit> Handle(DeleteSessionCommand request, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);

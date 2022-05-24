@@ -34,16 +34,16 @@ public class GetUserQuery : IRequest<UserDto?>
             _roleManager = roleManager;
             _context = context;
         }
-        
+
         public async Task<UserDto?> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-            
+
             var user = await this._userManager.Users
                 .AsNoTracking()
                 .Include(e => e.Courses)
                 .FirstOrDefaultAsync(u => u.Id == request.Id, cancellationToken);
-            
+
             if (user is null)
             {
                 return null;
@@ -53,10 +53,10 @@ public class GetUserQuery : IRequest<UserDto?>
                 new SearchRoleCommand(filter: await this._userManager.GetRolesAsync(user), returnIds: true));
             var permissions = await _mediator.Send(new GetUserPermissionsQuery(user.Id), cancellationToken);
             var sessions = await _mediator.Send(new GetUserSessionsQuery(user.Id), cancellationToken);
-            
+
             await transaction.CommitAsync(cancellationToken);
-            
-            return new UserDto(user, roles.Results, permissions) { Sessions =  sessions };
+
+            return new UserDto(user, roles.Results, permissions) { Sessions = sessions };
         }
     }
 }

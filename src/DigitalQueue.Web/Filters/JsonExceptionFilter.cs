@@ -18,7 +18,7 @@ public class JsonExceptionFilter : IExceptionFilter
         {
             return;
         }
-        
+
         ErrorDto error;
         if (_env.IsDevelopment())
         {

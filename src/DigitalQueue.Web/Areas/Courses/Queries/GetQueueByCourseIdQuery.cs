@@ -17,7 +17,7 @@ public class GetQueueByCourseIdQuery : IRequest<IEnumerable<QueueItemDto>>
     {
         CourseId = courseId;
     }
-    
+
     public class GetQueueByCourseIdQueryHandler : IRequestHandler<GetQueueByCourseIdQuery, IEnumerable<QueueItemDto>>
     {
         private readonly DigitalQueueContext _context;
@@ -28,11 +28,11 @@ public class GetQueueByCourseIdQuery : IRequest<IEnumerable<QueueItemDto>>
             _context = context;
             _httpContextAccessor = httpContextAccessor;
         }
-        
+
         public async Task<IEnumerable<QueueItemDto>> Handle(GetQueueByCourseIdQuery request, CancellationToken cancellationToken)
         {
             var currentUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
+
             return await _context.Queues.AsNoTracking()
                 .Include(e => e.Creator)
                 .Where(e => e.CourseId == request.CourseId)
