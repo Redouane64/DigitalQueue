@@ -2,13 +2,13 @@ namespace DigitalQueue.Web.Services.Notifications;
 
 public class FirebaseNotification : Notification<string>
 {
-    public string DeviceToken { get; }
+    public string[] Tokens { get; }
     public string Title { get; }
 
-    public FirebaseNotification(string deviceToken, string title, string body) 
+    public FirebaseNotification(string[] tokens, string title, string body) 
         : base(body)
     {
-        DeviceToken = deviceToken;
+        Tokens = tokens;
         Title = title;
     }
 }

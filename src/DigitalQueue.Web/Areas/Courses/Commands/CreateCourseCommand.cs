@@ -3,6 +3,7 @@ using System.Security.Claims;
 
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Services.Notifications;
 
 using MediatR;
 
@@ -32,12 +33,18 @@ public class CreateCourseCommand : IRequest<Course?>
     {
         private readonly DigitalQueueContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly FirebaseNotificationService _firebaseNotificationService;
         private readonly ILogger<CreateCourseCommandHandler> _logger;
 
-        public CreateCourseCommandHandler(DigitalQueueContext context, UserManager<User> userManager, ILogger<CreateCourseCommandHandler> logger)
+        public CreateCourseCommandHandler(
+            DigitalQueueContext context, 
+            UserManager<User> userManager, 
+            FirebaseNotificationService firebaseNotificationService,
+            ILogger<CreateCourseCommandHandler> logger)
         {
             _context = context;
             _userManager = userManager;
+            _firebaseNotificationService = firebaseNotificationService;
             _logger = logger;
         }
         
@@ -83,9 +90,30 @@ public class CreateCourseCommand : IRequest<Course?>
                         }
                     }
                     
+                    // send firebase notifications to teachers
+                    try
+                    {
+                        var teacherIds = teachers.Select(t => t.Id).ToArray();
+                        var tokens = await _context.Sessions
+                            .Where(s => teacherIds.Contains(s.UserId))
+                            .Select(s => s.DeviceToken)
+                            .ToArrayAsync(cancellationToken);
+
+                        await _firebaseNotificationService.Send(new FirebaseNotification(
+                            tokens,
+                            "You have been assigned teacher",
+                            $"You have been assigned as teacher for {course.Title}"
+                        ));
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e, "Unable to send Firebase notification");
+                    }
+                    
+                    
                     await _context.SaveChangesAsync(cancellationToken);
                     await transaction.CommitAsync(cancellationToken);
-            
+                    
                     return course;
                 }
                 catch (Exception exception)

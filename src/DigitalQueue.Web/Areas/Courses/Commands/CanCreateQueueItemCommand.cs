@@ -8,32 +8,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Courses.Commands;
 
-public class CanCreateCourseRequestCommand : IRequest<bool>
+public class CanCreateQueueItemCommand : IRequest<bool>
 {
     public string CourseId { get; }
 
-    public CanCreateCourseRequestCommand(string courseId)
+    public CanCreateQueueItemCommand(string courseId)
     {
         CourseId = courseId;
     }
 
-    public class CanCreateCourseRequestCommandHandler : IRequestHandler<CanCreateCourseRequestCommand, bool>
+    public class CanCreateQueueItemCommandHandler : IRequestHandler<CanCreateQueueItemCommand, bool>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DigitalQueueContext _context;
-        private readonly ILogger<CanCreateCourseRequestCommandHandler> _logger;
+        private readonly ILogger<CanCreateQueueItemCommandHandler> _logger;
 
-        public CanCreateCourseRequestCommandHandler(
+        public CanCreateQueueItemCommandHandler(
             IHttpContextAccessor httpContextAccessor,
             DigitalQueueContext context,
-            ILogger<CanCreateCourseRequestCommandHandler> logger)
+            ILogger<CanCreateQueueItemCommandHandler> logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _context = context;
             _logger = logger;
         }
         
-        public async Task<bool> Handle(CanCreateCourseRequestCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(CanCreateQueueItemCommand request, CancellationToken cancellationToken)
         {
             var currentUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var lastQueueItem = await _context.Queues

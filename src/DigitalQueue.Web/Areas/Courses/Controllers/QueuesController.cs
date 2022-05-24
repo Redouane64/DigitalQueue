@@ -37,14 +37,14 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
         [ProducesResponseType(typeof(ErrorDto), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateQueueItem([FromRoute] string courseId)
         {
-            var canCreate = await this._mediator.Send(new CanCreateCourseRequestCommand(courseId));
+            var canCreate = await this._mediator.Send(new CanCreateQueueItemCommand(courseId));
             if (!canCreate) 
             {
-                return BadRequest(new ErrorDto("You already the last in the queue."));
+                return BadRequest(new ErrorDto("You're already the last in the queue."));
             }
 
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await this._mediator.Send(new CreateCourseRequestCommand(courseId, currentUserId));
+            await this._mediator.Send(new CreateQueueItemCommand(courseId, currentUserId));
             return StatusCode(StatusCodes.Status201Created);
         }
 
@@ -52,7 +52,7 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> CompleteQueueItem([FromRoute] string itemId)
         {
-            await this._mediator.Send(new CompleteCourseRequestCommand(itemId));
+            await this._mediator.Send(new CompleteQueueItemCommand(itemId));
             return NoContent();
         }
     }

@@ -13,24 +13,24 @@ public class FirebaseNotificationService
     
     public async Task Send(FirebaseNotification notification)
     {
-        try
+        if (notification.Tokens.Length == 0)
         {
-            string messageId = await FirebaseMessaging.DefaultInstance.SendAsync(new Message()
+            return;
+        }
+
+        var response = await FirebaseMessaging.DefaultInstance.SendMulticastAsync(
+            new MulticastMessage()
             {
-                Notification = new Notification
+                Tokens = notification.Tokens,
+                    
+                Notification = new Notification()
                 {
                     Body = notification.Payload, 
                     Title = notification.Title
-                }, 
-                Token = notification.DeviceToken
-            });
-            
-            _logger.LogInformation("Message {messageId} sent", messageId);
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, "Unable to send firebase message");
-        }
+                }
+            }    
+        );
+        _logger.LogInformation("{} sent notification, {} failed notification", response.SuccessCount, response.FailureCount);
     }
 
 }

@@ -459,3 +459,4 @@ $RECYCLE.BIN/
 src/DigitalQueue.Web/wwwroot/lib
 
 .env
+service_account.json

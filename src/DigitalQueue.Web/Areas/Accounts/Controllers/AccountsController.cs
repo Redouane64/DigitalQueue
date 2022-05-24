@@ -34,7 +34,8 @@ public class AccountsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SignIn([FromBody]CreateAuthenticationCodeDto body)
     {
-        var result = await _mediator.Send(new CreateUserAuthenticationTokenCommand(body.Email!));
+        Request.Headers.TryGetValue("X-Device-Token", out var deviceToken);
+        var result = await _mediator.Send(new CreateUserAuthenticationTokenCommand(body.Email!, deviceToken));
         
         if (result is null)
         {
