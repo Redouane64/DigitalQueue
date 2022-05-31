@@ -61,6 +61,7 @@ public class CompleteQueueItemCommand : IRequest
 
                 queueItem.Completed = true;
                 await _context.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
 
                 // send firebase push notification
                 try
@@ -80,10 +81,56 @@ public class CompleteQueueItemCommand : IRequest
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Unable to send Firebase notification");
+                    _logger.LogError(e, "Unable to send notification");
                 }
 
-                await transaction.CommitAsync(cancellationToken);
+                // send update
+                try
+                {
+                    var userDevicesTokens = await _context.Sessions
+                        .AsNoTracking()
+                        .Where(s => s.UserId == queueItem.CreatorId)
+                        .Select(s => s.DeviceToken)
+                        .ToArrayAsync(cancellationToken);
+
+                    await _firebaseNotificationService.SendData(
+                        userDevicesTokens,
+                        new Dictionary<string, string>()
+                        {
+                            ["type"] = "update",
+                            ["course"] = queueItem.CourseId,
+                        }
+                    );
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Unable to send update notification");
+                }
+                // notify current student
+                try
+                {
+                    var currentStudent =
+                        await _context.Queues.OrderBy(q => q.CreateAt)
+                            .FirstOrDefaultAsync(cancellationToken);
+                    
+                    if (currentStudent is not null)
+                    {
+                        var currentStudentDeviceTokens = await _context.Sessions
+                            .Where(s => s.UserId == currentStudent.CreatorId && !String.IsNullOrEmpty(s.DeviceToken))
+                            .Select(s => s.DeviceToken)
+                            .ToArrayAsync(cancellationToken);
+
+                        await _firebaseNotificationService.Send(
+                            new FirebaseNotification(currentStudentDeviceTokens,
+                                $"Course {currentStudent.Course.Title} queue",
+                                $"You are current in {currentStudent.Course.Title} queue"));
+                    }
+                }
+                catch (Exception exception) 
+                {
+                    _logger.LogError(exception, "Unable to send update notification");
+                }
+
             }
             catch (Exception e)
             {
