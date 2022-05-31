@@ -27,9 +27,9 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
 
         [HttpGet(Name = nameof(GetQueue))]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetQueue([FromRoute] string courseId)
+        public async Task<IActionResult> GetQueue([FromRoute] string courseId, [FromQuery]bool received)
         {
-            return Ok(await _mediator.Send(new GetQueueByCourseIdQuery(courseId)));
+            return Ok(await _mediator.Send(new GetQueueByCourseIdQuery(courseId, received)));
         }
 
         [HttpPost("create", Name = nameof(CreateQueueItem))]

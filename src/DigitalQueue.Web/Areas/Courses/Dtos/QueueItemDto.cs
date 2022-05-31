@@ -5,4 +5,6 @@ public class QueueItemDto
     public string Id { get; set; }
     public string Student { get; set; }
     public DateTime CreatedAt { get; set; }
+    public bool Me { get; set; }
+    
 }

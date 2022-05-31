@@ -13,9 +13,12 @@ public class GetQueueByCourseIdQuery : IRequest<IEnumerable<QueueItemDto>>
 {
     public string CourseId { get; }
 
-    public GetQueueByCourseIdQuery(string courseId)
+    public bool Received { get; }
+
+    public GetQueueByCourseIdQuery(string courseId, bool received)
     {
         CourseId = courseId;
+        Received = received;
     }
 
     public class GetQueueByCourseIdQueryHandler : IRequestHandler<GetQueueByCourseIdQuery, IEnumerable<QueueItemDto>>
@@ -33,13 +36,25 @@ public class GetQueueByCourseIdQuery : IRequest<IEnumerable<QueueItemDto>>
         {
             var currentUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return await _context.Queues.AsNoTracking()
+            var query = _context.Queues.AsNoTracking()
                 .Include(e => e.Creator)
                 .Where(e => e.CourseId == request.CourseId)
-                .Where(e => e.Course.Teachers.Any(t => t.Id == currentUserId))
-                .Where(e => e.Completed != true)
-                .Select(e => new QueueItemDto() { Id = e.Id, Student = e.Creator.Name, CreatedAt = e.CreateAt, })
-                .OrderBy(e => e.CreatedAt)
+                .Where(e => e.Completed != true);
+
+            if (request.Received)
+            {
+                query = query.Where(e => e.CreatorId != currentUserId);
+            }
+
+            return await query
+                .OrderBy(e => e.CreateAt)
+                .Select(e => new QueueItemDto
+                {
+                    Id = e.Id, 
+                    Student = e.Creator.Name, 
+                    CreatedAt = e.CreateAt, 
+                    Me = currentUserId == e.CreatorId,
+                })
                 .ToArrayAsync(cancellationToken);
         }
     }
