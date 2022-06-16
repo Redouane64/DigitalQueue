@@ -50,8 +50,8 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="Accounts" asp-page="Profile"
-                                   asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)">
+                                <a class="nav-link text-white" asp-area="Accounts" asp-page="Profile">
+                                   @* asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)"*@
                                     <i class="fa fa-user m-1"></i>Account
                                 </a>
                             </li>

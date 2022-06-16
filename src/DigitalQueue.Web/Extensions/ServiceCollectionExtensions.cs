@@ -141,8 +141,8 @@ public static class ServiceCollectionExtensions
             options.Password.RequiredLength = 4;
 
             options.User.RequireUniqueEmail = true;
-            options.Tokens.ChangeEmailTokenProvider = AuthenticationTokenProvider.ProviderName; // Not needed
-            options.Tokens.PasswordResetTokenProvider = AuthenticationTokenProvider.ProviderName;
+            options.Tokens.ChangeEmailTokenProvider = UserTokenProvider.ProviderName; // Not needed
+            options.Tokens.PasswordResetTokenProvider = UserTokenProvider.ProviderName;
 
             options.SignIn.RequireConfirmedAccount = false;
             options.SignIn.RequireConfirmedEmail = false;
@@ -151,11 +151,11 @@ public static class ServiceCollectionExtensions
           .AddRoles<IdentityRole>()
           .AddEntityFrameworkStores<DigitalQueueContext>()
           .AddTokenProvider<JwtRefreshTokenProvider>(JwtRefreshTokenProvider.ProviderName)
-          .AddTokenProvider<AuthenticationTokenProvider>(AuthenticationTokenProvider.ProviderName);
+          .AddTokenProvider<UserTokenProvider>(UserTokenProvider.ProviderName);
 
         services.Configure<DataProtectionTokenProviderOptions>(options =>
         {
-            options.Name = AuthenticationTokenProvider.ProviderName;
+            options.Name = UserTokenProvider.ProviderName;
             options.TokenLifespan = TimeSpan.FromMinutes(5);
         });
 

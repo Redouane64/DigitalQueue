@@ -1,22 +1,15 @@
-using DigitalQueue.Web.Areas.Accounts.Dtos;
-using DigitalQueue.Web.Areas.Accounts.Queries;
-
-using MediatR;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalQueue.Web.Pages.Shared.Components.PermissionsList;
 
 public class PermissionsListViewComponent : ViewComponent
 {
-    private readonly IMediator _mediator;
-    public PermissionsListViewComponent(IMediator mediator)
+    public PermissionsListViewComponent()
     {
-        _mediator = mediator;
     }
 
-    public async Task<IViewComponentResult> InvokeAsync(string userId)
+    public async Task<IViewComponentResult> InvokeAsync()
     {
-        return View(new UserPermissionsDto(await _mediator.Send(new GetUserPermissionsQuery(userId))));
+        return View();
     }
 }

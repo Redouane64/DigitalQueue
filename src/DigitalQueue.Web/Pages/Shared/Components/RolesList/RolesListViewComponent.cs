@@ -1,7 +1,4 @@
-using System.Security.Claims;
-
-using DigitalQueue.Web.Areas.Accounts.Dtos;
-using DigitalQueue.Web.Data;
+using DigitalQueue.Web.Areas.Users.Models;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,18 +6,12 @@ namespace DigitalQueue.Web.Pages.Shared.Components.RolesList;
 
 public class RolesListViewComponent : ViewComponent
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public RolesListViewComponent(IHttpContextAccessor httpContextAccessor)
+    public RolesListViewComponent()
     {
-        _httpContextAccessor = httpContextAccessor;
     }
 
-    public IViewComponentResult Invoke(IEnumerable<AccountRoleDto> roles, string userId)
+    public IViewComponentResult Invoke(IEnumerable<AccountRole> roles)
     {
-        var editable = _httpContextAccessor.HttpContext!
-            .User.FindFirstValue(ClaimTypes.NameIdentifier).Equals(userId);
-
-        return View(new UserRolesDto(roles.Where(r => r.Text != RoleDefaults.User), userId, editable));
+        return View(roles);
     }
 }

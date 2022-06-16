@@ -1,4 +1,4 @@
-using DigitalQueue.Web.Areas.Accounts.Commands;
+using DigitalQueue.Web.Areas.Accounts.Commands.Authentication;
 using DigitalQueue.Web.Data;
 
 using MediatR;

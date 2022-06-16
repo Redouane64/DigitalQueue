@@ -1,6 +1,7 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Courses.Commands;
+using DigitalQueue.Web.Areas.Courses.Commands.Queues;
 using DigitalQueue.Web.Areas.Courses.Queries;
 using DigitalQueue.Web.Filters;
 

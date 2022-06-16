@@ -1,4 +1,5 @@
-using DigitalQueue.Web.Areas.Teachers.Queries;
+using DigitalQueue.Web.Areas.Users.Queries;
+using DigitalQueue.Web.Areas.Users.Queries.Teachers;
 
 using MediatR;
 

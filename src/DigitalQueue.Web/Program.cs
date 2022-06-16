@@ -1,7 +1,7 @@
-using DigitalQueue.Web.Areas.Teachers;
+using DigitalQueue.Web.Areas.Notifications.Extensions;
+using DigitalQueue.Web.Areas.Users;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Extensions;
-using DigitalQueue.Web.Services.Notifications;
 
 using MediatR;
 
@@ -30,7 +30,7 @@ builder.Services.AddDataContext(builder.Configuration);
 builder.Services.AddIdentity(builder.Configuration);
 builder.Services.AddApi(builder.Configuration);
 builder.Services.AddNotificationService(builder.Configuration);
-builder.Services.AddTeachersServices();
+builder.Services.AddUsersModule();
 
 var app = builder.Build();
 

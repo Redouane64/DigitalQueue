@@ -1,4 +1,5 @@
 using DigitalQueue.Web.Areas.Courses.Commands;
+using DigitalQueue.Web.Areas.Courses.Commands.Courses;
 using DigitalQueue.Web.Areas.Courses.Dtos;
 using DigitalQueue.Web.Areas.Courses.Queries;
 
@@ -47,7 +48,7 @@ public class Details : PageModel
 
     public async Task<IActionResult> OnPostArchiveCourse([FromRoute] string courseId)
     {
-        await _mediator.Send(new ArchiveCourseCommand(courseId));
+        // await _mediator.Send(new ArchiveCourseCommand(courseId));
         return RedirectToPagePermanent("Index");
     }
 

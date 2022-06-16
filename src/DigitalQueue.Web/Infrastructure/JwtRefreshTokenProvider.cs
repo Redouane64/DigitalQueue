@@ -13,7 +13,7 @@ public class JwtRefreshTokenProvider : DataProtectorTokenProvider<User>
     }
 
     public static readonly string ProviderName = "JwtRefreshTokenProvider";
-    public static readonly string Purpose = "RefershJwtAccessToken";
+    public static readonly string Purpose = "RefreshJwtAccessToken";
 
     public JwtRefreshTokenProvider(
         IDataProtectionProvider dataProtectionProvider,

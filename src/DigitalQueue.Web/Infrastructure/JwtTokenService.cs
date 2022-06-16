@@ -2,12 +2,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-using DigitalQueue.Web.Areas.Accounts.Dtos;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Areas.Accounts.Models;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+
+using User = DigitalQueue.Web.Data.Entities.User;
 
 namespace DigitalQueue.Web.Infrastructure;
 

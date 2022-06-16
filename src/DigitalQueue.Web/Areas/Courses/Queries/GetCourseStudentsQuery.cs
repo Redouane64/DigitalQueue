@@ -1,4 +1,3 @@
-using DigitalQueue.Web.Areas.Accounts.Dtos;
 using DigitalQueue.Web.Areas.Courses.Dtos;
 
 using MediatR;

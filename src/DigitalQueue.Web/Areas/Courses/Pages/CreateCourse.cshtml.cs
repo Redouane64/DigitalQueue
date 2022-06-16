@@ -1,7 +1,7 @@
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 using DigitalQueue.Web.Areas.Courses.Commands;
+using DigitalQueue.Web.Areas.Courses.Commands.Courses;
 using DigitalQueue.Web.Areas.Courses.Queries;
 
 using MediatR;
@@ -40,7 +40,7 @@ public class CreateCourseModel : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        var existingCourse = await this._mediator.Send(new FindCourseByTitleQuery(Title));
+        var existingCourse = await this._mediator.Send(new FindCourseByTitleQuery(Title) { Year = Year });
 
         if (existingCourse is not null)
         {

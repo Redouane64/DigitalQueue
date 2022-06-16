@@ -7,40 +7,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Areas.Courses.Queries;
 
-public partial class GetCoursesQuery
+
+public class GetCourseQueryHandler : IRequestHandler<GetCoursesQuery, IEnumerable<CourseDto>>
 {
-    public class GetCourseQueryHandler : IRequestHandler<GetCoursesQuery, IEnumerable<CourseDto>>
+    private readonly DigitalQueueContext _context;
+
+    public GetCourseQueryHandler(DigitalQueueContext context)
     {
-        private readonly DigitalQueueContext _context;
+        _context = context;
+    }
 
-        public GetCourseQueryHandler(DigitalQueueContext context)
+    public async Task<IEnumerable<CourseDto>> Handle(GetCoursesQuery request, CancellationToken cancellationToken)
+    {
+        var query = _context.Courses
+            .AsNoTracking()
+            .OrderByDescending(c => c.CreateAt)
+            .Where(c => !c.IsArchived);
+
+        if (request.SearchQuery is not null)
         {
-            _context = context;
+            query = query.Where(c => EF.Functions.Like(c.Title, $"%{request.SearchQuery}%"));
         }
 
-        public async Task<IEnumerable<CourseDto>> Handle(GetCoursesQuery request, CancellationToken cancellationToken)
-        {
-            var query = _context.Courses
-                .AsNoTracking()
-                .OrderByDescending(c => c.CreateAt)
-                .Where(c => !c.IsArchived);
-
-            if (request.SearchQuery is not null)
+        return await query.Select(
+            course => new CourseDto
             {
-                query = query.Where(c => EF.Functions.Like(c.Title, $"%{request.SearchQuery}%"));
+                Id = course.Id,
+                Title = course.Title,
+                Year = course.Year,
+                CreatedAt = course.CreateAt,
+                Teachers = course.Teachers.Count,
+                Students = course.QueueItems.Count,
             }
-
-            return await query.Select(
-                course => new CourseDto
-                {
-                    Id = course.Id,
-                    Title = course.Title,
-                    Year = course.Year,
-                    CreatedAt = course.CreateAt,
-                    Teachers = course.Teachers.Count,
-                    Students = course.QueueItems.Count,
-                }
-            ).ToArrayAsync(cancellationToken);
-        }
+        ).ToArrayAsync(cancellationToken);
     }
 }
+

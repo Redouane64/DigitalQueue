@@ -1,4 +1,4 @@
-using DigitalQueue.Web.Areas.Accounts.Queries;
+using DigitalQueue.Web.Areas.Users.Queries;
 
 using MediatR;
 
@@ -17,8 +17,8 @@ public class UsersListViewComponent : ViewComponent
 
     public async Task<IViewComponentResult> InvokeAsync(int? page, int? pageSize, bool fullList = true)
     {
-        var users = await _mediator.Send(new GetAllUsersQuery());
+        // var users = await _mediator.Send(new GetAllUsersQuery());
 
-        return View(new Areas.Accounts.Dtos.UsersListDto(users, page, pageSize, fullList));
+        return View(/*new Areas.Accounts.Models.UsersList(users, page, pageSize, fullList)*/);
     }
 }

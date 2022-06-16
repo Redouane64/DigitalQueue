@@ -2,10 +2,6 @@ namespace DigitalQueue.Web.Data.Entities;
 
 public class Session : IBaseEntity
 {
-    public Session()
-    {
-        Id = Guid.NewGuid().ToString();
-    }
     public string Id { get; set; }
     public string DeviceToken { get; set; }
     public string SecurityStamp { get; set; }
