@@ -44,8 +44,7 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
                 return BadRequest(new ErrorDto("You're already the last in the queue."));
             }
 
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await this._mediator.Send(new CreateQueueItemCommand(courseId, currentUserId));
+            await this._mediator.Send(new CreateQueueItemCommand(courseId, User));
             return StatusCode(StatusCodes.Status201Created);
         }
 

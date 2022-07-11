@@ -45,7 +45,7 @@ namespace DigitalQueue.Web.Areas.Accounts.Controllers
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var sessionSecurityStamp = User.FindFirstValue(ClaimTypesDefaults.Session);
-            await _mediator.Send(new DeleteSessionCommand(currentUserId, sessionSecurityStamp));
+            await _mediator.Send(new DeleteSessionCommand(User, sessionSecurityStamp));
 
             return NoContent();
         }

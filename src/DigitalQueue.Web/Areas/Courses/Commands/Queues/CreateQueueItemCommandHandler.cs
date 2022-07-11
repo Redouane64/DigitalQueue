@@ -17,12 +17,12 @@ namespace DigitalQueue.Web.Areas.Courses.Commands.Queues;
 public class CreateQueueItemCommand : IRequest
 {
     public string CourseId { get; }
-    public string UserId { get; }
+    public ClaimsPrincipal User { get; }
 
-    public CreateQueueItemCommand(string courseId, string userId)
+    public CreateQueueItemCommand(string courseId, ClaimsPrincipal user)
     {
         CourseId = courseId;
-        UserId = userId;
+        User = user;
     }
 }
 
@@ -59,8 +59,7 @@ public class CreateQueueItemCommandHandler : IRequestHandler<CreateQueueItemComm
             {
                 return Unit.Value;
             }
-
-            var user = await _userManager.FindByIdAsync(request.UserId);
+            var user = await _userManager.GetUserAsync(request.User);
 
             if (user is null)
             {
@@ -98,7 +97,7 @@ public class CreateQueueItemCommandHandler : IRequestHandler<CreateQueueItemComm
             await transaction.RollbackAsync(cancellationToken);
             _logger.LogError(
                 e, "Unable to create request for course {} with user {}",
-                request.CourseId, request.UserId);
+                request.CourseId, request.User);
         }
 
         return Unit.Value;

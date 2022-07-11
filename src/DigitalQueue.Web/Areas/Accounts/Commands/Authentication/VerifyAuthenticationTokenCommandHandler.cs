@@ -4,9 +4,12 @@ using DigitalQueue.Web.Areas.Accounts.Commands.Sessions;
 using DigitalQueue.Web.Areas.Accounts.Models;
 using DigitalQueue.Web.Data;
 using DigitalQueue.Web.Data.Common;
+using DigitalQueue.Web.Data.Users;
 using DigitalQueue.Web.Infrastructure;
 
 using MediatR;
+
+using Microsoft.AspNetCore.Identity;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands.Authentication;
 
@@ -15,7 +18,6 @@ public class VerifyAuthenticationTokenCommand : IRequest<TokenResult?>
 {
     public string Email { get; set; }
     public string Token { get; set; }
-
     public string? DeviceToken { get; set; }
     
     public VerifyAuthenticationTokenCommand(string email, string token)
@@ -31,6 +33,7 @@ public class VerifyAuthenticationTokenCommandHandler : IRequestHandler<VerifyAut
     private readonly DigitalQueueContext _context;
     private readonly JwtTokenService _jwtTokenService;
     private readonly IMediator _mediator;
+    private readonly IUserClaimsPrincipalFactory<ApplicationUser> _claimsPrincipalFactory;
     private readonly ILogger<VerifyAuthenticationTokenCommandHandler> _logger;
 
     public VerifyAuthenticationTokenCommandHandler(
@@ -38,12 +41,14 @@ public class VerifyAuthenticationTokenCommandHandler : IRequestHandler<VerifyAut
         DigitalQueueContext context,
         JwtTokenService jwtTokenService,
         IMediator mediator,
+        IUserClaimsPrincipalFactory<ApplicationUser> claimsPrincipalFactory,
         ILogger<VerifyAuthenticationTokenCommandHandler> logger)
     {
         _userManager = userManager;
         _context = context;
         _jwtTokenService = jwtTokenService;
         _mediator = mediator;
+        _claimsPrincipalFactory = claimsPrincipalFactory;
         _logger = logger;
     }
 
@@ -77,9 +82,8 @@ public class VerifyAuthenticationTokenCommandHandler : IRequestHandler<VerifyAut
         var claims = userClaims.Union(new[] { sessionClaim });
         var tokens = await _jwtTokenService.GenerateToken(claims, user);
 
-        await _mediator.Send(new CreateSessionCommand
-        {
-            UserId = user.Id,
+        var claimsPrinciple = await _claimsPrincipalFactory.CreateAsync(user);
+        await _mediator.Send(new CreateSessionCommand(claimsPrinciple) {
             SecurityStamp = sessionClaim.Value,
             AccessToken = tokens.AccessToken,
             RefreshToken = tokens.RefreshToken,

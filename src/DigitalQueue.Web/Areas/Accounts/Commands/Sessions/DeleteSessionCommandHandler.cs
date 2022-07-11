@@ -13,13 +13,13 @@ namespace DigitalQueue.Web.Areas.Accounts.Commands.Sessions;
 
 public class DeleteSessionCommand : IRequest
 {
-    public string UserId { get; }
-    public string SessionSecurityStamp { get; }
+    public ClaimsPrincipal User { get; }
+    public string SecurityStamp { get; }
 
-    public DeleteSessionCommand(string userId, string sessionSecurityStamp)
+    public DeleteSessionCommand(ClaimsPrincipal user, string securityStamp)
     {
-        UserId = userId;
-        SessionSecurityStamp = sessionSecurityStamp;
+        User = user;
+        SecurityStamp = securityStamp;
     }
 }
 
@@ -41,12 +41,13 @@ public class DeleteSessionCommandHandler : IRequestHandler<DeleteSessionCommand>
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
+            var userId = request.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var session = await _context.Sessions.Include(s => s.User).FirstOrDefaultAsync(
-                s => s.UserId == request.UserId && s.SecurityStamp == request.SessionSecurityStamp, cancellationToken);
+                s => s.UserId == userId && s.SecurityStamp == request.SecurityStamp, cancellationToken);
 
             if (session is null)
             {
-                _logger.LogWarning("Session {SessionId} does not exist", request.SessionSecurityStamp);
+                _logger.LogWarning("Session {SessionId} does not exist", request.SecurityStamp);
                 return Unit.Value;
             }
 
@@ -67,7 +68,7 @@ public class DeleteSessionCommandHandler : IRequestHandler<DeleteSessionCommand>
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unable to delete session {SessionId}", request.SessionSecurityStamp);
+            _logger.LogError(e, "Unable to delete session {SessionId}", request.SecurityStamp);
             await transaction.RollbackAsync(cancellationToken);
         }
 
