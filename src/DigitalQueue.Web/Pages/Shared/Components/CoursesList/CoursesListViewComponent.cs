@@ -1,4 +1,4 @@
-using DigitalQueue.Web.Areas.Courses.Dtos;
+using DigitalQueue.Web.Areas.Courses.Models;
 using DigitalQueue.Web.Areas.Courses.Queries;
 
 using MediatR;

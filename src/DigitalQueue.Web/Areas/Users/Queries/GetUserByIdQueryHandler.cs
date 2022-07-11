@@ -1,5 +1,5 @@
 using DigitalQueue.Web.Areas.Users.Models;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Users;
 
 using MediatR;
 
@@ -19,9 +19,9 @@ public class GetUserByIdQuery : IRequest<UserAccount>
 
 public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserAccount>
 {
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public GetUserByIdQueryHandler(UserManager<User> userManager)
+    public GetUserByIdQueryHandler(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }

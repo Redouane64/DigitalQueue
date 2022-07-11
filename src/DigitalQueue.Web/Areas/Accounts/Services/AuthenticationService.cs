@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Users;
 using DigitalQueue.Web.Infrastructure;
 
 using Microsoft.AspNetCore.Identity;
@@ -13,11 +13,11 @@ namespace DigitalQueue.Web.Areas.Accounts.Services;
 
 public class AuthenticationService : IAuthenticationService
 {
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly JwtRefreshTokenProvider _refreshTokenProvider;
     private readonly JwtOptions _jwtOptions;
 
-    public AuthenticationService(UserManager<User> userManager,
+    public AuthenticationService(UserManager<ApplicationUser> userManager,
         JwtRefreshTokenProvider refreshTokenProvider,
         IOptions<JwtOptions> jwtOptions)
     {

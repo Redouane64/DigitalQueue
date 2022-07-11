@@ -3,7 +3,7 @@ using System.Security.Claims;
 using DigitalQueue.Web.Areas.Accounts.Services;
 using DigitalQueue.Web.Areas.Notifications.Models;
 using DigitalQueue.Web.Areas.Notifications.Services;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Users;
 
 using MediatR;
 
@@ -29,13 +29,13 @@ public class CreateUserTokenCommand : IRequest
 
 public class CreateUserTokenCommandHandler : IRequestHandler<CreateUserTokenCommand>
 {
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IAuthenticationService _authenticationService;
     private readonly MailService _mailService;
     private readonly FirebaseService _firebaseService;
 
     public CreateUserTokenCommandHandler(
-        UserManager<User> userManager,
+        UserManager<ApplicationUser> userManager,
         IAuthenticationService authenticationService, 
         MailService mailService, 
         FirebaseService firebaseService)

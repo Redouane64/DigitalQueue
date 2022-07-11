@@ -2,14 +2,14 @@ using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Models;
 using DigitalQueue.Web.Data;
+using DigitalQueue.Web.Data.Common;
+using DigitalQueue.Web.Data.Users;
 using DigitalQueue.Web.Infrastructure;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
-using User = DigitalQueue.Web.Data.Entities.User;
 
 namespace DigitalQueue.Web.Areas.Accounts.Commands.Sessions;
 
@@ -26,14 +26,14 @@ public class RefreshSessionCommand : IRequest<TokenResult?>
 public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionCommand, TokenResult?>
 {
     private readonly JwtTokenService _jwtTokenService;
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly DigitalQueueContext _context;
     private readonly ILogger<RefreshSessionCommandHandler> _logger;
 
     public RefreshSessionCommandHandler(
         JwtTokenService jwtTokenService,
-        UserManager<User> userManager,
+        UserManager<ApplicationUser> userManager,
         IHttpContextAccessor httpContextAccessor,
         DigitalQueueContext context,
         ILogger<RefreshSessionCommandHandler> logger)

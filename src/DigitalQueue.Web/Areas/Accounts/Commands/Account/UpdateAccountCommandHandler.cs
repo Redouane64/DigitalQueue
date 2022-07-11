@@ -2,7 +2,7 @@ using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Models;
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Users;
 using DigitalQueue.Web.Infrastructure;
 
 using MediatR;
@@ -25,10 +25,10 @@ public class UpdateAccountCommand : IRequest
 
 public class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand>
 {
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly DigitalQueueContext _context;
 
-    public UpdateAccountCommandHandler(UserManager<User> userManager, DigitalQueueContext context)
+    public UpdateAccountCommandHandler(UserManager<ApplicationUser> userManager, DigitalQueueContext context)
     {
         _userManager = userManager;
         _context = context;

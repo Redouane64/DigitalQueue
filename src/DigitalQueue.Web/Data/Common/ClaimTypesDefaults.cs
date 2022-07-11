@@ -1,4 +1,4 @@
-namespace DigitalQueue.Web.Data;
+namespace DigitalQueue.Web.Data.Common;
 
 public static class ClaimTypesDefaults
 {

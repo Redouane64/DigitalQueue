@@ -1,6 +1,5 @@
 using System.Security.Claims;
 
-using DigitalQueue.Web.Areas.Courses.Commands;
 using DigitalQueue.Web.Areas.Courses.Commands.Queues;
 using DigitalQueue.Web.Areas.Courses.Queries;
 using DigitalQueue.Web.Filters;
@@ -30,7 +29,8 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetQueue([FromRoute] string courseId, [FromQuery]bool received)
         {
-            return Ok(await _mediator.Send(new GetQueueByCourseIdQuery(courseId, received)));
+            var query = new GetQueueByCourseIdQuery(courseId) { Received = received, User = User };
+            return Ok(await _mediator.Send(query));
         }
 
         [HttpPost("create", Name = nameof(CreateQueueItem))]

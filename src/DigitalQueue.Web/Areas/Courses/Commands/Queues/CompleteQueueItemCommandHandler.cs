@@ -1,6 +1,7 @@
 using DigitalQueue.Web.Areas.Notifications.Models;
 using DigitalQueue.Web.Areas.Notifications.Services;
 using DigitalQueue.Web.Data;
+using DigitalQueue.Web.Data.Common;
 
 using MediatR;
 
@@ -76,7 +77,7 @@ public class CompleteQueueItemCommandHandler : IRequestHandler<CompleteQueueItem
 
                 await _firebaseService.Send(
                     new FirebaseNotification(userDevicesTokens,
-                        subject: $"{queueItem.Course.Title} queue item has been marked complete by course teacher", 
+                        subject: $"{queueItem.Course.Name} queue item has been marked complete by course teacher", 
                         body: "Queue item completed")
                 );
             }
@@ -124,8 +125,8 @@ public class CompleteQueueItemCommandHandler : IRequestHandler<CompleteQueueItem
 
                     await _firebaseService.Send(
                         new FirebaseNotification(currentStudentDeviceTokens,
-                            subject: $"You are current in {currentStudent.Course.Title} queue", 
-                            body: $"Course {currentStudent.Course.Title} queue"));
+                            subject: $"You are current in {currentStudent.Course.Name} queue", 
+                            body: $"Course {currentStudent.Course.Name} queue"));
                 }
             }
             catch (Exception exception) 

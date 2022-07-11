@@ -3,6 +3,7 @@ using System.Security.Claims;
 using DigitalQueue.Web.Areas.Accounts.Commands.Sessions;
 using DigitalQueue.Web.Areas.Accounts.Models;
 using DigitalQueue.Web.Data;
+using DigitalQueue.Web.Data.Common;
 using DigitalQueue.Web.Infrastructure;
 
 using MediatR;

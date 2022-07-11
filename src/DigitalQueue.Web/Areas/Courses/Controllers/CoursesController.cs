@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-using DigitalQueue.Web.Areas.Courses.Dtos;
+using DigitalQueue.Web.Areas.Courses.Models;
 using DigitalQueue.Web.Areas.Courses.Queries;
 
 using MediatR;
@@ -24,7 +24,7 @@ namespace DigitalQueue.Web.Areas.Courses.Controllers
         }
 
         [HttpGet(Name = nameof(GetCourses))]
-        [Produces(typeof(IEnumerable<CourseDto>))]
+        [Produces(typeof(IEnumerable<CourseResult>))]
         public async Task<IActionResult> GetCourses([FromQuery] string q)
         {
             var courses = await this._mediator.Send(new GetCoursesQuery(q));

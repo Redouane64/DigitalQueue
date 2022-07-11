@@ -1,4 +1,4 @@
-namespace DigitalQueue.Web.Areas.Courses.Dtos;
+namespace DigitalQueue.Web.Areas.Courses.Models;
 
 public class QueuesDto
 {

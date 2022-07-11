@@ -3,7 +3,9 @@ using System.Security.Claims;
 using DigitalQueue.Web.Areas.Notifications.Models;
 using DigitalQueue.Web.Areas.Notifications.Services;
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Common;
+using DigitalQueue.Web.Data.Courses;
+using DigitalQueue.Web.Data.Users;
 
 using MediatR;
 
@@ -27,13 +29,13 @@ public class CreateQueueItemCommand : IRequest
 public class CreateQueueItemCommandHandler : IRequestHandler<CreateQueueItemCommand>
 {
     private readonly DigitalQueueContext _context;
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly FirebaseService _firebaseService;
     private readonly ILogger<CreateQueueItemCommandHandler> _logger;
 
     public CreateQueueItemCommandHandler(
         DigitalQueueContext context,
-        UserManager<User> userManager,
+        UserManager<ApplicationUser> userManager,
         FirebaseService firebaseService,
         ILogger<CreateQueueItemCommandHandler> logger)
     {
@@ -80,7 +82,7 @@ public class CreateQueueItemCommandHandler : IRequestHandler<CreateQueueItemComm
                     .ToArrayAsync(cancellationToken);
                 await _firebaseService.Send(new FirebaseNotification(
                     tokens,
-                    subject: $"New student waiting in {course.Title} queue",
+                    subject: $"New student waiting in {course.Name} queue",
                     body: "Student added to queue"));
             }
             catch (Exception e)

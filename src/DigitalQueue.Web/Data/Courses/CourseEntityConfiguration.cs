@@ -1,9 +1,7 @@
-using DigitalQueue.Web.Data.Entities;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DigitalQueue.Web.Data;
+namespace DigitalQueue.Web.Data.Courses;
 
 public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
 {
@@ -12,10 +10,12 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
         builder.ToTable("courses");
 
         builder.Property(e => e.Id).HasColumnName("id");
-        builder.Property(e => e.Title).HasColumnName("title");
-        builder.Property(e => e.Year).HasColumnName("year");
-        builder.Property(e => e.IsArchived)
-            .HasColumnName("is_archived")
+        builder.Property(e => e.Name).HasColumnName("title");
+        builder.Property(e => e.Year).HasColumnName("year")
+               .IsRequired(false);
+        builder.Property(e => e.Group).HasColumnName("group");
+        builder.Property(e => e.Deleted)
+            .HasColumnName("deleted")
             .HasDefaultValue(false);
 
         builder.Property(e => e.CreateAt)
@@ -28,18 +28,17 @@ public class CourseEntityConfiguration : IEntityTypeConfiguration<Course>
             e => e.Teachers
         ).WithMany(
             e => e.Courses
-        ).UsingEntity(e =>
-        {
+        ).UsingEntity(e => {
             e.ToTable("course_teacher");
             e.Property("CoursesId").HasColumnName("course_id");
             e.Property("TeachersId").HasColumnName("teacher_id");
         });
 
         builder.HasMany(e => e.QueueItems)
-            .WithOne(e => e.Course)
-            .HasForeignKey(e => e.CourseId);
+               .WithOne(e => e.Course)
+               .HasForeignKey(e => e.CourseId);
 
-        builder.HasIndex(e => new { e.Title, e.Year }).IsUnique();
+        builder.HasIndex(e => new { e.Name, e.Group }).IsUnique();
     }
 }
 

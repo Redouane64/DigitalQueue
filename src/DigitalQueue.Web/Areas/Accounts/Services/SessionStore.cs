@@ -1,5 +1,5 @@
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Users;
 
 using Microsoft.EntityFrameworkCore;
 

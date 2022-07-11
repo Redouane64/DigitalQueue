@@ -3,7 +3,9 @@ using System.Security.Claims;
 using DigitalQueue.Web.Areas.Notifications.Models;
 using DigitalQueue.Web.Areas.Notifications.Services;
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Common;
+using DigitalQueue.Web.Data.Courses;
+using DigitalQueue.Web.Data.Users;
 
 using MediatR;
 
@@ -35,13 +37,13 @@ public partial class CreateCourseCommand : IRequest<Course?>
 public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, Course?>
 {
     private readonly DigitalQueueContext _context;
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly FirebaseService _firebaseService;
     private readonly ILogger<CreateCourseCommandHandler> _logger;
 
     public CreateCourseCommandHandler(
         DigitalQueueContext context,
-        UserManager<User> userManager,
+        UserManager<ApplicationUser> userManager,
         FirebaseService firebaseService,
         ILogger<CreateCourseCommandHandler> logger)
     {
@@ -69,7 +71,7 @@ public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, C
                 var course = new Course
                 {
                     Id = Guid.NewGuid().ToString(),
-                    Title = request.Title,
+                    Name = request.Title,
                     Teachers = teachers,
                     Year = request.Year
                 };
@@ -104,7 +106,7 @@ public class CreateCourseCommandHandler : IRequestHandler<CreateCourseCommand, C
 
                     await _firebaseService.Send(new FirebaseNotification(
                         tokens,
-                        subject: $"You have been assigned as teacher for {course.Title}", 
+                        subject: $"You have been assigned as teacher for {course.Name}", 
                         body: "You have been assigned teacher"));
                 }
                 catch (Exception e)

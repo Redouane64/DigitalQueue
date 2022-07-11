@@ -42,7 +42,7 @@ public class UpdateCourseCommandHandler : IRequestHandler<UpdateCourseCommand, b
             return false;
         }
 
-        course.Title = request.Title;
+        course.Name = request.Title;
         course.Year = request.Year;
 
         try

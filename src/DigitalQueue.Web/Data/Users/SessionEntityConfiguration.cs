@@ -1,9 +1,7 @@
-using DigitalQueue.Web.Data.Entities;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DigitalQueue.Web.Data;
+namespace DigitalQueue.Web.Data.Users;
 
 public class SessionEntityConfiguration : IEntityTypeConfiguration<Session>
 {

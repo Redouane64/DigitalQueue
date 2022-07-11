@@ -1,7 +1,8 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Common;
+using DigitalQueue.Web.Data.Users;
 
 using MediatR;
 
@@ -23,12 +24,12 @@ public class CreateDefaultAccountCommand : IRequest
 
 public class CreateDefaultAccountCommandHandler : IRequestHandler<CreateDefaultAccountCommand>
 {
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly DigitalQueueContext _context;
     private readonly ILogger<CreateDefaultAccountCommandHandler> _logger;
 
     public CreateDefaultAccountCommandHandler(
-        UserManager<User> userManager,
+        UserManager<ApplicationUser> userManager,
         DigitalQueueContext context,
         ILogger<CreateDefaultAccountCommandHandler> logger)
     {
@@ -42,7 +43,7 @@ public class CreateDefaultAccountCommandHandler : IRequestHandler<CreateDefaultA
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
-            var user = new User()
+            var user = new ApplicationUser()
             {
                 Email = request.Email,
                 UserName = request.Email,

@@ -1,6 +1,6 @@
 using DigitalQueue.Web.Areas.Courses.Commands;
 using DigitalQueue.Web.Areas.Courses.Commands.Courses;
-using DigitalQueue.Web.Areas.Courses.Dtos;
+using DigitalQueue.Web.Areas.Courses.Models;
 using DigitalQueue.Web.Areas.Courses.Queries;
 
 using MediatR;
@@ -22,7 +22,7 @@ public class Details : PageModel
         _mediator = mediator;
     }
 
-    public CourseDto Course { get; set; }
+    public CourseResult Course { get; set; }
 
     [TempData]
     public bool? PostResultMessage { get; set; }

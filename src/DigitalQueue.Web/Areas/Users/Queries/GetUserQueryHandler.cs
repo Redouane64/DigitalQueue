@@ -1,7 +1,7 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Users.Models;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Users;
 
 using MediatR;
 
@@ -21,9 +21,9 @@ public class GetUserQuery : IRequest<UserAccount?>
 
 public class GetUserQueryHandler : IRequestHandler<GetUserQuery, UserAccount?>
 {
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public GetUserQueryHandler(UserManager<User> userManager)
+    public GetUserQueryHandler(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }

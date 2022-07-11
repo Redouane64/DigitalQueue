@@ -2,7 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Common;
+using DigitalQueue.Web.Data.Users;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -15,9 +16,9 @@ namespace DigitalQueue.Web.Areas.Accounts.Pages;
 public class LoginModel : PageModel
 {
     private readonly ILogger<LoginModel> _logger;
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public LoginModel(ILogger<LoginModel> logger, UserManager<User> userManager)
+    public LoginModel(ILogger<LoginModel> logger, UserManager<ApplicationUser> userManager)
     {
         _logger = logger;
         _userManager = userManager;

@@ -40,7 +40,7 @@ public class CreateCourseModel : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        var existingCourse = await this._mediator.Send(new FindCourseByTitleQuery(Title) { Year = Year });
+        var existingCourse = await this._mediator.Send(new FindCourseByNameQuery(Title) { Year = Year });
 
         if (existingCourse is not null)
         {

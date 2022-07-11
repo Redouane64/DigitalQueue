@@ -1,14 +1,14 @@
 using System.Security.Claims;
 
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Users;
 
 namespace DigitalQueue.Web.Areas.Accounts.Services;
 
 public interface IUserService
 {
-    Task<User?> FindUserByEmail(string email);
+    Task<ApplicationUser?> FindUserByEmail(string email);
     
-    Task<User?>  CreateUser(
+    Task<ApplicationUser?>  CreateUser(
         string email, 
         string name, 
         IEnumerable<string> roles, 

@@ -1,6 +1,6 @@
 using DigitalQueue.Web.Areas.Common.Models;
 using DigitalQueue.Web.Areas.Users.Models;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Users;
 
 using MediatR;
 
@@ -21,9 +21,9 @@ public class SearchTeacherQuery : IRequest<SearchResult<TeacherAccount>>
 
 public class SearchTeacherQueryHandler : IRequestHandler<SearchTeacherQuery, SearchResult<TeacherAccount>>
 {
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public SearchTeacherQueryHandler(UserManager<User> userManager)
+    public SearchTeacherQueryHandler(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }

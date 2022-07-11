@@ -1,6 +1,7 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Data;
+using DigitalQueue.Web.Data.Common;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

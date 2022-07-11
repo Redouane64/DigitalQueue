@@ -1,7 +1,8 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Common;
+using DigitalQueue.Web.Data.Users;
 
 using MediatR;
 
@@ -25,10 +26,10 @@ public class SetTeacherCommand : IRequest
 public class SetTeacherCommandHandler : IRequestHandler<SetTeacherCommand>
 {
     private readonly DigitalQueueContext _context;
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<SetTeacherCommandHandler> _logger;
 
-    public SetTeacherCommandHandler(DigitalQueueContext context, UserManager<User> userManager, ILogger<SetTeacherCommandHandler> logger)
+    public SetTeacherCommandHandler(DigitalQueueContext context, UserManager<ApplicationUser> userManager, ILogger<SetTeacherCommandHandler> logger)
     {
         _context = context;
         _userManager = userManager;

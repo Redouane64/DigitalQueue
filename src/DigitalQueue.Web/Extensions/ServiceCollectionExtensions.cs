@@ -2,7 +2,8 @@ using System.Text;
 using System.Text.Json.Serialization;
 
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Common;
+using DigitalQueue.Web.Data.Users;
 using DigitalQueue.Web.Filters;
 using DigitalQueue.Web.Infrastructure;
 
@@ -131,7 +132,7 @@ public static class ServiceCollectionExtensions
             });
         });
 
-        services.AddIdentityCore<User>(options =>
+        services.AddIdentityCore<ApplicationUser>(options =>
         {
             options.Password.RequireDigit = false;
             options.Password.RequireLowercase = false;

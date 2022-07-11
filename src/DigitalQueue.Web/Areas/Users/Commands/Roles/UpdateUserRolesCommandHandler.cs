@@ -2,7 +2,8 @@ using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Notifications.Services;
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Common;
+using DigitalQueue.Web.Data.Users;
 
 using MediatR;
 
@@ -29,13 +30,13 @@ public class UpdateUserRolesCommand : IRequest<bool>
 
 public class UpdateUserRolesCommandHandler : IRequestHandler<UpdateUserRolesCommand, bool>
 {
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly DigitalQueueContext _context;
     private readonly FirebaseService _notificationService;
     private readonly ILogger<UpdateUserRolesCommandHandler> _logger;
 
     public UpdateUserRolesCommandHandler(
-        UserManager<User> userManager,
+        UserManager<ApplicationUser> userManager,
         DigitalQueueContext context,
         FirebaseService notificationService,
         ILogger<UpdateUserRolesCommandHandler> logger)

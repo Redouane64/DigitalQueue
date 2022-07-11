@@ -2,6 +2,7 @@ using System.Security.Claims;
 
 using DigitalQueue.Web.Areas.Accounts.Models;
 using DigitalQueue.Web.Areas.Users.Models;
+using DigitalQueue.Web.Data.Users;
 
 using MediatR;
 
@@ -22,10 +23,10 @@ public class GetAllUsersQuery : IRequest<IEnumerable<UserAccount>>
 
 public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, IEnumerable<UserAccount>>
 {
-    private readonly UserManager<Data.Entities.User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
     public GetAllUsersQueryHandler(
-        UserManager<Data.Entities.User> userManager,
+        UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;

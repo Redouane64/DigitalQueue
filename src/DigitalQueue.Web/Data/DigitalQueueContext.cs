@@ -1,5 +1,7 @@
-using DigitalQueue.Web.Areas.Courses.Dtos;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Areas.Courses.Models;
+using DigitalQueue.Web.Data.Common;
+using DigitalQueue.Web.Data.Courses;
+using DigitalQueue.Web.Data.Users;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -7,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalQueue.Web.Data;
 
-public class DigitalQueueContext : IdentityDbContext<User>
+public class DigitalQueueContext : IdentityDbContext<ApplicationUser>
 {
     public DigitalQueueContext(DbContextOptions<DigitalQueueContext> options)
         : base(options)
@@ -18,7 +20,7 @@ public class DigitalQueueContext : IdentityDbContext<User>
     {
         base.OnModelCreating(builder);
 
-        builder.ApplyConfiguration(new UserEntityConfiguration());
+        builder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
         builder.ApplyConfiguration(new RoleEntityConfiguration());
 
         builder.Ignore<IdentityUserToken<string>>();

@@ -1,7 +1,8 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Common;
+using DigitalQueue.Web.Data.Users;
 
 using MediatR;
 
@@ -25,10 +26,10 @@ public class DeleteSessionCommand : IRequest
 public class DeleteSessionCommandHandler : IRequestHandler<DeleteSessionCommand>
 {
     private readonly DigitalQueueContext _context;
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<DeleteSessionCommandHandler> _logger;
 
-    public DeleteSessionCommandHandler(DigitalQueueContext context, UserManager<User> userManager, ILogger<DeleteSessionCommandHandler> logger)
+    public DeleteSessionCommandHandler(DigitalQueueContext context, UserManager<ApplicationUser> userManager, ILogger<DeleteSessionCommandHandler> logger)
     {
         _context = context;
         _userManager = userManager;

@@ -1,4 +1,4 @@
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Users;
 
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace DigitalQueue.Web.Infrastructure;
 
-public class JwtRefreshTokenProvider : DataProtectorTokenProvider<User>
+public class JwtRefreshTokenProvider : DataProtectorTokenProvider<ApplicationUser>
 {
     public sealed class JwtRefreshTokenProviderOptions : DataProtectionTokenProviderOptions
     {
@@ -23,6 +23,6 @@ public class JwtRefreshTokenProvider : DataProtectorTokenProvider<User>
     {
     }
 
-    public override Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<User> manager, User user)
+    public override Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<ApplicationUser> manager, ApplicationUser applicationUser)
         => Task.FromResult(false);
 }

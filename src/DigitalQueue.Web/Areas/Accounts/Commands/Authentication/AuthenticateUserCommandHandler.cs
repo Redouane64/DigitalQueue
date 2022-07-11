@@ -1,7 +1,8 @@
 using DigitalQueue.Web.Areas.Accounts.Models;
 using DigitalQueue.Web.Areas.Accounts.Services;
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Common;
+using DigitalQueue.Web.Data.Users;
 
 using MediatR;
 
@@ -28,12 +29,12 @@ public class AuthenticateUserCommandHandler : IRequestHandler<AuthenticationUser
 {
     private readonly IUserService _userService;
     private readonly IAuthenticationService _authenticationService;
-    private readonly IUserClaimsPrincipalFactory<User> _claimsPrincipalFactory;
+    private readonly IUserClaimsPrincipalFactory<ApplicationUser> _claimsPrincipalFactory;
 
     public AuthenticateUserCommandHandler(
         IUserService userService,
         IAuthenticationService authenticationService,
-        IUserClaimsPrincipalFactory<User> claimsPrincipalFactory)
+        IUserClaimsPrincipalFactory<ApplicationUser> claimsPrincipalFactory)
     {
         _userService = userService;
         _authenticationService = authenticationService;

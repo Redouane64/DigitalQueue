@@ -1,7 +1,7 @@
 using System.Security.Claims;
 
 using DigitalQueue.Web.Data;
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Users;
 using DigitalQueue.Web.Infrastructure;
 
 using Microsoft.AspNetCore.Identity;
@@ -12,21 +12,21 @@ namespace DigitalQueue.Web.Areas.Accounts.Services;
 public class UsersService : IUserService
 {
     
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly DigitalQueueContext _context;
 
-    public UsersService(UserManager<User> userManager, DigitalQueueContext context)
+    public UsersService(UserManager<ApplicationUser> userManager, DigitalQueueContext context)
     {
         _userManager = userManager;
         _context = context;
     }
 
-    public async Task<User?> FindUserByEmail(string email)
+    public async Task<ApplicationUser?> FindUserByEmail(string email)
     {
         return await _userManager.FindByEmailAsync(email);
     }
 
-    public async Task<User?> CreateUser(
+    public async Task<ApplicationUser?> CreateUser(
         string email, 
         string name, 
         IEnumerable<string> roles, 
@@ -35,7 +35,7 @@ public class UsersService : IUserService
     {
         await using var transaction = await this._context.Database.BeginTransactionAsync(cancellationToken);
 
-        var user = new User { Email = email, UserName = name };
+        var user = new ApplicationUser { Email = email, UserName = name };
         var createUserResult = await _userManager.CreateAsync(user);
 
         if (!createUserResult.Succeeded)

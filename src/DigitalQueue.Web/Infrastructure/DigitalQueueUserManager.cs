@@ -1,11 +1,11 @@
-using DigitalQueue.Web.Data.Entities;
+using DigitalQueue.Web.Data.Users;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
 namespace DigitalQueue.Web.Infrastructure;
 
-public class DigitalQueueUserManager : UserManager<User>
+public class DigitalQueueUserManager : UserManager<ApplicationUser>
 {
     public override bool SupportsUserLockout => false;
     public override bool SupportsUserPhoneNumber => false;
@@ -15,11 +15,11 @@ public class DigitalQueueUserManager : UserManager<User>
     public override bool SupportsUserTwoFactorRecoveryCodes => false;
 
     public DigitalQueueUserManager(
-        IUserStore<User> store,
+        IUserStore<ApplicationUser> store,
         IOptions<IdentityOptions> optionsAccessor,
-        IPasswordHasher<User> passwordHasher,
-        IEnumerable<IUserValidator<User>> userValidators,
-        IEnumerable<IPasswordValidator<User>> passwordValidators,
+        IPasswordHasher<ApplicationUser> passwordHasher,
+        IEnumerable<IUserValidator<ApplicationUser>> userValidators,
+        IEnumerable<IPasswordValidator<ApplicationUser>> passwordValidators,
         ILookupNormalizer keyNormalizer,
         IdentityErrorDescriber errors,
         IServiceProvider services,
